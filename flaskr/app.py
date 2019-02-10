@@ -1,16 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager
-from form import LoginForm
+from forms import LoginForm, RegistrationForm
 
 
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-app.config.update(dict(
-    SECRET_KEY="powerful secretkey",
-    WTF_CSRF_SECRET_KEY="a csrf secret key"
-))
+app.config["SECRET_KEY"]="powerful secretkey"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -24,8 +21,9 @@ def hello():
 
 @app.route("/login")
 def login():
-    form = LoginForm()
-    return render_template("login.html", form=form)
+    registration_form = RegistrationForm()
+    login_form = LoginForm()
+    return render_template("login.html", registration_form=registration_form, login_form=login_form)
 
 
 @app.route("/mentee/<k_number>")

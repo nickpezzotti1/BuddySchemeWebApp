@@ -1,0 +1,28 @@
+CREATE TABLE Student
+(
+  kNumber VARCHAR(8) NOT NULL,
+  firstN  VARCHAR(30) NOT NULL,
+  lastN VARCHAR(30) NOT NULL,
+  email VARCHAR(30) NOT NULL,
+  degreeTitle VARCHAR(50) NOT NULL,
+  year INT NOT NULL,
+  isMale BOOLEAN NOT NULL,
+  interests VARCHAR(200) NOT NULL,
+  PRIMARY KEY(kNumber)
+);
+
+CREATE TABLE Mentee
+(
+  menteeID INT AUTO_INCREMENT NOT NULL,
+  kNumber VARCHAR(8) NOT NULL,
+  PRIMARY KEY(menteeID),
+  FOREIGN KEY (kNumber) REFERENCES Student(kNumber)
+);
+
+CREATE TABLE Mentor
+(
+  mentorID INT AUTO_INCREMENT NOT NULL,
+  kNumber VARCHAR(8) NOT NULL,
+  PRIMARY KEY(mentorID),
+  FOREIGN KEY (kNumber) REFERENCES Student(kNumber)
+);

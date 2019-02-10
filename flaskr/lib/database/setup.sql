@@ -1,12 +1,13 @@
 CREATE TABLE Students
 (
-  k_number VARCHAR(255) NOT NULL,
-  first_name  VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL,
-  degree_title VARCHAR(255) NOT NULL,
-  year_study INT NOT NULL,
-  gender VARCHAR(255) NOT NULL,
-  PRIMARY KEY(k_number)
+ k_number VARCHAR(255) NOT NULL,
+ first_name  VARCHAR(255) NOT NULL,
+ last_name VARCHAR(255) NOT NULL,
+ degree_title VARCHAR(255) NOT NULL,
+ year_study INT NOT NULL,
+ gender VARCHAR(255) NOT NULL,
+ password_hash VARCHAR(255) NOT NULL, 
+ PRIMARY KEY(k_number)
 );
 
 CREATE TABLE Informations

@@ -27,6 +27,28 @@ def query(sql_query):
 
     return result
 
+
+def insert(sql_query):
+    """ Will push a query to the DB"""    
+
+    # Connect to the database
+    conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
+
+    try:
+        with conn.cursor() as cursor:
+            result = cursor.execute(sql_query)
+                    
+        conn.commit()
+            
+    except Exception as e:
+        print("Exeception occured:{}".format(e))
+
+    finally:
+        conn.close()
+
+    return result
+
 if __name__ == '__main__':
 
+    print(insert("INSERT INTO Students VALUES(\"K1232323\", \"Jean\", \"Dupont\", \"Bsc Robotics\", 1, \"Other\", \"EO(*U&#H@D@#\");"))
     print(query("SELECT * FROM Students;"))

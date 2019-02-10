@@ -16,3 +16,9 @@ Buddy scheme management system web application.
 
 1. `$ source env/bin/activate`
 2. `(env) $ python app.py`
+
+## Datababse Credentials
+To set the variables permanently, you should edit your `.bashrc` in your home directory.
+
+1. `(env) $ export BUDDY_DB_USER='admin'`
+2. `(env) $ export BUDDY_DB_PASSWORD='r5!!eXFNVC5qMDL3$o&m'`

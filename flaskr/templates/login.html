@@ -27,7 +27,6 @@
 							</div>
 						</div>
 						<form action="" method="post" name="login">
-							{{ login_form.hidden_tag() }}
 							<div class="form-group">
 									{{ login_form.k_number.label(class="form-control-label") }}
 									{{ login_form.k_number(class="form-control form-control-lg", placeholder="Enter your k-number") }}
@@ -69,7 +68,7 @@
 								<h1>Signup</h1>
 							</div>
 						</div>
-						<form action="#" name="registration">
+						<form action="#" name="registration" method="post">
 							<div class="form-group">
 								{{ registration_form.first_name.label(class="form-control-label") }}
 								{{ registration_form.first_name(class="form-control form-control-lg", placeholder="Enter First Name") }}
@@ -79,12 +78,43 @@
 								{{ registration_form.last_name(class="form-control form-control-lg", placeholder="Enter Last Name") }}
 							</div>
 							<div class="form-group">
+								{{ registration_form.k_number.label(class="form-control-label") }}
+								{% if registration_form.k_number.errors %}
+                        {{ registration_form.k_number(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in registration_form.k_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+											{{ registration_form.k_number(class="form-control form-control-lg", placeholder="Enter k-number") }}
+                    {% endif %}
+							</div>
+							<div class="form-group">
 								{{ registration_form.password.label(class="form-control-label") }}
-								{{ registration_form.password(class="form-control form-control-lg", placeholder="Enter Password") }}
+								{% if registration_form.password.errors %}
+                        {{ registration_form.password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in registration_form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+												{{ registration_form.password(class="form-control form-control-lg", placeholder="Enter Password") }}
+                    {% endif %}
 							</div>
 							<div class="form-group">
 								{{ registration_form.confirm_password.label(class="form-control-label") }}
-								{{ registration_form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
+								{% if registration_form.confirm_password.errors %}
+                        {{ registration_form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in registration_form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+												{{ registration_form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
+                    {% endif %}
 							</div>
 							<div class="col-md-12 text-center ">
 								{{ registration_form.submit(class="btn btn-block mybtn btn-primary tx-tfm") }}

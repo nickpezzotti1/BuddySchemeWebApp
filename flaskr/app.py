@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager
 from forms import LoginForm, RegistrationForm
 
@@ -15,14 +15,22 @@ def load_user(user_id):
 
 @app.route("/")
 @app.route("/home")
-def hello():
+def home():
     return render_template("index.html")
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
     registration_form = RegistrationForm()
+    if request.method == "POST" and registration_form.is_submitted():
+        # add user to system
+        return redirect(url_for("home"))
+
     login_form = LoginForm()
+    if request.method == "POST" and login_form.is_submitted():
+        # check if he is authorised
+        return redirect(url_for("home"))
+
     return render_template("login.html", registration_form=registration_form, login_form=login_form)
 
 

@@ -27,9 +27,11 @@
 							</div>
 						</div>
 						<form action="" method="post" name="login">
+							{{ form.csrf_token }}
 							<div class="form-group">
-								<label for="exampleInputEmail1">Email address</label>
-								<input type="email" name="login_email" class="form-control" id="login_email" aria-describedby="emailHelp" placeholder="Enter email">
+								<label for="exampleInputEmail1">K number</label>
+								{{ form.knumber.label }} {{ form.knumber(size=20) }}
+								<input type="text" name="k_number" class="form-control" id="k_number" aria-describedby="knumberHelp" placeholder="Enter k number">
 							</div>
 							<div class="form-group">
 								<label for="exampleInputEmail1">Password</label>

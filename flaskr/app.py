@@ -1,15 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_login import LoginManager
+from form import LoginForm
+
 
 app = Flask(__name__)
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+app.config.update(dict(
+    SECRET_KEY="powerful secretkey",
+    WTF_CSRF_SECRET_KEY="a csrf secret key"
+))
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 @app.route("/")
 @app.route("/home")
 def hello():
     return render_template("index.html")
 
+
 @app.route("/login")
 def login():
-    return render_template("login.html")
+    form = LoginForm()
+    return render_template("login.html", form=form)
+
 
 @app.route("/mentee/<k_number>")
 def mentee(k_number):
@@ -37,4 +54,4 @@ def mentee(k_number):
 
 # We only need this for local dev
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5000)

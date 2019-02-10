@@ -1,28 +1,27 @@
-CREATE TABLE Student
+CREATE TABLE Students
 (
-  kNumber VARCHAR(8) NOT NULL,
-  firstN  VARCHAR(30) NOT NULL,
-  lastN VARCHAR(30) NOT NULL,
-  email VARCHAR(30) NOT NULL,
-  degreeTitle VARCHAR(50) NOT NULL,
-  year INT NOT NULL,
-  isMale BOOLEAN NOT NULL,
-  interests VARCHAR(200) NOT NULL,
-  PRIMARY KEY(kNumber)
+  k_number VARCHAR(255) NOT NULL,
+  first_name  VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL,
+  degree_title VARCHAR(255) NOT NULL,
+  year_study INT NOT NULL,
+  gender VARCHAR(255) NOT NULL,
+  PRIMARY KEY(k_number)
 );
 
-CREATE TABLE Mentee
+CREATE TABLE Informations
 (
-  menteeID INT AUTO_INCREMENT NOT NULL,
-  kNumber VARCHAR(8) NOT NULL,
-  PRIMARY KEY(menteeID),
-  FOREIGN KEY (kNumber) REFERENCES Student(kNumber)
+ hobbies VARCHAR(255) NOT NULL,
+ fields VARCHAR(255) NOT NULL,
+ k_number VARCHAR(255) NOT NULL,
+ FOREIGN KEY (k_number) REFERENCES Students(k_number)
 );
 
-CREATE TABLE Mentor
+CREATE TABLE Allocation
 (
-  mentorID INT AUTO_INCREMENT NOT NULL,
-  kNumber VARCHAR(8) NOT NULL,
-  PRIMARY KEY(mentorID),
-  FOREIGN KEY (kNumber) REFERENCES Student(kNumber)
+ mentor_k_number VARCHAR(255) NOT NULL,
+ mentee_k_number VARCHAR(255) NOT NULL,
+ PRIMARY KEY (mentor_k_number, mentee_k_number),
+ FOREIGN KEY (mentor_k_number) REFERENCES Students(k_number),
+ FOREIGN KEY (mentee_k_number) REFERENCES Students(k_number)
 );

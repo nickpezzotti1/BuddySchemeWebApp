@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager
 from forms import LoginForm, RegistrationForm
+from flask_wtf import FlaskForm
 
 
 app = Flask(__name__)
@@ -21,15 +22,18 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    registration_form = RegistrationForm()
-    if request.method == "POST" and registration_form.is_submitted():
-        # add user to system
+    registration_form = RegistrationForm(request.form)
+
+    if registration_form.validate_on_submit():        # add user to system
+        print("SUCCESS")
         return redirect(url_for("home"))
 
-    login_form = LoginForm()
-    if request.method == "POST" and login_form.is_submitted():
-        # check if he is authorised
-        return redirect(url_for("home"))
+    login_form = LoginForm(request.form)
+    # if login_form.validate_on_submit():        # add user to system
+    #     # check if he is authorised
+    #     return redirect(url_for("home"))
+
+    # never validating the form
 
     return render_template("login.html", registration_form=registration_form, login_form=login_form)
 

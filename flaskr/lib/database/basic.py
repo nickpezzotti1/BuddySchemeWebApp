@@ -62,6 +62,7 @@ def sanity_check(sql_fields):
     return sql_fields.isalnum() or (type(sql_fields) == int)
 
 
+# TODO should I raise my own exception?
 def update_students(**kwargs):
     """ Will update fields in Students based on the k_number
         You will need to precise the specific field"""
@@ -71,14 +72,24 @@ def update_students(**kwargs):
 
     # We need the k_number to update
     if "k_number" not in kwargs:
-        return "K_NUMBER ERROR"
+        return "Error: k_number not defined"
     
-    for field in kwargs:
+    for field, value in kwargs.items():
 
         # Will check that the field is valid, only alphanum and right type
-        if not sanity_check(kwargs[field]) or field not in accepted_fields or type(kwargs[field]) != type(accepted_fields[field]):
-            return "ERROR"
-         
+        if not sanity_check(value):
+            return "Error: did not pass sanity check"
+        elif field not in accepted_fields:
+            return "Error: field isn't in database"
+        elif type(value) != type(accepted_fields[field]):
+            return "Error: field is the wrong type"
+        elif        
+ 
+    if len(kwargs) > 1:
+        pass
+    else:
+        return "Error: did not pass enough argoum"
+ 
     
 if __name__ == '__main__':
 

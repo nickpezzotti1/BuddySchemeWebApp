@@ -14,7 +14,6 @@ def query(sql_query):
    
     try:
     
-        # Select all the users that are in the french society and don't have a ticket yet
         with conn.cursor() as cursor:
             cursor.execute(sql_query)
             result = cursor.fetchall()

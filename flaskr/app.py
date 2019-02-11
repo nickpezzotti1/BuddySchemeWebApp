@@ -23,24 +23,32 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     registration_form = RegistrationForm(request.form)
-    if registration_form.validate_on_submit():        # add user to system
-        # hash the user password
-        first_name = registration_form.first_name.data
-        last_name = registration_form.last_name.data
-        k_number = registration_form.k_number.data
-        plain_text_password = registration_form.password.data
-        print(first_name, last_name, k_number, plain_text_password)
-        # store user data in database
-
-        #redirect to profile page, where he must insert his preferences
-        return redirect(url_for("home"))
-
     login_form = LoginForm(request.form)
-    if login_form.validate_on_submit():        # add user to system
-        # check if he is authorised
-        return redirect(url_for("home"))
 
-    # never validating the form
+    if registration_form.registration_submit.data: # if the registation form was submitted
+        if registration_form.validate_on_submit(): # if the form was valid
+            # hash the user password
+            first_name = registration_form.first_name.data
+            last_name = registration_form.last_name.data
+            k_number = registration_form.k_number.data
+            plain_text_password = registration_form.password.data
+            # store user data in database
+
+            #redirect to profile page, where he must insert his preferences
+            return redirect(url_for("home"))
+        else: # if the form was NOT valid
+            # Flash the error message
+            return render_template("login.html", registration_form=registration_form, login_form=login_form, sign_up_visible=True)
+
+    if login_form.login_submit.data: # if the login form was submitted
+        if login_form.validate_on_submit(): # if the form was valid
+            # check if he is authorised
+
+            #redirect to profile page, where he must insert his preferences
+            return redirect(url_for("home"))
+        else: # if the form was NOT valid
+            # Flash the error message
+            return render_template("login.html", registration_form=registration_form, login_form=login_form)
 
     return render_template("login.html", registration_form=registration_form, login_form=login_form)
 

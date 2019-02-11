@@ -59,7 +59,7 @@ def sanity_check(sql_fields):
     """ Will sanity check the fields 
         return true, if we can run it"""
 
-    return sql_fields.isalnum()
+    return sql_fields.isalnum() or (type(sql_fields) == int)
 
 
 def update_students(**kwargs):
@@ -67,19 +67,22 @@ def update_students(**kwargs):
         You will need to precise the specific field"""
 
     accepted_fields = {"first_name":"", "last_name":"", "degree_title":"",
-                        "year_study":0, "gender":""}
+                        "year_study":0, "gender":"", "k_number":""}
 
+    # We need the k_number to update
+    if "k_number" not in kwargs:
+        return "K_NUMBER ERROR"
     
+    for field in kwargs:
+
+        # Will check that the field is valid, only alphanum and right type
+        if not sanity_check(kwargs[field]) or field not in accepted_fields or type(kwargs[field]) != type(accepted_fields[field]):
+            return "ERROR"
+         
     
-    # Need to check that every argument
-
-    # Need to check the type of everything    
-
-   print(k_number) 
-
 if __name__ == '__main__':
 
     print(insert("INSERT INTO Students VALUES(\"K1232323\", \"Jean\", \"Dupont\", \"Bsc Robotics\", 1, \"Other\", \"EO(*U&#H@D@#\");"))
     print(query("SELECT * FROM Students;"))
     print(sanity_check("drop Students tables;")) 
-    print(update_students("K1631292")))
+    print(update_students(**{"first_name":"Enzo","test":"test"}))

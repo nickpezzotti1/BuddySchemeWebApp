@@ -23,15 +23,22 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     registration_form = RegistrationForm(request.form)
-
     if registration_form.validate_on_submit():        # add user to system
-        print("SUCCESS")
+        # hash the user password
+        first_name = registration_form.first_name.data
+        last_name = registration_form.last_name.data
+        k_number = registration_form.k_number.data
+        plain_text_password = registration_form.password.data
+        print(first_name, last_name, k_number, plain_text_password)
+        # store user data in database
+
+        #redirect to profile page, where he must insert his preferences
         return redirect(url_for("home"))
 
     login_form = LoginForm(request.form)
-    # if login_form.validate_on_submit():        # add user to system
-    #     # check if he is authorised
-    #     return redirect(url_for("home"))
+    if login_form.validate_on_submit():        # add user to system
+        # check if he is authorised
+        return redirect(url_for("home"))
 
     # never validating the form
 

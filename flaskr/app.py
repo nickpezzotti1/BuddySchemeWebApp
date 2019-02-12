@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin, login_required, logout_user, current_user, login_user
 from forms import LoginForm, RegistrationForm
 from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
@@ -7,18 +7,25 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
+app.config["SECRET_KEY"]="powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = "login"
+
 db = SQLAlchemy(app)
-app.config["SECRET_KEY"]="powerful secretkey"
+
 
 ## TODO: refactor user into different file
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.String(15), primary_key=True)
     password = db.Column(db.String(15))
     email = id + "@kcl.ac.uk"
     first_name = db.Column(db.String(15))
     last_name = db.Column(db.String(15))
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(id)
 
 
 @app.route("/")
@@ -42,7 +49,7 @@ def login():
             hashed_password = generate_password_hash("12345678", method="sha256")
 
             # store user data in database
-            new_user = User(k_number=k_number, first_name=first_name, last_name=last_name, password=hashed_password)
+            new_user = User(id=k_number, first_name=first_name, last_name=last_name, password=hashed_password)
             
             # db.session.add(new_user)
             # db.session.commit()
@@ -58,12 +65,14 @@ def login():
 
     if login_form.login_submit.data: # if the login form was submitted
         if login_form.validate_on_submit(): # if the form was valid
+            db_hashed_password = generate_password_hash("12345678", method="sha256")
+            ## TODO: query from database
+            user = User(id=login_form.k_number.data, password=db_hashed_password)
+
             # check if he is authorised
-            ## TODO: get from db
-            hashed_password = generate_password_hash("12345678", method="sha256")
-            input_password = login_form.password.data
-            if check_password_hash(hashed_password, input_password):
+            if check_password_hash(user.password, login_form.password.data):
                 # redirect to profile page, where he must insert his preferences
+                login_user(user, remember=login_form.remember.data)
                 app.logger.warning('logged in')
                 return redirect("/dashboard")
             else:
@@ -78,8 +87,15 @@ def login():
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
     return redirect("/")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/home")
 
 
 @app.route("/mentee/<k_number>")

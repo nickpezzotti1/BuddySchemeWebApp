@@ -37,9 +37,18 @@
 									{{ login_form.password.label(class="form-control-label") }}
 									{{ login_form.password (class="form-control form-control-lg", placeholder="Enter password") }}
 							</div>
+
+							{{	login_form.remember()	}}
+							{{ login_form.remember.label(class="form-control-label", text="Remember me?") }}
+
+
+
 							<div class="form-group">
 								<p class="text-center">By signing up you accept our <a href="#">Terms Of Use</a></p>
 							</div>
+							
+							
+
 							<div class="col-md-12 text-center ">
 								{{ login_form.login_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
 							</div>

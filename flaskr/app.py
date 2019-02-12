@@ -35,7 +35,7 @@ def login():
             # store user data in database
 
             #redirect to profile page, where he must insert his preferences
-            return redirect(url_for("home"))
+            return redirect("/dashboard")
         else: # if the form was NOT valid
             # Flash the error message
             return render_template("login.html", registration_form=registration_form, login_form=login_form, sign_up_visible=True)
@@ -45,12 +45,17 @@ def login():
             # check if he is authorised
 
             #redirect to profile page, where he must insert his preferences
-            return redirect(url_for("home"))
+            return redirect("/dashboard")
         else: # if the form was NOT valid
             # Flash the error message
             return render_template("login.html", registration_form=registration_form, login_form=login_form)
 
     return render_template("login.html", registration_form=registration_form, login_form=login_form)
+
+
+@app.route("/dashboard")
+def dashboard():
+    return redirect("/")
 
 
 @app.route("/mentee/<k_number>")

@@ -92,7 +92,9 @@ def _update_students(**kwargs):
             return f"Error: {field} isn't a column in the table"
         elif type(value) != type(accepted_fields[field]):
             return f"Error: {field} is the wrong type"
- 
+
+
+    # Ie if there's k_number and another field to update 
     if len(kwargs) > 1:
         sql_query = "UPDATE Students "
         sql_query += ", ".join([f"set {field} = {to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
@@ -106,16 +108,27 @@ def _update_students(**kwargs):
 
 
 # TODO check the 0 and 1 return 
-def update_students(k_number=False, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False):
+def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False):
     """ Front end interface of the private function, 
         don't need to know the underlying interface """
 
     accepted_fields = {"k_number": k_number, "first_name": first_name, "last_name": last_name, "degree_title": degree_title, "year_study": year_study}
 
+    # Set the dictionarry like it's needed
     dict_fields = {field:value for field, value in  accepted_fields.items() if value is not False}
 
     return _update_students(**dict_fields)
+   
+
+def get_user_data(k_number):
+    """ Returns all the data in the Students table """
     
+    if sanity_check(k_number):
+        return query(f"SELECT * FROM Students where k_number={to_str(k_number)}")
+    else:
+        return "Error: k_number did not pass sanity check"
+
+ 
 if __name__ == '__main__':
 
     print(insert("INSERT INTO Students VALUES(\"K1232323\", \"Jean\", \"Dupont\", \"Bsc Robotics\", 1, \"Other\", \"EO(*U&#H@D@#\");"))
@@ -123,4 +136,5 @@ if __name__ == '__main__':
     print(sanity_check("drop Students tables;")) 
     print(_update_students(**{"first_name":"Enzo","test":"test"}))
 
-    print(update_students(k_number="K1631292", first_name="Sacha", degree_title="BA Arts"))
+    print(update_students(k_number="K1631292", first_name="Sacha", degree_title="BA Arts")) 
+    print(get_user_data("k1631292"))

@@ -68,6 +68,7 @@ def to_str(my_str):
 
     return "\"" + my_str + "\""
 
+
 # TODO should I raise my own exception?
 def _update_students(**kwargs):
     """ Will update fields in Students based on the k_number
@@ -101,9 +102,10 @@ def _update_students(**kwargs):
 
     print(sql_query)
 
-    return query(sql_query)
+    return insert(sql_query)
 
 
+# TODO check the 0 and 1 return 
 def update_students(k_number=False, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False):
     """ Front end interface of the private function, 
         don't need to know the underlying interface """
@@ -121,4 +123,4 @@ if __name__ == '__main__':
     print(sanity_check("drop Students tables;")) 
     print(_update_students(**{"first_name":"Enzo","test":"test"}))
 
-    print(update_students(k_number="K1631292", first_name="Sacha"))
+    print(update_students(k_number="K1631292", first_name="Sacha", degree_title="BA Arts"))

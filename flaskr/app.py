@@ -59,7 +59,7 @@ def login():
     if login_form.login_submit.data: # if the login form was submitted
         if login_form.validate_on_submit(): # if the form was valid
             # check if he is authorised
-            # get from db
+            ## TODO: get from db
             hashed_password = generate_password_hash("12345678")
             input_password = login_form.password.data
             if check_password_hash(hashed_password, input_password):

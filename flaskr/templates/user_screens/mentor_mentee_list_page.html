@@ -1,0 +1,23 @@
+{% extends "shared/user_screen_layout.html" %}
+
+{% block content_block %}
+<h1> Mentees </h1>
+<h2> K-Number: {{user_info["k_number"]}}<h2> 
+<h2> First Name: {{user_info["first_name"]}}<h2> 
+<h2> Last Name: {{user_info["last_name"]}}<h2> 
+<h2> Age: {{user_info["age"]}}<h2> 
+
+
+    <h1> Preferences </h1>
+    <h2> K-Number: <h2> {K1763636}
+    <h2> First Name: <h2> {Nihad}
+  
+<div id="browse_app">
+    <a class="btn btn-large btn-info" href="{{url_for('mentor')}}">Back to Dashboard </a>
+</div>
+
+<div id="browse_app">
+    <a class="btn btn-large btn-info" href="{{url_for('mentor_mentee', k_number_mentee="k1764064")}}">More Info </a>
+</div>
+
+{% endblock content_block %}

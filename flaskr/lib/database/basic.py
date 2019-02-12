@@ -128,6 +128,14 @@ def get_user_data(k_number):
     else:
         return "Error: k_number did not pass sanity check"
 
+
+def get_user_hashed_password(k_number):
+    """ Returns the hashed password for the user"""
+
+    if sanity_check(k_number):
+        return query(f"select password_hash from Students where k_number={to_str(k_number)}")
+    else:
+        return "Error: k_number did not pass sanity check"
  
 if __name__ == '__main__':
 
@@ -138,3 +146,4 @@ if __name__ == '__main__':
 
     print(update_students(k_number="K1631292", first_name="Sacha", degree_title="BA Arts")) 
     print(get_user_data("k1631292"))
+    print(get_user_hashed_password("K1631292"))

@@ -2,6 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
+user_info = {
+    "k_number": "k1764064",
+    "k_number_mentee": "k1738383",
+    "first_name": "Nicholas",
+    "last_name": "Pezzotti",
+    "age": 20,
+    "hobbies": ["Football", "Poker"],
+    "academic_interests": ["AI", "Blockchain"]
+}
+
 @app.route("/")
 @app.route("/home")
 def hello():
@@ -11,8 +21,8 @@ def hello():
 def login():
     return render_template("login.html")
 
-@app.route("/mentee/<k_number>")
-def mentee(k_number):
+@app.route("/mentee")
+def mentee():
     # ensure user is authenticated: the session is valid; the user is k_number
 
     # user_info = getMenteeData(k_number): Dictionary
@@ -24,17 +34,38 @@ def mentee(k_number):
                 # Hobbies: List[string]
                 # Academic interests: List[string]
             # Format into dictionary
-    user_info = {
-        "k_number": "k1763763",
-        "first_name": "Nicholas",
-        "last_name": "Pezzotti",
-        "age": 20,
-        "hobbies": ["football", "poker"],
-        "academic_interests": ["AI", "Blockchain"]
-    }
 
     return render_template("user_screens/mentee_page.html", title="Your Profile", user_info=user_info)
 
+@app.route("/mentor")
+def mentor():
+
+    return render_template("user_screens/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
+
+@app.route("/mentor/preferences" ,methods = ['POST', 'GET'])
+def mentor_preferences():
+
+    if request.method == "POST":
+        user_info['hobbies'] = request.form.getlist('hobbies')
+        user_info['academic_interests'] = request.form.getlist('academic_interests')
+        print(user_info)
+        print(request.form.getlist('hobbies'))
+        
+        return redirect(url_for("mentor"))
+    else:
+        return render_template("user_screens/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
+
+@app.route("/mentor/mentee-list")
+def mentor_mentee_list():
+
+    return render_template("user_screens/mentor_mentee_list_page.html", title="Your Mentees", user_info=user_info)
+
+@app.route("/mentor/mentee/<k_number_mentee>")
+def mentor_mentee(k_number_mentee):
+ 
+    return render_template("user_screens/mentor_mentee_page.html", title="Your Mentee", user_info=user_info)
+
+
 # We only need this for local dev
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5000)

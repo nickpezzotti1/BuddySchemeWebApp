@@ -62,6 +62,12 @@ def sanity_check(sql_fields):
     return sql_fields.isalnum() or (type(sql_fields) == int)
 
 
+def to_str(my_str):
+    """ Will return the string surrounded by 
+        double quotes, useful for SQL query"""
+
+    return "\"" + my_str "\""
+
 # TODO should I raise my own exception?
 def update_students(**kwargs):
     """ Will update fields in Students based on the k_number
@@ -86,7 +92,7 @@ def update_students(**kwargs):
         elif        
  
     if len(kwargs) > 1:
-        pass
+        sql_query = "UPDATE Students set"
     else:
         return "Error: did not pass enough argoum"
  

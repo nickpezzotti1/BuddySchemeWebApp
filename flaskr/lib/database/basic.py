@@ -157,8 +157,14 @@ def get_mentor(mentee_k_number):
         return "Error: k_number did not pass sanity check"
 
 
-def get_mentee():
-    pass
+def get_mentee(mentor_k_number):
+    """ Given the mentor K-Number will return its mentor(s) k-number"""
+
+    if sanity_check(mentor_k_number):
+        return query(f"SELECT mentee_k_number from Allocation where mentor_k_number={to_str(mentor_k_number)};")
+    else:
+        return "Error: k_number did not pass sanity check"
+
 
 
 def get_information():
@@ -192,3 +198,4 @@ if __name__ == '__main__':
     print(get_user_hashed_password("K1631292"))
     print(insert_mentor_mentee("K1631292", "K1232323"))
     print(get_mentor("K1631292"))
+    print(get_mentee("K1631292"))

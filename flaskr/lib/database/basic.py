@@ -182,10 +182,12 @@ def update_mentee(mentor_k_number, mentee_k_number):
  
 
 def get_user_data(k_number):
-    """ Returns all the data in the Students table """
+    """ Returns all the data in the Students table except from password hash"""
     
     if _sanity_check(k_number):
-        return _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")
+        result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")
+        return {"k_number":result[0][0], "first_name":result[0][1], "last_name":result[0][2], "degree_title":result[0][3],
+                    "year_study":result[0][4], "gender":result[0][5]}
     else:
         return "Error: k_number did not pass sanity check"
 

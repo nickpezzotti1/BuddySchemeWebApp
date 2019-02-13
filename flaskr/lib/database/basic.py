@@ -118,16 +118,29 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
     return _update_students(**dict_fields)
 
 
-def update_informations():
-    pass
+def update_informations(k_number, hobbies=False, fields=False):
+
+    return 
 
 
-def update_mentor():
-    pass  
+def update_mentor(mentor_k_number, mentee_k_number):
+    """ Given both mentor and mentee k_number,
+        Will update the mentor"""
+
+    if sanity_check(mentor_k_number) and sanity_check(mentee_k_number):
+        return insert(f"UPDATE Allocations set mentor_k_number={to_str(mentor_k_number)} where mentee_k_number={to_str(mentee_k_number)};")
+    else:
+        return "Error: one of the k_number did not pass the sanity check"
 
 
-def update_mentee():
-    pass
+def update_mentee(mentor_k_number, mentee_k_number):
+    """ Given both mentee and mentor k_number,
+        Will update the mentee"""
+
+    if sanity_check(mentor_k_number) and sanity_check(mentee_k_number):
+        return insert(f"UPDATE Allocations set mentee_k_number={to_str(mentee_k_number)} where mentor_k_number={to_str(mentor_k_number)};")
+    else:
+        return "Error: one of the k_number did not pass sanity check"
  
 
 def get_user_data(k_number):
@@ -166,7 +179,6 @@ def get_mentee(mentor_k_number):
         return "Error: k_number did not pass sanity check"
 
 
-
 def get_information(k_number):
     """ Given the k_number will return all the extra information on that student"""
 
@@ -193,6 +205,7 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
     else:
         return "Error: one of the field did not pass sanity check"
 
+
 def insert_interests(k_number, hobbies, fields):
     """ Will entirely populate an entry for Information table"""
     
@@ -204,14 +217,3 @@ def insert_interests(k_number, hobbies, fields):
 if __name__ == '__main__':
 
     # TODO test all the functions
-    print(insert("INSERT INTO Students VALUES(\"K1232323\", \"Jean\", \"Dupont\", \"Bsc Robotics\", 1, \"Other\", \"EO(*U&#H@D@#\");"))
-    print(query("SELECT * FROM Students;"))
-    print(sanity_check("drop Students tables;")) 
-    print(_update_students(**{"first_name":"Enzo","test":"test"}))
-
-    print(update_students(k_number="K1631292", first_name="Sacha", degree_title="BA Arts")) 
-    print(get_user_data("k1631292"))
-    print(get_user_hashed_password("K1631292"))
-    print(insert_mentor_mentee("K1631292", "K1232323"))
-    print(get_mentor("K1631292"))
-    print(get_mentee("K1631292"))

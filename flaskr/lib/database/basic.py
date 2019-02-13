@@ -37,9 +37,6 @@ def _insert(sql_query):
     # Connect to the database
     conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
 
-    # Define result
-    result = ""
-
     try:
         with conn.cursor() as cursor:
             result = cursor.execute(sql_query)
@@ -48,29 +45,19 @@ def _insert(sql_query):
             
     except Exception as e:
         print("Exeception occured:{}".format(e))
+        return False
 
     finally:
         conn.close()
     
-    return result
+    return True
 
 
 def _sanity_check(sql_fields):
     """ Will sanity check the fields 
         return true, if we can run it"""
 
-    p = re.compile('(k[1-9]{7}){1}', re.IGNORECASE)
-
-    try: 
-        if type(sql_fields) == int:
-            return True
-        elif p.match(sql_fields) and len(sql_fields) == 9:
-            return True
-
-    except Exception as e:
-        print("Exception occured:{}".format(e))
-        
-    return False
+    return sql_fields.isalnum() or (type(sql_fields) == int)
 
 
 def _to_str(my_str):
@@ -258,7 +245,8 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
 
 
 def insert_interests(k_number, hobbies, fields):
-    """ Will entirely populate an entry for Information table"""
+    """ Will entirely populate an entry for Information table
+        Returns True if everything went correctly, False otherwise"""
     
     if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(fields):
         return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(fields)}, {_to_str(k_number)});")

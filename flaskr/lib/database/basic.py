@@ -119,8 +119,10 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
 
 
 def update_informations(k_number, hobbies=False, fields=False):
+    """ Given either or hobbies and fields,
+        Will update the entry based on the k_number"""
 
-    return 
+    accepted_fields = {"k_number": k_number, } 
 
 
 def update_mentor(mentor_k_number, mentee_k_number):

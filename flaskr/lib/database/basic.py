@@ -59,7 +59,7 @@ def sanity_check(sql_fields):
     """ Will sanity check the fields 
         return true, if we can run it"""
 
-    return sql_fields.isalnum() or (type(sql_fields) == int)
+    return sql_fields.replace(" ", "").isalnum() or (type(sql_fields) == int)
 
 
 def to_str(my_str):
@@ -96,13 +96,11 @@ def _update_students(**kwargs):
 
     # Ie if there's k_number and another field to update 
     if len(kwargs) > 1:
-        sql_query = "UPDATE Students "
-        sql_query += ", ".join([f"set {field} = {to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
+        sql_query = "UPDATE Students set "
+        sql_query += ", ".join([f"{field} = {to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
         sql_query += f" where k_number={to_str(kwargs['k_number'])};" 
     else:
         return "Error: did not pass enough arguments"
-
-    print(sql_query)
 
     return insert(sql_query)
 
@@ -118,13 +116,25 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
     dict_fields = {field:value for field, value in  accepted_fields.items() if value is not False}
 
     return _update_students(**dict_fields)
-   
+
+
+def update_informations():
+    pass
+
+
+def update_mentor():
+    pass  
+
+
+def update_mentee():
+    pass
+ 
 
 def get_user_data(k_number):
     """ Returns all the data in the Students table """
     
     if sanity_check(k_number):
-        return query(f"SELECT * FROM Students where k_number={to_str(k_number)}")
+        return query(f"SELECT * FROM Students where k_number={to_str(k_number)};")
     else:
         return "Error: k_number did not pass sanity check"
 
@@ -133,10 +143,43 @@ def get_user_hashed_password(k_number):
     """ Returns the hashed password for the user"""
 
     if sanity_check(k_number):
-        return query(f"select password_hash from Students where k_number={to_str(k_number)}")
+        return query(f"select password_hash from Students where k_number={to_str(k_number)};")
     else:
         return "Error: k_number did not pass sanity check"
- 
+
+
+def get_mentor(mentee_k_number):
+    """ Given the mentee K-Number will return its mentor(s) k-number"""
+
+    if sanity_check(mentee_k_number):
+        return query(f"SELECT mentor_k_number from Allocation where mentee_k_number={to_str(mentee_k_number)};")
+    else:
+        return "Error: k_number did not pass sanity check"
+
+
+def get_mentee():
+    pass
+
+
+def get_information():
+    pass
+
+
+def insert_mentor_mentee(mentor_k_number, mentee_k_number):
+    """ Insert the mentor, mentee pair k number """
+
+    if sanity_check(mentor_k_number) and sanity_check(mentee_k_number):
+        return insert(f"INSERT INTO Allocation VALUES({to_str(mentor_k_number)}, {to_str(mentee_k_number)});")
+    else:
+        return "Error: one of the k_number did not pass sanity check"
+
+
+def insert_student():
+    pass
+
+def insert_interests():
+    pass
+
 if __name__ == '__main__':
 
     print(insert("INSERT INTO Students VALUES(\"K1232323\", \"Jean\", \"Dupont\", \"Bsc Robotics\", 1, \"Other\", \"EO(*U&#H@D@#\");"))
@@ -147,3 +190,5 @@ if __name__ == '__main__':
     print(update_students(k_number="K1631292", first_name="Sacha", degree_title="BA Arts")) 
     print(get_user_data("k1631292"))
     print(get_user_hashed_password("K1631292"))
+    print(insert_mentor_mentee("K1631292", "K1232323"))
+    print(get_mentor("K1631292"))

@@ -57,7 +57,7 @@ def _sanity_check(sql_fields):
     """ Will sanity check the fields 
         return true, if we can run it"""
 
-    return sql_fields.isalnum() or (type(sql_fields) == int)
+    return (type(sql_fields) == int) or sql_fields.replace(" ", "").isalnum()
 
 
 def _to_str(my_str):

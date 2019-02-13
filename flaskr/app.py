@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_required, logout_user, current_user, login_user
 from forms import LoginForm, RegistrationForm
 from flask_wtf import FlaskForm
-from user import User
+from mock_user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 

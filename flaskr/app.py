@@ -3,7 +3,6 @@ from flask_login import LoginManager, UserMixin, login_required, logout_user, cu
 from forms import LoginForm, RegistrationForm
 from flask_wtf import FlaskForm
 from user import User
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -12,8 +11,6 @@ app.config["SECRET_KEY"]="powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-
-db = SQLAlchemy(app)
 
 
 @login_manager.user_loader

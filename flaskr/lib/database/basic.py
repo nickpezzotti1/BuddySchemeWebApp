@@ -203,7 +203,8 @@ def get_mentor(mentee_k_number):
     """ Given the mentee K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentee_k_number):
-        return _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+        result = _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+        return {"mentor_k_number":result[0][0]}
     else:
         return "Error: k_number did not pass sanity check"
 
@@ -212,7 +213,8 @@ def get_mentee(mentor_k_number):
     """ Given the mentor K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentor_k_number):
-        return _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+        result = _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+        return {"mentee_k_number":result[0][0]}
     else:
         return "Error: k_number did not pass sanity check"
 

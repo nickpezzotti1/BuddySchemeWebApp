@@ -1,4 +1,4 @@
-# BuddySchemeWebApp
+# BuddySchemeWebApp (Python 3.6 & virtualenv required)
 Buddy scheme management system web application. 
 
 # Setting up on your local dev machine
@@ -25,4 +25,8 @@ To set the variables permanently, you should edit your `.bashrc` in your home di
 
 ## Connect to database
 
+(Assumption) mysql is installed on your machine
+
 1. `(env) $ mysql -h buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com -u admin -p`
+2. Enter the password: `r5!!eXFNVC5qMDL3$o&m`
+3. `> Use Buddy;`

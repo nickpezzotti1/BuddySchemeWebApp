@@ -167,8 +167,13 @@ def get_mentee(mentor_k_number):
 
 
 
-def get_information():
-    pass
+def get_information(k_number):
+    """ Given the k_number will return all the extra information on that student"""
+
+    if sanity_check(k_number):
+        return query(f"select * from Informations where k_number={to_str(k_number)};")
+    else:
+        return "Error: the k_number did not pass the sanity check"
 
 
 def insert_mentor_mentee(mentor_k_number, mentee_k_number):
@@ -183,8 +188,13 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
 def insert_student():
     pass
 
-def insert_interests():
-    pass
+def insert_interests(k_number, hobbies, fields):
+    """ Will entirely populate an entry for Information table"""
+    
+    if sanity_check(k_number) and sanity_check(hobbies) and sanity_check(fields):
+        return insert(f"INSERT INTO Informations VALUES({to_str(hobbies)}, {to_str(fields)}, {to_str(k_number)});")
+    else:
+        return "Error: one of the field did not pass the sanity check"
 
 if __name__ == '__main__':
 

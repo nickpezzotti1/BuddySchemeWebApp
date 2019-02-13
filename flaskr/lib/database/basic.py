@@ -185,8 +185,13 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
         return "Error: one of the k_number did not pass sanity check"
 
 
-def insert_student():
-    pass
+def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, password_hash):
+    """ Will entirely populate an entry for Students table"""
+
+    if sanity_check(k_number) and sanity_check(first_name) and sanity_check(last_name) and sanity_check(degree_title) and sanity_check(year_study) and sanity_check(gender):
+        return insert(f"INSERT INTO Students VALUES({to_str(k_number)}, {to_str(first_name)}, {to_str(last_name)}, {to_str(degree_title)}, {year_study}, {to_str(gender)}, {to_str(password_hash)});")
+    else:
+        return "Error: one of the field did not pass sanity check"
 
 def insert_interests(k_number, hobbies, fields):
     """ Will entirely populate an entry for Information table"""
@@ -198,6 +203,7 @@ def insert_interests(k_number, hobbies, fields):
 
 if __name__ == '__main__':
 
+    # TODO test all the functions
     print(insert("INSERT INTO Students VALUES(\"K1232323\", \"Jean\", \"Dupont\", \"Bsc Robotics\", 1, \"Other\", \"EO(*U&#H@D@#\");"))
     print(query("SELECT * FROM Students;"))
     print(sanity_check("drop Students tables;")) 

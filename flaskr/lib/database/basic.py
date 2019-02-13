@@ -218,10 +218,12 @@ def get_mentee(mentor_k_number):
 
 
 def get_information(k_number):
-    """ Given the k_number will return all the extra information on that student"""
+    """ Given the k_number will return all the extra information on that student
+        As a dictionnary"""
 
     if _sanity_check(k_number):
-        return _query(f"select * from Informations where k_number={_to_str(k_number)};")
+        result = _query(f"select * from Informations where k_number={_to_str(k_number)};")
+        return {"hobbies":result[0][0], "fields":result[0][1], "k_number":result[0][2]}
     else:
         return "Error: the k_number did not pass the sanity check"
 

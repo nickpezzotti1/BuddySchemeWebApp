@@ -1,4 +1,4 @@
-# BuddySchemeWebApp (Python3 & virtualenv required)
+# BuddySchemeWebApp (Python 3.6 & virtualenv required)
 Buddy scheme management system web application. 
 
 # Setting up on your local dev machine

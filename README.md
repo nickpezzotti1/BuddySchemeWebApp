@@ -25,4 +25,6 @@ To set the variables permanently, you should edit your `.bashrc` in your home di
 
 ## Connect to database
 
+0. (Assumption) mysql is installed on your machine
+
 1. `(env) $ mysql -h buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com -u admin -p`

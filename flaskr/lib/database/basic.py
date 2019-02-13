@@ -1,4 +1,4 @@
-import pymysql, os, re
+import pymysql, os
 
 # Will set up the credentials
 DATABASE_USER = os.environ.get("BUDDY_DB_USER", '')
@@ -95,8 +95,8 @@ def _update_students(**kwargs):
     # Ie if there's k_number and another field to update 
     if len(kwargs) > 1:
         sql_query = "UPDATE Students set "
-        sql_query += ", ".join([f"{field} = {to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
-        sql_query += f" where k_number={to_str(kwargs['k_number'])};" 
+        sql_query += ", ".join([f"{field} = {_to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
+        sql_query += f" where k_number={_to_str(kwargs['k_number'])};" 
     else:
         return "Error: did not pass enough arguments"
 
@@ -151,12 +151,12 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
 
 def update_informations(k_number, hobbies=False, fields=False):
     """ Given either or hobbies and fields,
-        Will update the entry based on the k_number"""
+        Will update the entry based on the k_number
+        Return True if no errors while updating, False otherwise"""
 
     accepted_fields = {"k_number": k_number, "hobbies":hobbies, "fields":fields} 
 
     # Set the dictionnary like it's needed
-
     dict_fields = {field:value for field, value in accepted_fields.items() if value is not False}
 
     return _update_informations(**dict_fields)
@@ -166,7 +166,7 @@ def update_mentor(mentor_k_number, mentee_k_number):
         Will update the mentor"""
 
     if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
-        return _insert(f"UPDATE Allocations set mentor_k_number={_to_str(mentor_k_number)} where mentee_k_number={_to_str(mentee_k_number)};")
+        return _insert(f"UPDATE Allocation set mentor_k_number={_to_str(mentor_k_number)} where mentee_k_number={_to_str(mentee_k_number)};")
     else:
         return "Error: one of the k_number did not pass the sanity check"
 
@@ -176,7 +176,7 @@ def update_mentee(mentor_k_number, mentee_k_number):
         Will update the mentee"""
 
     if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
-        return _insert(f"UPDATE Allocations set mentee_k_number={_to_str(mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)};")
+        return _insert(f"UPDATE Allocation set mentee_k_number={_to_str(mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)};")
     else:
         return "Error: one of the k_number did not pass sanity check"
  

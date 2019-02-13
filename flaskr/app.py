@@ -76,7 +76,7 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return redirect("/")
+    return current_user.k_number
 
 @app.route("/logout")
 @login_required

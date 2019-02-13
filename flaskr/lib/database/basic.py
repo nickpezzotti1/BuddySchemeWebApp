@@ -194,7 +194,8 @@ def get_user_hashed_password(k_number):
     """ Returns the hashed password for the user"""
 
     if _sanity_check(k_number):
-        return _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
+        result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
+        return {"password_hash":result[0][0]}
     else:
         return "Error: k_number did not pass sanity check"
 

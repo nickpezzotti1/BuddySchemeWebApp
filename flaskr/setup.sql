@@ -17,7 +17,7 @@ CREATE TABLE Hobbies
  hobby VARCHAR(255) NOT NULL,
  k_number VARCHAR(255) NOT NULL,
  FOREIGN KEY (k_number) REFERENCES Students(k_number),
- PRIMARY KEY (hobbie, k_number)
+ PRIMARY KEY (hobby, k_number)
 );
 
 CREATE TABLE Interests

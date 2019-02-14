@@ -6,17 +6,28 @@ CREATE TABLE Students
  degree_title VARCHAR(255) NOT NULL,
  year_study INT NOT NULL,
  gender VARCHAR(255) NOT NULL,
+ is_mentor BIT(1) NOT NULL,
+ email_confirmed BIT(1) NOT NULL DEFAULT b'0',
  password_hash VARCHAR(255) NOT NULL, 
  PRIMARY KEY(k_number)
 );
 
-CREATE TABLE Informations
+CREATE TABLE Hobbies
 (
- hobbies VARCHAR(255) NOT NULL,
- fields VARCHAR(255) NOT NULL,
+ hobby VARCHAR(255) NOT NULL,
  k_number VARCHAR(255) NOT NULL,
- FOREIGN KEY (k_number) REFERENCES Students(k_number)
+ FOREIGN KEY (k_number) REFERENCES Students(k_number),
+ PRIMARY KEY (hobby, k_number)
 );
+
+CREATE TABLE Interests
+(
+ interest VARCHAR(255) NOT NULL,
+ k_number VARCHAR(255) NOT NULL,
+ FOREIGN KEY (k_number) REFERENCES Students(k_number),
+ PRIMARY KEY (interest, k_number)
+);
+
 
 CREATE TABLE Allocation
 (

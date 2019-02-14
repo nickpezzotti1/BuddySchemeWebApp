@@ -1,4 +1,5 @@
-import pymysql, os
+import os
+import pymysql
 
 # Will set up the credentials
 DATABASE_USER = os.environ.get("BUDDY_DB_USER", '')
@@ -6,6 +7,7 @@ DATABASE_PASSWORD = os.environ.get("BUDDY_DB_PASSWORD", '')
 DB_NAME = "Buddy"
 DB_HOST = "buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com"
 
+HASH_COL = 'password_hash'
 
 def _query(sql_query):
     """ Returns results of query """
@@ -18,7 +20,7 @@ def _query(sql_query):
 
     try:
     
-        with conn.cursor() as cursor:
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute(sql_query)
             result = cursor.fetchall()
 
@@ -67,16 +69,16 @@ def _to_str(my_str):
     if type(my_str) == str:
         return "\"" + my_str + "\""
     else:
-        print("Error: " + my_str)
-        return False
+        return f"Error: {my_str} isn't a string"
+
 
 # TODO should I raise my own exception?
-def _update_students(**kwargs):
+def _update_students(** kwargs):
     """ Will update fields in Students based on the k_number
         You will need to precise the specific field"""
 
     accepted_fields = {"first_name":"", "last_name":"", "degree_title":"",
-                        "year_study":0, "gender":"", "k_number":""}
+        "year_study":0, "gender":"", "k_number":""}
     
     sql_query = ""
 
@@ -107,11 +109,11 @@ def _update_students(**kwargs):
 
 
 # TODO should I raise my own exception?
-def _update_informations(**kwargs):
-    """ Will update fields in Students based on the k_number
+def _update_informations(** kwargs):
+    """ Will update hobbies and interests in Students based on the k_number
         You will need to precise the specific field"""
 
-    accepted_fields = {"hobbies":"", "fields":"", "k_number":""}    
+    accepted_fields = {"hobbies":"", "interests":"", "k_number":""}    
     sql_query = ""
 
     # We need the k_number to update
@@ -149,20 +151,19 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
     # Set the dictionarry like it's needed
     dict_fields = {field:value for field, value in  accepted_fields.items() if value is not False}
 
-    return _update_students(**dict_fields)
+    return _update_students(** dict_fields)
 
-
-def update_informations(k_number, hobbies=False, fields=False):
-    """ Given either or hobbies and fields,
+def update_informations(k_number, hobbies=False, interests=False):
+    """ Given either or hobbies and interests,
         Will update the entry based on the k_number
         Return True if no errors while updating, False otherwise"""
 
-    accepted_fields = {"k_number": k_number, "hobbies":hobbies, "fields":fields} 
+    accepted_fields = {"k_number": k_number, "hobbies":hobbies, "interests":interests} 
 
     # Set the dictionnary like it's needed
     dict_fields = {field:value for field, value in accepted_fields.items() if value is not False}
 
-    return _update_informations(**dict_fields)
+    return _update_informations(** dict_fields)
 
 def update_mentor(mentor_k_number, mentee_k_number):
     """ Given both mentor and mentee k_number,
@@ -188,9 +189,9 @@ def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""
     
     if _sanity_check(k_number):
-        result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")
-        return {"k_number":result[0][0], "first_name":result[0][1], "last_name":result[0][2], "degree_title":result[0][3],
-                    "year_study":result[0][4], "gender":result[0][5]}
+        result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+        result.pop(HASH_COL, None) # can check not none
+        return result       
     else:
         return "Error: k_number did not pass sanity check"
 
@@ -200,38 +201,38 @@ def get_user_hashed_password(k_number):
 
     if _sanity_check(k_number):
         result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
-        return {"password_hash":result[0][0]}
+        return result[0].pop(HASH_COL, None) 
     else:
         return "Error: k_number did not pass sanity check"
 
 
-def get_mentor(mentee_k_number):
+def get_mentors(mentee_k_number):
     """ Given the mentee K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentee_k_number):
         result = _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
-        return {"mentor_k_number":result[0][0]}
+        return result
     else:
         return "Error: k_number did not pass sanity check"
 
 
-def get_mentee(mentor_k_number):
+def get_mentees(mentor_k_number):
     """ Given the mentor K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentor_k_number):
         result = _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
-        return {"mentee_k_number":result[0][0]}
+        return result
     else:
         return "Error: k_number did not pass sanity check"
 
 
-def get_information(k_number):
+def get_information(k_number): #### change this to two -> hobbies + interests
     """ Given the k_number will return all the extra information on that student
         As a dictionnary"""
 
     if _sanity_check(k_number):
         result = _query(f"select * from Informations where k_number={_to_str(k_number)};")
-        return {"hobbies":result[0][0], "fields":result[0][1], "k_number":result[0][2]}
+        return result
     else:
         return "Error: the k_number did not pass the sanity check"
 
@@ -256,16 +257,25 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
         return "Error: one of the field did not pass sanity check"
 
 
-def insert_interests(k_number, hobbies, fields):
+def insert_interests(k_number, hobbies, interests):
     """ Will entirely populate an entry for Information table
         Returns True if everything went correctly, False otherwise"""
     
-    if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(fields):
-        return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(fields)}, {_to_str(k_number)});")
+    if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(interests):
+        return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(interests)}, {_to_str(k_number)});")
     else:
         return "Error: one of the field did not pass the sanity check"
 
-if __name__ == '__main__':
 
-    
+def get_all_students_data_basic():
+    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches 
+
+def get_mentee_details(k_number):
+    if _sanity_check(k_number): 
+        return _query(f"SELECT k_number, first_name, last_name FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
+    else:
+        return "Error: one of the field did not pass the sanity check"
+
+
+if __name__ == '__main__':
     pass

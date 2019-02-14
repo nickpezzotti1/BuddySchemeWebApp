@@ -1,4 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+import basic
+from flask import Flask
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
 
 app = Flask(__name__)
 
@@ -24,7 +29,7 @@ mentee_user_info = {
 }
 
 mentees = {
-    "k1803945" : {
+    "k1803945": {
         "first_name": "Alice",
         "last_name": "Apple",
         "age": 21,
@@ -42,7 +47,7 @@ mentees = {
 }
 
 mentors = {
-    "k1803945" : {
+    "k1803945": {
         "first_name": "Jardin",
         "last_name": "Apple",
         "age": 21,
@@ -71,17 +76,17 @@ def login():
 
 @app.route("/mentor")
 def mentor():
-        # ensure user is authenticated: the session is valid; the user is k_number
+    # ensure user is authenticated: the session is valid; the user is k_number
 
-    # user_info = getMenteeData(k_number): Dictionary
-            # Query database with k number to get the following fields:
-                # k number: string
-                # First Name: string
-                # Last Name: string
-                # Age: int
-                # Hobbies: List[string]
-                # Academic interests: List[string]
-            # Format into dictionary
+# user_info = getMenteeData(k_number): Dictionary
+    # Query database with k number to get the following fields:
+        # k number: string
+        # First Name: string
+        # Last Name: string
+        # Age: int
+        # Hobbies: List[string]
+        # Academic interests: List[string]
+    # Format into dictionary
 
     return render_template("user_screens/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
 
@@ -90,7 +95,7 @@ def mentee():
 
     return render_template("user_screens/mentee_dashboard_page.html", title="Your Profile", user_info=mentee_user_info)
 
-@app.route("/mentor/preferences" ,methods = ['POST', 'GET'])
+@app.route("/mentor/preferences", methods=['POST', 'GET'])
 def mentor_preferences():
 
     if request.method == "POST":
@@ -101,7 +106,7 @@ def mentor_preferences():
     else:
         return render_template("user_screens/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
 
-@app.route("/mentee/preferences" ,methods = ['POST', 'GET'])
+@app.route("/mentee/preferences", methods=['POST', 'GET'])
 def mentee_preferences():
 
     if request.method == "POST":
@@ -129,21 +134,56 @@ def mentee_mentor_list():
 
 @app.route("/mentor/mentee/<k_number_mentee>")
 def mentor_mentee(k_number_mentee):
- 
-    
-
 
     return render_template("user_screens/mentor_mentee_page.html", title="Your Mentee", mentee_info=mentees[k_number_mentee], k_number_mentee=k_number_mentee)
 
 @app.route("/mentee/mentor/<k_number_mentor>")
 def mentee_mentor(k_number_mentor):
- 
-    
-
 
     return render_template("user_screens/mentee_mentor_page.html", title="Your Mentor", mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
 
 
+@app.route("/admin")
+def admin_dashboard():
+    
+    return render_template("admin/dashboard.html", title="Admin Dashboard")
+
+@app.route("/admin/view_students", methods=['POST', 'GET'])
+def admin_view_students():
+    data = basic.get_all_students_data_basic()
+    return render_template("admin/view_students.html", title="View Students", data=data)
+
+@app.route("/admin/student_details", methods=['POST'])
+def view_student_details():
+    if(request.method == 'POST'):
+        kNum = request.form["knum"]
+        udata = basic.get_user_data(kNum)
+        info = basic.get_information(kNum)
+        isTor = True #udata.is_mentor change
+        if isTor:
+            matches = basic.get_mentee_details(kNum)
+        else:
+            matches = basic.get_mentor_details(kNum)
+                 
+        return render_template("admin/student_details.html", title="Details For " + kNum, udata=udata, info=info, matches=matches)
+    else:
+        admin_view_students()
+    
+@app.route("/admin/general_settings")
+def general_settings():
+    
+    return render_template("admin/general_settings.html", title="General Settings")
+    
+@app.route("/admin/matching_settings")
+def matching_settings():
+    
+    return render_template("admin/matching_settings.html", title="Matching Settings") # change
+@app.route("/admin/signup_settings")
+def sign_up_settings():
+
+    
+    return render_template("admin/dashboard.html", title="Sign-Up Settings")
+
 # We only need this for local dev
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

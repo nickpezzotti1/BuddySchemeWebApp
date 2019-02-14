@@ -64,8 +64,11 @@ def _to_str(my_str):
     """ Will return the string surrounded by 
         double quotes, useful for SQL query"""
 
-    return "\"" + my_str + "\""
-
+    if type(my_str) == str:
+        return "\"" + my_str + "\""
+    else:
+        print("Error: " + my_str)
+        return False
 
 # TODO should I raise my own exception?
 def _update_students(**kwargs):
@@ -246,7 +249,9 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
     """ Will entirely populate an entry for Students table"""
 
     if _sanity_check(k_number) and _sanity_check(first_name) and _sanity_check(last_name) and _sanity_check(degree_title) and _sanity_check(year_study) and _sanity_check(gender):
-        return _insert(f"INSERT INTO Students VALUES({_to_str(k_number)}, {_to_str(first_name)}, {_to_str(last_name)}, {_to_str(degree_title)}, {year_study}, {_to_str(gender)}, {_to_str(password_hash)});")
+        value = f"INSERT INTO Students VALUES({_to_str(k_number)}, {_to_str(first_name)}, {_to_str(last_name)}, {_to_str(degree_title)}, {year_study}, {_to_str(gender)}, {_to_str(password_hash)});"
+        print(value)
+        return _insert(value)
     else:
         return "Error: one of the field did not pass sanity check"
 
@@ -261,4 +266,6 @@ def insert_interests(k_number, hobbies, fields):
         return "Error: one of the field did not pass the sanity check"
 
 if __name__ == '__main__':
+
+    
     pass

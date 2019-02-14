@@ -66,7 +66,10 @@ def _to_str(my_str):
     """ Will return the string surrounded by 
         double quotes, useful for SQL query"""
 
-    return "\"" + my_str + "\""
+    if type(my_str) == str:
+        return "\"" + my_str + "\""
+    else:
+        return f"Error: {my_str} isn't a string"
 
 
 # TODO should I raise my own exception?
@@ -204,7 +207,7 @@ def get_user_hashed_password(k_number):
         return "Error: k_number did not pass sanity check"
 
 
-def get_mentor(mentee_k_number):
+def get_mentors(mentee_k_number):
     """ Given the mentee K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentee_k_number):
@@ -214,7 +217,7 @@ def get_mentor(mentee_k_number):
         return "Error: k_number did not pass sanity check"
 
 
-def get_mentee(mentor_k_number):
+def get_mentees(mentor_k_number):
     """ Given the mentor K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentor_k_number):

@@ -110,10 +110,10 @@ def _update_students(** kwargs):
 
 # TODO should I raise my own exception?
 def _update_informations(** kwargs):
-    """ Will update fields in Students based on the k_number
+    """ Will update hobbies and interests in Students based on the k_number
         You will need to precise the specific field"""
 
-    accepted_fields = {"hobbies":"", "fields":"", "k_number":""}    
+    accepted_fields = {"hobbies":"", "interests":"", "k_number":""}    
     sql_query = ""
 
     # We need the k_number to update
@@ -153,13 +153,12 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
 
     return _update_students(** dict_fields)
 
-
-def update_informations(k_number, hobbies=False, fields=False):
-    """ Given either or hobbies and fields,
+def update_informations(k_number, hobbies=False, interests=False):
+    """ Given either or hobbies and interests,
         Will update the entry based on the k_number
         Return True if no errors while updating, False otherwise"""
 
-    accepted_fields = {"k_number": k_number, "hobbies":hobbies, "fields":fields} 
+    accepted_fields = {"k_number": k_number, "hobbies":hobbies, "interests":interests} 
 
     # Set the dictionnary like it's needed
     dict_fields = {field:value for field, value in accepted_fields.items() if value is not False}
@@ -256,12 +255,12 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
         return "Error: one of the field did not pass sanity check"
 
 
-def insert_interests(k_number, hobbies, fields):
+def insert_interests(k_number, hobbies, interests):
     """ Will entirely populate an entry for Information table
         Returns True if everything went correctly, False otherwise"""
     
-    if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(fields):
-        return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(fields)}, {_to_str(k_number)});")
+    if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(interests):
+        return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(interests)}, {_to_str(k_number)});")
     else:
         return "Error: one of the field did not pass the sanity check"
 

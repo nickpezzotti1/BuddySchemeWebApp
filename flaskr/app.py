@@ -11,7 +11,7 @@ user_info = {
     "last_name": "Pezzotti",
     "age": 20,
     "hobbies": ["Football", "Poker"],
-    "academic_interests": ["AI", "Blockchain"]
+    "interests": ["AI", "Blockchain"]
 }
 mentee_user_info = {
     "k_number": "k1764064",
@@ -20,7 +20,7 @@ mentee_user_info = {
     "last_name": "Rahman",
     "age": 20,
     "hobbies": ["Football", "Poker"],
-    "academic_interests": ["AI", "Blockchain"]
+    "interests": ["AI", "Blockchain"]
 }
 
 mentees = {
@@ -83,34 +83,34 @@ def mentor():
                 # Academic interests: List[string]
             # Format into dictionary
 
-    return render_template("user_screens/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
+    return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
 
 @app.route("/mentee")
 def mentee():
 
-    return render_template("user_screens/mentee_dashboard_page.html", title="Your Profile", user_info=mentee_user_info)
+    return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_info=mentee_user_info)
 
 @app.route("/mentor/preferences" ,methods = ['POST', 'GET'])
 def mentor_preferences():
 
     if request.method == "POST":
         user_info['hobbies'] = request.form.getlist('hobbies')
-        user_info['academic_interests'] = request.form.getlist('academic_interests')
+        user_info['interests'] = request.form.getlist('interests')
         
         return redirect(url_for("mentor"))
     else:
-        return render_template("user_screens/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
+        return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
 
 @app.route("/mentee/preferences" ,methods = ['POST', 'GET'])
 def mentee_preferences():
 
     if request.method == "POST":
         mentee_user_info['hobbies'] = request.form.getlist('hobbies')
-        mentee_user_info['academic_interests'] = request.form.getlist('academic_interests')
+        mentee_user_info['interests'] = request.form.getlist('interests')
         
         return redirect(url_for("mentee"))
     else:
-        return render_template("user_screens/mentee_preferences_page.html", title="Your Preferences", user_info=mentee_user_info)
+        return render_template("user_screens/mentee/mentee_preferences_page.html", title="Your Preferences", user_info=mentee_user_info)
 
 
 @app.route("/mentor/mentee-list")
@@ -118,14 +118,14 @@ def mentor_mentee_list():
 
     # query database for all mentees the mentor has
 
-    return render_template("user_screens/mentor_mentee_list_page.html", title="Your Mentees", user_info=user_info, mentees=mentees)
+    return render_template("user_screens/mentor/mentor_mentee_list_page.html", title="Your Mentees", user_info=user_info, mentees=mentees)
 
 @app.route("/mentee/mentor-list")
 def mentee_mentor_list():
 
     # query database for all mentees the mentor has
 
-    return render_template("user_screens/mentee_mentor_list_page.html", title="Your Mentors", user_info=mentee_user_info, mentors=mentors)
+    return render_template("user_screens/mentee/mentee_mentor_list_page.html", title="Your Mentors", user_info=mentee_user_info, mentors=mentors)
 
 @app.route("/mentor/mentee/<k_number_mentee>")
 def mentor_mentee(k_number_mentee):
@@ -133,7 +133,7 @@ def mentor_mentee(k_number_mentee):
     
 
 
-    return render_template("user_screens/mentor_mentee_page.html", title="Your Mentee", mentee_info=mentees[k_number_mentee], k_number_mentee=k_number_mentee)
+    return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_info=mentees[k_number_mentee], k_number_mentee=k_number_mentee)
 
 @app.route("/mentee/mentor/<k_number_mentor>")
 def mentee_mentor(k_number_mentor):
@@ -141,7 +141,7 @@ def mentee_mentor(k_number_mentor):
     
 
 
-    return render_template("user_screens/mentee_mentor_page.html", title="Your Mentor", mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+    return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
 
 
 # We only need this for local dev

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_required, logout_user, current_user, login_user
 from forms import LoginForm, RegistrationForm
 from flask_wtf import FlaskForm
-from mock_user import User
+from user import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -15,7 +15,7 @@ login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(id):
-    user = User
+    user = User(id)
     return user
 
 
@@ -40,7 +40,7 @@ def login():
             hashed_password = generate_password_hash("12345678", method="sha256")
 
             ## TODO: store user data in database
-            new_user = User()
+            new_user = User(k_number)
             
             app.logger.warning('registered')
 
@@ -54,7 +54,8 @@ def login():
     if login_form.login_submit.data: # if the login form was submitted
         if login_form.validate_on_submit(): # if the form was valid
             ## TODO: query from database
-            user = User()
+            k_number = registration_form.k_number.data
+            user = User(k_number)
 
             # check if he is authorised
             if check_password_hash(user.password, login_form.password.data):

@@ -199,7 +199,7 @@ def get_user_hashed_password(k_number):
 
     if _sanity_check(k_number):
         result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
-        return {"password_hash":result[0][0]}
+        return result[0].pop(HASH_COL, None) 
     else:
         return "Error: k_number did not pass sanity check"
 
@@ -209,7 +209,7 @@ def get_mentor(mentee_k_number):
 
     if _sanity_check(mentee_k_number):
         result = _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
-        return {"mentor_k_number":result[0][0]}
+        return result
     else:
         return "Error: k_number did not pass sanity check"
 
@@ -219,12 +219,12 @@ def get_mentee(mentor_k_number):
 
     if _sanity_check(mentor_k_number):
         result = _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
-        return {"mentee_k_number":result[0][0]}
+        return result
     else:
         return "Error: k_number did not pass sanity check"
 
 
-def get_information(k_number):
+def get_information(k_number): #### change this to two -> hobbies + interests
     """ Given the k_number will return all the extra information on that student
         As a dictionnary"""
 

@@ -8,8 +8,7 @@ class User(UserMixin):
         self.password = None
 
         try:
-            self.password = db.get_user_hashed_password(k_number)["password_hash"]
+            self.password = db.get_user_hashed_password(k_number)
 
         except Exception as e:
             print("Exeception occured:{}".format(e))
-

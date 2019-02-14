@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, login_required, logout_user, cu
 from forms import LoginForm, RegistrationForm
 from flask_wtf import FlaskForm
 from user import User
+import basic as db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -39,9 +40,8 @@ def login():
             # hashed_password = generate_password_hash(registration_form.password.data)
             hashed_password = generate_password_hash("12345678", method="sha256")
 
-            ## TODO: store user data in database
-            new_user = User(k_number)
-            
+            app.logger.warning(db.insert_student(k_number, first_name, last_name, "na", 2018, "na", hashed_password))
+
             app.logger.warning('registered')
 
             #redirect to profile page, where he must insert his preferences
@@ -57,14 +57,18 @@ def login():
             k_number = registration_form.k_number.data
             user = User(k_number)
 
-            # check if he is authorised
-            if check_password_hash(user.password, login_form.password.data):
-                # redirect to profile page, where he must insert his preferences
-                login_user(user, remember=False)
-                app.logger.warning('logged in')
-                return redirect("/dashboard")
+            # if user exists in db
+            if(user.password):
+                # check if he is authorised
+                if check_password_hash(user.password, login_form.password.data):
+                    # redirect to profile page, where he must insert his preferences
+                    login_user(user, remember=False)
+                    app.logger.warning('logged in')
+                    return redirect("/dashboard")
+                else:
+                    app.logger.warning('wrong password')
+                    return redirect("/login")
             else:
-                app.logger.warning('wrong password')
                 return redirect("/login")
         else: # if the form was NOT valid
             # Flash the error message

@@ -271,8 +271,7 @@ def get_interests(k_number):
 def insert_mentor_mentee(mentor_k_number, mentee_k_number):
     """ Insert the mentor, mentee pair k number """
 
-    if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
-        return _insert(f"INSERT INTO Allocation VALUES({_to_str(mentor_k_number)}, {_to_str(mentee_k_number)});")
+    return _insert(f"INSERT INTO Allocation VALUES({_to_str([mentor_k_number, mentee_k_number])});")
 
 
 def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash):

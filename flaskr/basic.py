@@ -132,39 +132,6 @@ def _update_students(** kwargs):
     return _insert(sql_query)
 
 
-# TODO should I raise my own exception?
-def _update_informations(** kwargs):
-    """ Will update hobbies and interests in Students based on the k_number
-        You will need to precise the specific field"""
-
-    accepted_fields = {"hobbies":"", "interests":"", "k_number":""}    
-    sql_query = ""
-
-    # We need the k_number to update
-    if "k_number" not in kwargs:
-        return "Error: k_number not defined"
-    
-    # Will check that the field is valid, only alphanum and right type
-    for field, value in kwargs.items():
-
-        if not _sanity_check(value):
-            return f"Error: {field} did not pass sanity check"
-        elif field not in accepted_fields:
-            return f"Error: {field} isn't a column in the table"
-        elif type(value) != type(accepted_fields[field]):
-            return f"Error: {field} is the wrong type"
-
-
-    # Ie if there's k_number and another field to update 
-    if len(kwargs) > 1:
-        sql_query = "UPDATE Informations set "
-        sql_query += ", ".join([f"{field} = {_to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
-        sql_query += f" where k_number={_to_str(kwargs['k_number'])};" 
-    else:
-        return "Error: did not pass enough arguments"
-
-    return _insert(sql_query)
-
 # TODO check the 0 and 1 return 
 def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False):
     """ Front end interface of the private function, 

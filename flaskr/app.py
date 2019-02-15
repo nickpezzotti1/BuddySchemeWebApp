@@ -27,37 +27,14 @@ def home():
 
 
 @app.route("/login", methods=["GET", "POST"])
-def login():
-    registration_form = RegistrationForm(request.form)
+def login():    
     login_form = LoginForm(request.form)
-
-    if registration_form.registration_submit.data: # if the registation form was submitted
-        if registration_form.validate_on_submit(): # if the form was valid
-            # hash the user password
-            first_name = registration_form.first_name.data
-            last_name = registration_form.last_name.data
-            k_number = registration_form.k_number.data
-            # hashed_password = generate_password_hash(registration_form.password.data)
-            hashed_password = generate_password_hash("12345678", method="sha256")
-
-            app.logger.warning(db.insert_student(k_number, first_name, last_name, "na", 2018, "na", hashed_password))
-
-            app.logger.warning('registered')
-
-            #redirect to profile page, where he must insert his preferences
-            return redirect("/dashboard")
-        else: # if the form was NOT valid
-            # Flash the error message
-            app.logger.warning('error registering')
-            return render_template("login.html", registration_form=registration_form, login_form=login_form, sign_up_visible=True)
 
     if login_form.login_submit.data: # if the login form was submitted
         if login_form.validate_on_submit(): # if the form was valid
-            ## TODO: query from database
-            k_number = registration_form.k_number.data
-            user = User(k_number)
+            user = User(login_form.k_number.data)
 
-            # if user exists in db
+            # if user exists in db then a password hash was successfully retrieved
             if(user.password):
                 # check if he is authorised
                 if check_password_hash(user.password, login_form.password.data):
@@ -73,15 +50,42 @@ def login():
         else: # if the form was NOT valid
             # Flash the error message
             app.logger.warning('error logging in')
-            return render_template("login.html", registration_form=registration_form, login_form=login_form)
+            return render_template("login.html", login_form=login_form)
 
-    return render_template("login.html", registration_form=registration_form, login_form=login_form)
+    return render_template("login.html", login_form=login_form)
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    registration_form = RegistrationForm(request.form)
+
+    if registration_form.registration_submit.data: # if the registation form was submitted
+        if registration_form.validate_on_submit(): # if the form was valid
+            # hash the user password
+            first_name = registration_form.first_name.data
+            last_name = registration_form.last_name.data
+            k_number = registration_form.k_number.data
+            # hashed_password = generate_password_hash(registration_form.password.data)
+            hashed_password = generate_password_hash("12345678", method="sha256")
+
+            db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", hashed_password)
+            app.logger.warning('register user: ' + db_insert_success)
+
+            #redirect to profile page, where he must insert his preferences
+            return redirect("/dashboard")
+        else: # if the form was NOT valid
+            # Flash the error message
+            app.logger.warning('error registering')
+            return render_template("signup.html", registration_form=registration_form)
+    
+    return render_template("signup.html", registration_form=registration_form)
 
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return current_user.k_number
+
 
 @app.route("/logout")
 @login_required

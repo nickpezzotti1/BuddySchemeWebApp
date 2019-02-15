@@ -110,7 +110,7 @@ def _update_students(** kwargs):
 
     # We need the k_number to update
     if "k_number" not in kwargs:
-        return raise NameError("K-number could not be found in the list of arguments")
+        raise NameError("K-number could not be found in the list of arguments")
     
     # Will check that the field is valid, only alphanum and right type
     for field, value in kwargs.items():
@@ -118,7 +118,7 @@ def _update_students(** kwargs):
         if field not in accepted_fields:
             raise Exception(f"{field} isn't a column in the table")
         elif type(value) != accepted_fields[field]:
-            return raise TypeError(f"{field} is the wrong type")
+            raise TypeError(f"{field} is the wrong type")
 
 
     # Ie if there's k_number and another field to update 
@@ -144,35 +144,25 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
 
     return _update_students(** dict_fields)
 
-def update_informations(k_number, hobbies=False, interests=False):
-    """ Given either or hobbies and interests,
-        Will update the entry based on the k_number
-        Return True if no errors while updating, False otherwise"""
 
-    accepted_fields = {"k_number": k_number, "hobbies":hobbies, "interests":interests} 
+def update_hobbies(k_number, hobbies):
+    pass
 
-    # Set the dictionnary like it's needed
-    dict_fields = {field:value for field, value in accepted_fields.items() if value is not False}
 
-    return _update_informations(** dict_fields)
-
-def update_mentor(mentor_k_number, mentee_k_number):
-    """ Given both mentor and mentee k_number,
-        Will update the mentor"""
-
-    if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
-        return _insert(f"UPDATE Allocation set mentor_k_number={_to_str(mentor_k_number)} where mentee_k_number={_to_str(mentee_k_number)};")
+def update_interests(k_number, interests):
+    pass
 
 
 def update_mentee(mentor_k_number, mentee_k_number):
     """ Given both mentee and mentor k_number,
         Will update the mentee"""
 
-    if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
-        return _insert(f"UPDATE Allocation set mentee_k_number={_to_str(mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)};")
-    else:
-        return "Error: one of the k_number did not pass sanity check"
+    return _insert(f"UPDATE Allocation set mentee_k_number={_to_str(mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)};")
  
+
+def update_mentor(mentor_k_number, mentee_k_number):
+    pass
+
 
 def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""

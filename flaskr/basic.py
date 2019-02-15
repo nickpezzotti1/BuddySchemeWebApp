@@ -86,25 +86,26 @@ def _to_str(my_str):
     """ Will return the string surrounded by 
         double quotes, useful for SQL query
         Or if it's a bool return TRUE/FALSE
-        Or if it's a number the number as it is"""
+        Or if it's a number the number as it is
+        Or if it's a list will call back this function 
+        and return all the field separated by ',' """
 
-    if type(my_str) == str:
-        return "\"" + my_str + "\""
-    elif type(my_str) == int:
-        return my_str 
-    # For better looking sql queries
-    elif my_str is True:
-        return "\"TRUE\""
-    elif my_str is False:
-        return "\"FALSE\""
-        
+    if type(my_str) is list:
+        return ",".join([_to_str(i) for i in my_str])
+    
+    if _sanity_check(my_str):
+        if type(my_str) is str:
+            return "\"" + my_str + "\""
+        elif type(my_str) is int:
+            return str(my_str) 
+        # For better looking sql queries
+        elif my_str is True:
+            return "\"TRUE\""
+        elif my_str is False:
+            return "\"FALSE\""
+ 
     raise TypeError(f"{type(my_str)} type isn't accepted.")
 
-
-def _to_str_list(list_str):
-    """ Will return a list of strings or others accepted fields separated by ',' """
-
-    return ",".join([_to_str(my_str) for my_str in list_str])
 
 # TODO should I raise my own exception?
 def _update_students(** kwargs):
@@ -289,7 +290,7 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
 
     
     if _sanity_check_list([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor]):
-        value = f"INSERT INTO Students VALUES({_to_str(k_number)}, {_to_str(first_name)}, {_to_str(last_name)}, {_to_str(degree_title)}, {year_study}, {_to_str(gender)}, 0, 0, {_to_str(password_hash)});"
+        value = f"INSERT INTO Students VALUES({_to_str_list()});"
         return _insert(value)
 
 

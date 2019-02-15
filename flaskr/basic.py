@@ -63,7 +63,7 @@ def _sanity_check(sql_fields):
     """ Will sanity check the fields 
         return true, if we can run it"""
 
-    if (type(sql_fields) == int) or sql_fields.replace(" ", "").isalnum():
+    if (type(sql_fields) in [int, bool]) or sql_fields.replace(" ", "").isalnum():
         return True
     else:
         raise ValueError(f"{sql_fields} isn't an accepted field value.")
@@ -273,7 +273,8 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
 def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash):
     """ Will entirely populate an entry for Students table"""
 
-    if _sanity_check(k_number) and _sanity_check(first_name) and _sanity_check(last_name) and _sanity_check(degree_title) and _sanity_check(year_study) and _sanity_check(gender):
+    
+    if _sanity_check_list([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor]):
         value = f"INSERT INTO Students VALUES({_to_str(k_number)}, {_to_str(first_name)}, {_to_str(last_name)}, {_to_str(degree_title)}, {year_study}, {_to_str(gender)}, 0, 0, {_to_str(password_hash)});"
         return _insert(value)
 

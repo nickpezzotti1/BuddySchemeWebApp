@@ -299,12 +299,6 @@ def get_all_students_data_basic():
     # Add has matches 
     return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;") 
 
-def get_mentee_details(k_number):
-    """ """    
-
-    if _sanity_check(k_number): 
-        return _query(f"SELECT k_number, first_name, last_name FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
-
 
 if __name__ == '__main__':
     print(f"GET USER DATA TEST {get_user_data('K1631292')}")

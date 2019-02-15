@@ -10,7 +10,7 @@ DB_HOST = "buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com"
 HASH_COL = 'password_hash'
 
 def _query(sql_query):
-    """ Returns results of query """
+    """ Returns a list of results of query """
     
     # Connect to the database
     conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
@@ -30,7 +30,11 @@ def _query(sql_query):
     finally:
         conn.close()
 
-    return result
+    # Empty answer will be tuple
+    if type(result) == tuple:
+        return []
+    else:
+        return result
 
 
 def _insert(sql_query):
@@ -278,4 +282,4 @@ def get_mentee_details(k_number):
 
 
 if __name__ == '__main__':
-    pass
+    print(f"GET USER DATA TEST {get_user_data('K1631292')}")

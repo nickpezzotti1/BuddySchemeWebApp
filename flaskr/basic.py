@@ -102,24 +102,23 @@ def _update_students(** kwargs):
     """ Will update fields in Students based on the k_number
         You will need to precise the specific field"""
 
-    accepted_fields = {"first_name":"", "last_name":"", "degree_title":"",
-        "year_study":0, "gender":"", "k_number":""}
+    accepted_fields = {"first_name":str, "last_name":str, "degree_title":str,
+        "year_study":int, "gender":str, "k_number":int, "is_mentor":bool,
+        "email_confirmed": bool}
     
     sql_query = ""
 
     # We need the k_number to update
     if "k_number" not in kwargs:
-        return "Error: k_number not defined"
+        return raise NameError("K-number could not be found in the list of arguments")
     
     # Will check that the field is valid, only alphanum and right type
     for field, value in kwargs.items():
 
-        if not _sanity_check(value):
-            return f"Error: {field} did not pass sanity check"
-        elif field not in accepted_fields:
-            return f"Error: {field} isn't a column in the table"
-        elif type(value) != type(accepted_fields[field]):
-            return f"Error: {field} is the wrong type"
+        if field not in accepted_fields:
+            raise Exception(f"{field} isn't a column in the table")
+        elif type(value) != accepted_fields[field]:
+            return raise TypeError(f"{field} is the wrong type")
 
 
     # Ie if there's k_number and another field to update 
@@ -128,7 +127,7 @@ def _update_students(** kwargs):
         sql_query += ", ".join([f"{field} = {_to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
         sql_query += f" where k_number={_to_str(kwargs['k_number'])};" 
     else:
-        return "Error: did not pass enough arguments"
+        raise Exception("Need at least one argument.") 
 
     return _insert(sql_query)
 
@@ -211,61 +210,49 @@ def update_mentee(mentor_k_number, mentee_k_number):
 def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""
     
-    if _sanity_check(k_number):
-        
-        try:        
-            result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+    try:        
+        result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
 
-        except IndexError:
-            raise IndexError(f"{k_number} doesn't exist.")
+    except IndexError:
+        raise IndexError(f"{k_number} doesn't exist.")
 
-        result.pop(HASH_COL, None) # can check not none
-        return result       
+    result.pop(HASH_COL, None) # can check not none
+    return result       
 
 
 def get_user_hashed_password(k_number):
     """ Returns the hashed password for the user"""
 
-    if _sanity_check(k_number):
-        
-        try:
-            result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
-            return result[0].pop(HASH_COL, None)
+    try:
+        result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
+        return result[0].pop(HASH_COL, None)
 
-        except IndexError:
-            raise IndexError(f"{k_number} does not exist.")        
+    except IndexError:
+        raise IndexError(f"{k_number} does not exist.")        
 
 
 def get_mentors(mentee_k_number):
     """ Given the mentee K-Number will return its mentor(s) k-number"""
 
-    if _sanity_check(mentee_k_number):
-        
-        return _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+    return _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
 
 
 def get_mentees(mentor_k_number):
     """ Given the mentor K-Number will return its mentor(s) k-number"""
 
-    if _sanity_check(mentor_k_number):
-        
-        return _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+    return _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
 
 
 def get_hobbies(k_number):
     """ Given the k_number will return all the student's hobbies"""
 
-    if _sanity_check(k_number):
-        
-        return _query(f"SELECT * FROM Hobbies where k_number={_to_str(k_number)};")
+    return _query(f"SELECT * FROM Hobbies where k_number={_to_str(k_number)};")
 
 
 def get_interests(k_number):
     """ Given the k_number will return all the student's interests"""
 
-    if _sanity_check(k_number):
-       
-        return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)}") 
+    return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)}") 
 
 
 def insert_mentor_mentee(mentor_k_number, mentee_k_number):

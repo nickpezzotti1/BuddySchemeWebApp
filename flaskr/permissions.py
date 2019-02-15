@@ -2,7 +2,7 @@ from flask import redirect
 from flask_login import current_user
 from functools import wraps
 
-def permissioned_login_required(role="ANY", redirect_on_fail="/dashboard"):
+def permissioned_login_required(role="ANY", redirect_on_fail="/"):
     def wrapper(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):

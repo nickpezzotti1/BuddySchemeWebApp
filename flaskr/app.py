@@ -90,14 +90,14 @@ def dashboard():
 
 
 @app.route("/logout")
-@permissioned_login_required(role="ANY", login_manager=login_manager)
+@login_required
 def logout():
     logout_user()
     return redirect("/home")
 
 
 @app.route("/mentee/<k_number>")
-@permissioned_login_required(role="MENTOR", login_manager=login_manager)
+@permissioned_login_required(role="MENTOR", redirect_on_fail="/dashboard")
 def mentee(k_number):
     # ensure user is authenticated: the session is valid; the user is k_number
 

@@ -193,7 +193,13 @@ def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""
     
     if _sanity_check(k_number):
-        result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+        
+        try:
+            result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+        except IndexError as e:
+            print("The k-number provided isn't in the database")
+            raise
+
         result.pop(HASH_COL, None) # can check not none
         return result       
     else:

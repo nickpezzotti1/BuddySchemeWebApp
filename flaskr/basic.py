@@ -288,11 +288,9 @@ def insert_hobbies(k_number, hobbies):
 
 
 def insert_interests(k_number, interests):
-    """ Will entirely populate an entry for Information table
-        Returns True if everything went correctly, False otherwise"""
+    """ Will entirely populate an entry for Interests table"""
     
-    if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(interests):
-        return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(interests)}, {_to_str(k_number)});")
+    return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")
 
 
 def get_all_students_data_basic():

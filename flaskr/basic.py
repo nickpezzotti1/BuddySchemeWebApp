@@ -198,6 +198,7 @@ def get_user_data(k_number):
         
         try:        
             result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+
         except IndexError:
             raise IndexError(f"{k_number} doesn't exist.")
 
@@ -213,6 +214,7 @@ def get_user_hashed_password(k_number):
         try:
             result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
             return result[0].pop(HASH_COL, None)
+
         except IndexError:
             raise IndexError(f"{k_number} does not exist.")        
 

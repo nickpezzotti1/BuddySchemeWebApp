@@ -84,13 +84,27 @@ def _sanity_check_list(list_fields):
 
 def _to_str(my_str):
     """ Will return the string surrounded by 
-        double quotes, useful for SQL query"""
+        double quotes, useful for SQL query
+        Or if it's a bool return TRUE/FALSE
+        Or if it's a number the number as it is"""
 
     if type(my_str) == str:
         return "\"" + my_str + "\""
+    elif type(my_str) == int:
+        return my_str 
+    # For better looking sql queries
+    elif my_str is True:
+        return "\"TRUE\""
+    elif my_str is False:
+        return "\"FALSE\""
     else:
-        return f"Error: {my_str} isn't a string"
+        raise TypeError(f"{type(my_str)} type isn't accepted.")
 
+
+def _to_str_list(list_str):
+    """ Will return a list of strings separated by ',' """
+
+    [_to_str(my_str) for my_str in list_str]
 
 # TODO should I raise my own exception?
 def _update_students(** kwargs):

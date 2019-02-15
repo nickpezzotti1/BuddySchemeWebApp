@@ -27,7 +27,7 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
       <a class="navbar-brand" href="#">Buddy System</a>
       <div class="mr-auto mt-2 mt-lg-0"> </div>
-      <button class="btn btn-outline-danger my-2 my-sm-0">Sign Out</button>
+      <button class="btn btn-outline-danger my-2 my-sm-0" href={{ url_for("logout") }}>Sign Out</button>
     </div>
   </nav>
 
@@ -36,7 +36,7 @@
     {% block content_block %} {% endblock content_block %}
   </div>
 
-  <footer class="bottom">
+  <footer class="bottom bg-light">
 
       &copy; Copyright 2010 by <a href="http://domain.invalid/">you</a>.
 

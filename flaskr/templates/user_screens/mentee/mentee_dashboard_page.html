@@ -1,0 +1,32 @@
+{% extends "shared/user_screen_layout.html" %}
+
+{% block content_block %}
+<h1> Your Profile </h1>
+<h2> K-Number: {{user_info["k_number"]}}<h2> 
+<h2> First Name: {{user_info["first_name"]}}<h2> 
+<h2> Last Name: {{user_info["last_name"]}}<h2> 
+<h2> Age: {{user_info["age"]}}<h2> 
+<h2> Hobbies:</h2>
+<ul>
+    {% for hobby in user_info["hobbies"] %}
+    <li>{{ hobby }}</li>
+    {% endfor %}
+</ul>
+
+
+<h2> Academic Interests: </h2>
+<ul>
+    {% for interest in user_info["interests"] %}
+    <li>{{ interest }}</li>
+    {% endfor %}
+</ul>
+
+
+
+<div id="browse_app">
+    <a class="btn btn-large btn-info" href="{{url_for('mentee_preferences')}}">Preferences</a>
+</div>
+<div id="browse_app">
+    <a class="btn btn-large btn-info" href="{{url_for('mentee_mentor_list')}}">My Mentees</a>
+</div>
+{% endblock content_block %}

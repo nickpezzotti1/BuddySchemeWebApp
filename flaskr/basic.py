@@ -63,8 +63,12 @@ def _sanity_check(sql_fields):
     """ Will sanity check the fields 
         return true, if we can run it"""
 
-    return (type(sql_fields) == int) or sql_fields.replace(" ", "").isalnum()
+    if (type(sql_fields) == int) or sql_fields.replace(" ", "").isalnum():
+        return True
+    else:
+        raise ValueError(f"{sql_fields} isn't an accepted field value.")
 
+    
 
 def _to_str(my_str):
     """ Will return the string surrounded by 
@@ -194,14 +198,14 @@ def get_user_data(k_number):
     
     if _sanity_check(k_number):
         
-        try:
+        try:        
             result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
         except IndexError as e:
-            print("The k-number provided isn't in the database")
-            raise
+            raise IndexError(f"{k_number} doesn't exist.")
 
         result.pop(HASH_COL, None) # can check not none
         return result       
+    
     else:
         return "Error: k_number did not pass sanity check"
 
@@ -236,15 +240,19 @@ def get_mentees(mentor_k_number):
         return "Error: k_number did not pass sanity check"
 
 
-def get_information(k_number): #### change this to two -> hobbies + interests
-    """ Given the k_number will return all the extra information on that student
-        As a dictionnary"""
+def get_hobbies(k_number):
+    """ Given the k_number will return all the student's hobbies"""
 
     if _sanity_check(k_number):
-        result = _query(f"select * from Informations where k_number={_to_str(k_number)};")
-        return result
-    else:
-        return "Error: the k_number did not pass the sanity check"
+        pass 
+
+
+def get_interests(k_number):
+    """ Given the k_number will return all the student's interests"""
+
+    if _sanity_check(k_number):
+        pass
+        
 
 
 def insert_mentor_mentee(mentor_k_number, mentee_k_number):
@@ -289,3 +297,4 @@ def get_mentee_details(k_number):
 
 if __name__ == '__main__':
     print(f"GET USER DATA TEST {get_user_data('K1631292')}")
+    print("it didin't stop")

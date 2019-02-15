@@ -69,7 +69,7 @@ def signup():
             hashed_password = generate_password_hash("12345678", method="sha256")
 
             db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", hashed_password)
-            app.logger.warning('register user: ' + db_insert_success)
+            app.logger.warning('register user: ' + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences
             return redirect("/dashboard")

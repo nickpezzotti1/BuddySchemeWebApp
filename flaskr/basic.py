@@ -179,8 +179,6 @@ def update_mentor(mentor_k_number, mentee_k_number):
 
     if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
         return _insert(f"UPDATE Allocation set mentor_k_number={_to_str(mentor_k_number)} where mentee_k_number={_to_str(mentee_k_number)};")
-    else:
-        return "Error: one of the k_number did not pass the sanity check"
 
 
 def update_mentee(mentor_k_number, mentee_k_number):
@@ -205,9 +203,6 @@ def get_user_data(k_number):
 
         result.pop(HASH_COL, None) # can check not none
         return result       
-    
-    else:
-        return "Error: k_number did not pass sanity check"
 
 
 def get_user_hashed_password(k_number):
@@ -216,43 +211,38 @@ def get_user_hashed_password(k_number):
     if _sanity_check(k_number):
         result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
         return result[0].pop(HASH_COL, None) 
-    else:
-        return "Error: k_number did not pass sanity check"
 
 
 def get_mentors(mentee_k_number):
     """ Given the mentee K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentee_k_number):
-        result = _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
-        return result
-    else:
-        return "Error: k_number did not pass sanity check"
+        
+        return _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
 
 
 def get_mentees(mentor_k_number):
     """ Given the mentor K-Number will return its mentor(s) k-number"""
 
     if _sanity_check(mentor_k_number):
-        result = _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
-        return result
-    else:
-        return "Error: k_number did not pass sanity check"
+        
+        return _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
 
 
 def get_hobbies(k_number):
     """ Given the k_number will return all the student's hobbies"""
 
     if _sanity_check(k_number):
-        pass 
+        
+        return _query(f"SELECT * FROM Hobbies where k_number={_to_str(k_number)};")
 
 
 def get_interests(k_number):
     """ Given the k_number will return all the student's interests"""
 
     if _sanity_check(k_number):
-        pass
-        
+       
+        return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)}") 
 
 
 def insert_mentor_mentee(mentor_k_number, mentee_k_number):
@@ -269,10 +259,7 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
 
     if _sanity_check(k_number) and _sanity_check(first_name) and _sanity_check(last_name) and _sanity_check(degree_title) and _sanity_check(year_study) and _sanity_check(gender):
         value = f"INSERT INTO Students VALUES({_to_str(k_number)}, {_to_str(first_name)}, {_to_str(last_name)}, {_to_str(degree_title)}, {year_study}, {_to_str(gender)}, 0, 0, {_to_str(password_hash)});"
-        print(value)
         return _insert(value)
-    else:
-        return "Error: one of the field did not pass sanity check"
 
 
 def insert_interests(k_number, hobbies, interests):
@@ -281,18 +268,19 @@ def insert_interests(k_number, hobbies, interests):
     
     if _sanity_check(k_number) and _sanity_check(hobbies) and _sanity_check(interests):
         return _insert(f"INSERT INTO Informations VALUES({_to_str(hobbies)}, {_to_str(interests)}, {_to_str(k_number)});")
-    else:
-        return "Error: one of the field did not pass the sanity check"
 
 
 def get_all_students_data_basic():
-    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches 
+    """ God knows what this function does"""
+    
+    # Add has matches 
+    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;") 
 
 def get_mentee_details(k_number):
+    """ """    
+
     if _sanity_check(k_number): 
         return _query(f"SELECT k_number, first_name, last_name FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
-    else:
-        return "Error: one of the field did not pass the sanity check"
 
 
 if __name__ == '__main__':

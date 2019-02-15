@@ -69,19 +69,6 @@ def _sanity_check(sql_fields):
         raise ValueError(f"{sql_fields} isn't an accepted field value.")
 
 
-def _sanity_check_list(list_fields):
-    """ Will sanity check a list"""
-
-    if type(list_fields) != list:
-        raise TypeError(f"The function excepts a list type argument and not {type(list_fields)} type.")
-    
-    for field in list_fields:
-        if _sanity_check(field):
-            pass
-     
-    return True
-
-
 def _to_str(my_str):
     """ Will return the string surrounded by 
         double quotes, useful for SQL query

@@ -4,7 +4,9 @@ from forms import LoginForm, RegistrationForm
 from flask_wtf import FlaskForm
 from user import User
 import basic as db
+from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 app = Flask(__name__)
@@ -88,13 +90,14 @@ def dashboard():
 
 
 @app.route("/logout")
-@login_required
+@permissioned_login_required(role="ANY", login_manager=login_manager)
 def logout():
     logout_user()
     return redirect("/home")
 
 
 @app.route("/mentee/<k_number>")
+@permissioned_login_required(role="MENTOR", login_manager=login_manager)
 def mentee(k_number):
     # ensure user is authenticated: the session is valid; the user is k_number
 

@@ -7,6 +7,7 @@ class User(UserMixin):
         self.id = k_number
         self.password = None
         self.email_confirmed = None
+        self.role = "ADMIN"
 
         try:
             self.password = db.get_user_hashed_password(k_number)

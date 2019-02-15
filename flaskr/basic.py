@@ -69,13 +69,16 @@ def _sanity_check(sql_fields):
         raise ValueError(f"{sql_fields} isn't an accepted field value.")
 
 
-def _to_str(my_str):
+def _to_str(my_str, password_hash=False):
     """ Will return the string surrounded by 
         double quotes, useful for SQL query
         Or if it's a bool return TRUE/FALSE
         Or if it's a number the number as it is
         Or if it's a list will call back this function 
         and return all the field separated by ',' """
+
+    if password_hash:
+        return "\"" + my_str + "\""
 
     if type(my_str) is list:
         return ",".join([_to_str(i) for i in my_str])
@@ -275,13 +278,16 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
 def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash):
     """ Will entirely populate an entry for Students table"""
 
-    
-    if _sanity_check_list([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor]):
-        value = f"INSERT INTO Students VALUES({_to_str_list()});"
-        return _insert(value)
+    return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)});")
 
 
-def insert_interests(k_number, hobbies, interests):
+def insert_hobbies(k_number, hobbies):
+    """ Will entirely populate an entry for the Hobbies database"""
+
+    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobbies, k_number])});")
+
+
+def insert_interests(k_number, interests):
     """ Will entirely populate an entry for Information table
         Returns True if everything went correctly, False otherwise"""
     

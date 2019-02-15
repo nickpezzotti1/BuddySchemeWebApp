@@ -97,14 +97,14 @@ def _to_str(my_str):
         return "\"TRUE\""
     elif my_str is False:
         return "\"FALSE\""
-    else:
-        raise TypeError(f"{type(my_str)} type isn't accepted.")
+        
+    raise TypeError(f"{type(my_str)} type isn't accepted.")
 
 
 def _to_str_list(list_str):
-    """ Will return a list of strings separated by ',' """
+    """ Will return a list of strings or others accepted fields separated by ',' """
 
-    [_to_str(my_str) for my_str in list_str]
+    return ",".join([_to_str(my_str) for my_str in list_str])
 
 # TODO should I raise my own exception?
 def _update_students(** kwargs):

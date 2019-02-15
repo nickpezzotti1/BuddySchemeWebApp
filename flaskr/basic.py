@@ -198,7 +198,7 @@ def get_user_data(k_number):
         
         try:        
             result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
-        except IndexError as e:
+        except IndexError:
             raise IndexError(f"{k_number} doesn't exist.")
 
         result.pop(HASH_COL, None) # can check not none
@@ -209,8 +209,12 @@ def get_user_hashed_password(k_number):
     """ Returns the hashed password for the user"""
 
     if _sanity_check(k_number):
-        result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
-        return result[0].pop(HASH_COL, None) 
+        
+        try:
+            result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
+            return result[0].pop(HASH_COL, None)
+        except IndexError:
+            raise IndexError(f"{k_number} does not exist.")        
 
 
 def get_mentors(mentee_k_number):

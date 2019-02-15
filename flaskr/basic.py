@@ -68,7 +68,19 @@ def _sanity_check(sql_fields):
     else:
         raise ValueError(f"{sql_fields} isn't an accepted field value.")
 
+
+def _sanity_check_list(list_fields):
+    """ Will sanity check a list"""
+
+    if type(list_fields) != list:
+        raise TypeError(f"The function excepts a list type argument and not {type(list_fields)} type.")
     
+    for field in list_fields:
+        if _sanity_check(field):
+            pass
+     
+    return True
+
 
 def _to_str(my_str):
     """ Will return the string surrounded by 
@@ -256,11 +268,9 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
 
     if _sanity_check(mentor_k_number) and _sanity_check(mentee_k_number):
         return _insert(f"INSERT INTO Allocation VALUES({_to_str(mentor_k_number)}, {_to_str(mentee_k_number)});")
-    else:
-        return "Error: one of the k_number did not pass sanity check"
 
 
-def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, password_hash):
+def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash):
     """ Will entirely populate an entry for Students table"""
 
     if _sanity_check(k_number) and _sanity_check(first_name) and _sanity_check(last_name) and _sanity_check(degree_title) and _sanity_check(year_study) and _sanity_check(gender):

@@ -153,11 +153,20 @@ def update_hobbies(k_number, hobbies):
 
     return True
 
-def update_interests(k_number, old_interest, new_interest):
-    """ Given the k-number of the students, old and new interests
-        Will replace the interest"""
+
+def update_interests(k_number, interests):
+    """ Given the k-number of the students and new interests
+        Will replace all the interests by the new one"""
     
-    return _insert("UPDATE Interests set interest={_to_str(new_interest)} where k_number={_to_str(k_number)} and hobby={_to_str(old_interest)};")
+    if type(interests) is not list:
+        raise TypeError("Interest/s must be passed as a list")
+
+    delete_interests(k_number)
+
+    for interest in interests:
+        insert_interests(k_number, interest)
+
+    return True
 
 
 def update_mentee(mentor_k_number, new_mentee_k_number, old_mentee_k_number):
@@ -253,14 +262,25 @@ def insert_interests(k_number, interests):
     return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")
 
 
+# TODO Need to check for hobbies type
 def delete_hobbies(k_number, hobbies=False):
-        """ Will delete all the rows where K_number is 
-            Or only where hobbies and k-number are"""
+    """ Will delete all the rows where K_number is 
+         Or only where hobbies and k-number are"""
 
-        if hobbies:
-            return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} and hobby={_to_str(hobbies)};")
-        else:
-            return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)};")
+    if hobbies:
+        return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} and hobby={_to_str(hobbies)};")
+    else:
+        return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)};")
+
+
+def delete_interests(k_number, interests=False):
+    """ Will delete all the rows where the k-number is
+        Or only where interests and k-number are"""  
+
+    if interests:
+        return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)} and interest={_to_str(interests)};")
+    else:
+        return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)};")     
 
 
 def get_all_students_data_basic():
@@ -274,6 +294,6 @@ def get_all_students_data_basic():
 # TODO : Get all functions
 # TODO : Get functions with the list options?
 if __name__ == '__main__':
-    print(_query("SELECT * from Hobbies;"))
-    update_hobbies("K1543367", ["Rowing", "Football", "Rugby"])
-    print(_query("SELECT * from Hobbies;"))
+    print(_query("SELECT * from Interests;"))
+    update_interests("K1543367", ["AI", "ML", "DL"])
+    print(_query("SELECT * from Interests;"))

@@ -297,6 +297,17 @@ def delete_interests(k_number, interests=False):
         return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)};")     
 
 
+def delete_mentors(mentee_k_number):
+    """ Given the mentee k-number will delete all his mentors"""
+        
+    return _insert(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+
+def delete_mentees(mentor_k_number)
+    """ Given the mentor k-number will delete all his mentees"""
+
+    return _insert(f"DELETE FROM Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+
+
 def get_all_students_data_basic():
     """ God knows what this function does"""
     

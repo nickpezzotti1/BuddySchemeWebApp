@@ -127,11 +127,14 @@ def _update_students(** kwargs):
         raise Exception("Need at least one argument.") 
 
 
-def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False):
+def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False, is_mentor=False, is_admin=False):
     """ Front end interface of the private function, 
         don't need to know the underlying interface """
 
-    accepted_fields = {"k_number": k_number, "first_name": first_name, "last_name": last_name, "degree_title": degree_title, "year_study": year_study}
+    accepted_fields = {"k_number": k_number, "first_name": first_name, 
+        "last_name": last_name, "degree_title": degree_title, 
+        "year_study": year_study, "gender": gender, "is_mentor": is_mentor, 
+        "is_admin": is_admin}
 
     # Set the dictionarry like it's needed
     dict_fields = {field:value for field, value in  accepted_fields.items() if value is not False}
@@ -197,6 +200,13 @@ def update_mentor(mentee_k_number, mentors_k_number):
     return True
 
 
+def update_hash_password(k_number, password_hash):
+    """ Given the k_number, will update the password_hash"""
+
+    if type(password_hash) is str:
+        return _insert(f"UPDATE Students set password_hash={ "\"" + password_hash + "\""};")    
+    else:
+
 def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""
     
@@ -258,10 +268,10 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
     return _insert(f"INSERT INTO Allocation VALUES({_to_str([mentor_k_number, mentee_k_number])});")
 
 
-def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash):
+def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin):
     """ Will entirely populate an entry for Students table"""
 
-    return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)});")
+    return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)});")
 
 
 def insert_hobbies(k_number, hobbies):
@@ -302,11 +312,16 @@ def delete_mentors(mentee_k_number):
         
     return _insert(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)};")
 
-def delete_mentees(mentor_k_number)
+def delete_mentees(mentor_k_number):
     """ Given the mentor k-number will delete all his mentees"""
 
     return _insert(f"DELETE FROM Allocation where mentor_k_number={_to_str(mentor_k_number)};")
 
+
+def delete_students(k_number):
+    """ Delete the students entry in the Tables"""
+
+    return delete_hobbies(k_number) and delete_interests(k_number) and delete_mentors(k_number) and delete_mentees(k_number)
 
 def get_all_students_data_basic():
     """ God knows what this function does"""

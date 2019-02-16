@@ -139,11 +139,19 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
     return _update_students(** dict_fields)
 
 
-def update_hobbies(k_number, old_hobbies, new_hobbies):
-    """ Given the k_number of the students, old and new hobbies
-        Will replace the hobby"""
+def update_hobbies(k_number, hobbies):
+    """ Given the k_number and hobbies, will delete all the hobbies
+        And reinsert them"""
+
+    if type(hobbies) is not list:
+        raise TypeError("Hobby/ies must be passed as a list.")
     
-    return _insert("UPDATE Hobbies set hobby={_to_str(new_hobbies)} where k_number={_to_str(k_number)} and hobby={_to_str(k_number)};")
+    delete_hobbies(k_number)
+    
+    for hobby in hobbies:
+        insert_hobbies(k_number, hobby)
+
+    return True
 
 def update_interests(k_number, old_interest, new_interest):
     """ Given the k-number of the students, old and new interests
@@ -245,6 +253,16 @@ def insert_interests(k_number, interests):
     return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")
 
 
+def delete_hobbies(k_number, hobbies=False):
+        """ Will delete all the rows where K_number is 
+            Or only where hobbies and k-number are"""
+
+        if hobbies:
+            return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} and hobby={_to_str(hobbies)};")
+        else:
+            return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)};")
+
+
 def get_all_students_data_basic():
     """ God knows what this function does"""
     
@@ -252,6 +270,10 @@ def get_all_students_data_basic():
     return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;") 
 
 
+# TODO : FOR NOW do only singular
+# TODO : Get all functions
+# TODO : Get functions with the list options?
 if __name__ == '__main__':
-    print(f"GET USER DATA TEST {get_user_data('K1631292')}")
-    print("it didin't stop")
+    print(_query("SELECT * from Hobbies;"))
+    update_hobbies("K1543367", ["Rowing", "Football", "Rugby"])
+    print(_query("SELECT * from Hobbies;"))

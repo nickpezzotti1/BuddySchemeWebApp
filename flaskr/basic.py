@@ -169,18 +169,32 @@ def update_interests(k_number, interests):
     return True
 
 
-def update_mentee(mentor_k_number, new_mentee_k_number, old_mentee_k_number):
-    """ Given both mentee and mentor k_number,
-        Will update the mentee"""
+def update_mentee(mentor_k_number, mentees_k_number):
+    """ Given the mentor_k_number will update all his mentees"""
 
-    return _insert(f"UPDATE Allocation set mentee_k_number={_to_str(new_mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)} and mentee_k_number={_to_str(old_mentee_k_number)};")
- 
+    if type(mentees_k_number) is not list:
+        raise TypeError("Mentee/s must be passed as a list.") 
 
-def update_mentor(old_mentor_k_number, new_mentor_k_number, mentee_k_number):
-    """ Given both the mentor and mentee k-number, 
-        Will update the mentor"""
+    delete_mentees(mentor_k_number)
 
-    return _insert(f"UPDATE Allocation set mentor_k_number={_to_str(new_mentor_k_number)} where mentee_k_number={_to_str(mentee_k_number)} and mentor_k_number={_to_str(old_mentor_k_number)};")
+    for mentee_k_number in mentees_k_number:
+        insert_mentor_mentee(mentor_k_number, mentee_k_number)
+
+    return True
+
+
+def update_mentor(mentee_k_number, mentors_k_number):
+    """ Given the mentee_k_number will update all his mentors"""
+
+    if type(mentors_k_number) is not list:
+        raise TypeError("Mentor/s must be passed as a list.")
+
+    delete_mentors(mentee_k_number)
+
+    for mentor_k_number in mentors_k_number:
+        insert_mentor_mentee(mentor_k_number, mentee_k_number)
+
+    return True
 
 
 def get_user_data(k_number):

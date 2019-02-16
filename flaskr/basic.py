@@ -16,7 +16,7 @@ def _query(sql_query):
     conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
 
     # Define result
-    result = ""   
+    result = []   
 
     try:
     
@@ -25,7 +25,7 @@ def _query(sql_query):
             result = cursor.fetchall()
 
     except Exception as e:
-        print("Exeception occured:{}".format(e))
+        raise Exception(f"{e}")
 
     finally:
         conn.close()
@@ -50,7 +50,7 @@ def _insert(sql_query):
         conn.commit()
             
     except Exception as e:
-        print("Exeception occured:{}".format(e))
+        raise Exception(f"{e}")
         return False
 
     finally:
@@ -97,7 +97,6 @@ def _to_str(my_str, password_hash=False):
     raise TypeError(f"{type(my_str)} type isn't accepted.")
 
 
-# TODO should I raise my own exception?
 def _update_students(** kwargs):
     """ Will update fields in Students based on the k_number
         You will need to precise the specific field"""
@@ -106,8 +105,6 @@ def _update_students(** kwargs):
         "year_study":int, "gender":str, "k_number":int, "is_mentor":bool,
         "email_confirmed": bool}
     
-    sql_query = ""
-
     # We need the k_number to update
     if "k_number" not in kwargs:
         raise NameError("K-number could not be found in the list of arguments")
@@ -120,19 +117,16 @@ def _update_students(** kwargs):
         elif type(value) != accepted_fields[field]:
             raise TypeError(f"{field} is the wrong type")
 
-
     # Ie if there's k_number and another field to update 
     if len(kwargs) > 1:
         sql_query = "UPDATE Students set "
-        sql_query += ", ".join([f"{field} = {_to_str(value) if type(value)==str else int(value) }" for field, value in kwargs.items() if field != "k_number"])
+        sql_query += ", ".join([f"{field} = {_to_str(value)}" for field, value in kwargs.items() if field != "k_number"])
         sql_query += f" where k_number={_to_str(kwargs['k_number'])};" 
+        return _insert(sql_query)
     else:
         raise Exception("Need at least one argument.") 
 
-    return _insert(sql_query)
 
-
-# TODO check the 0 and 1 return 
 def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False):
     """ Front end interface of the private function, 
         don't need to know the underlying interface """
@@ -145,23 +139,31 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
     return _update_students(** dict_fields)
 
 
-def update_hobbies(k_number, hobbies):
-    pass
+def update_hobbies(k_number, old_hobbies, new_hobbies):
+    """ Given the k_number of the students, old and new hobbies
+        Will replace the hobby"""
+    
+    return _insert("UPDATE Hobbies set hobby={_to_str(new_hobbies)} where k_number={_to_str(k_number)} and hobby={_to_str(k_number)};")
+
+def update_interests(k_number, old_interest, new_interest):
+    """ Given the k-number of the students, old and new interests
+        Will replace the interest"""
+    
+    return _insert("UPDATE Interests set interest={_to_str(new_interest)} where k_number={_to_str(k_number)} and hobby={_to_str(old_interest)};")
 
 
-def update_interests(k_number, interests):
-    pass
-
-
-def update_mentee(mentor_k_number, mentee_k_number):
+def update_mentee(mentor_k_number, new_mentee_k_number, old_mentee_k_number):
     """ Given both mentee and mentor k_number,
         Will update the mentee"""
 
-    return _insert(f"UPDATE Allocation set mentee_k_number={_to_str(mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)};")
+    return _insert(f"UPDATE Allocation set mentee_k_number={_to_str(new_mentee_k_number)} where mentor_k_number={_to_str(mentor_k_number)} and mentee_k_number={_to_str(old_mentee_k_number)};")
  
 
-def update_mentor(mentor_k_number, mentee_k_number):
-    pass
+def update_mentor(old_mentor_k_number, new_mentor_k_number, mentee_k_number):
+    """ Given both the mentor and mentee k-number, 
+        Will update the mentor"""
+
+    return _insert(f"UPDATE Allocation set mentor_k_number={_to_str(new_mentor_k_number)} where mentee_k_number={_to_str(mentee_k_number)} and mentor_k_number={_to_str(old_mentor_k_number)};")
 
 
 def get_user_data(k_number):
@@ -169,12 +171,15 @@ def get_user_data(k_number):
     
     try:        
         result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+        result.pop(HASH_COL, None) # can check not none
+        return result       
 
     except IndexError:
         raise IndexError(f"{k_number} doesn't exist.")
+    except KeyError:
+        raise KeyError(f"{HASH_COL} not found in table.")
 
-    result.pop(HASH_COL, None) # can check not none
-    return result       
+#TODO Should I return something here?    
 
 
 def get_user_hashed_password(k_number):
@@ -186,6 +191,10 @@ def get_user_hashed_password(k_number):
 
     except IndexError:
         raise IndexError(f"{k_number} does not exist.")        
+    except KeyError:
+        raise KeyError(f"{HASH_COL} not found in table")
+
+# TODO Should I return something here as well?
 
 
 def get_mentors(mentee_k_number):

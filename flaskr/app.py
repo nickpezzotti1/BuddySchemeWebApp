@@ -5,6 +5,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -242,8 +243,12 @@ def allocate():
     }
   ]
 }"""
+
     response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = template_input)
-    return response.text #render_template('admin/matching_settings.html', title='Matching Settings')
+    # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
+    response_text = response.text[1:-1].replace("\\", "")
+    json_response = json.loads(response_text)
+    return json_response["assignments"][0]["mentor_id"]
 
 # We only need this for local dev
 if __name__ == '__main__':

@@ -4,77 +4,78 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+import requests
 
 app = Flask(__name__)
 
 # Mock data
 
 user_info = {
-    "k_number": "k1764064",
-    "k_number_mentee": "k1738383",
-    "first_name": "Nicholas",
-    "last_name": "Pezzotti",
-    "age": 20,
-    "hobbies": ["Football", "Poker"],
-    "academic_interests": ["AI", "Blockchain"]
+    'k_number': 'k1764064',
+    'k_number_mentee': 'k1738383',
+    'first_name': 'Nicholas',
+    'last_name': 'Pezzotti',
+    'age': 20,
+    'hobbies': ['Football', 'Poker'],
+    'academic_interests': ['AI', 'Blockchain']
 }
 mentee_user_info = {
-    "k_number": "k1764064",
-    "k_number_mentee": "k1738383",
-    "first_name": "Nihad",
-    "last_name": "Rahman",
-    "age": 20,
-    "hobbies": ["Football", "Poker"],
-    "academic_interests": ["AI", "Blockchain"]
+    'k_number': 'k1764064',
+    'k_number_mentee': 'k1738383',
+    'first_name': 'Nihad',
+    'last_name': 'Rahman',
+    'age': 20,
+    'hobbies': ['Football', 'Poker'],
+    'academic_interests': ['AI', 'Blockchain']
 }
 
 mentees = {
-    "k1803945": {
-        "first_name": "Alice",
-        "last_name": "Apple",
-        "age": 21,
+    'k1803945': {
+        'first_name': 'Alice',
+        'last_name': 'Apple',
+        'age': 21,
     },
-    "k1874859": {
-        "first_name": "Bob",
-        "last_name": "Banana",
-        "age": 22,
+    'k1874859': {
+        'first_name': 'Bob',
+        'last_name': 'Banana',
+        'age': 22,
     },
-    "k1673459": {
-        "first_name": "Charlie",
-        "last_name": "Carrot",
-        "age": 19,
+    'k1673459': {
+        'first_name': 'Charlie',
+        'last_name': 'Carrot',
+        'age': 19,
     }
 }
 
 mentors = {
-    "k1803945": {
-        "first_name": "Jardin",
-        "last_name": "Apple",
-        "age": 21,
+    'k1803945': {
+        'first_name': 'Jardin',
+        'last_name': 'Apple',
+        'age': 21,
     },
-    "k1874859": {
-        "first_name": "Nick",
-        "last_name": "Banana",
-        "age": 22,
+    'k1874859': {
+        'first_name': 'Nick',
+        'last_name': 'Banana',
+        'age': 22,
     },
-    "k1673459": {
-        "first_name": "Charlie",
-        "last_name": "Carrot",
-        "age": 19,
+    'k1673459': {
+        'first_name': 'Charlie',
+        'last_name': 'Carrot',
+        'age': 19,
     }
 }
 
-@app.route("/")
-@app.route("/home")
+@app.route('/')
+@app.route('/home')
 def hello():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/login")
+@app.route('/login')
 def login():
-    return render_template("login.html")
+    return render_template('login.html')
 
 
-@app.route("/mentor")
+@app.route('/mentor')
 def mentor():
     # ensure user is authenticated: the session is valid; the user is k_number
 
@@ -88,75 +89,75 @@ def mentor():
         # Academic interests: List[string]
     # Format into dictionary
 
-    return render_template("user_screens/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
+    return render_template('user_screens/mentor_dashboard_page.html', title='Your Profile', user_info=user_info)
 
-@app.route("/mentee")
+@app.route('/mentee')
 def mentee():
 
-    return render_template("user_screens/mentee_dashboard_page.html", title="Your Profile", user_info=mentee_user_info)
+    return render_template('user_screens/mentee_dashboard_page.html', title='Your Profile', user_info=mentee_user_info)
 
-@app.route("/mentor/preferences", methods=['POST', 'GET'])
+@app.route('/mentor/preferences', methods=['POST', 'GET'])
 def mentor_preferences():
 
-    if request.method == "POST":
+    if request.method == 'POST':
         user_info['hobbies'] = request.form.getlist('hobbies')
         user_info['academic_interests'] = request.form.getlist('academic_interests')
-        
-        return redirect(url_for("mentor"))
-    else:
-        return render_template("user_screens/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
 
-@app.route("/mentee/preferences", methods=['POST', 'GET'])
+        return redirect(url_for('mentor'))
+    else:
+        return render_template('user_screens/mentor_preferences_page.html', title='Your Preferences', user_info=user_info)
+
+@app.route('/mentee/preferences', methods=['POST', 'GET'])
 def mentee_preferences():
 
-    if request.method == "POST":
+    if request.method == 'POST':
         mentee_user_info['hobbies'] = request.form.getlist('hobbies')
         mentee_user_info['academic_interests'] = request.form.getlist('academic_interests')
-        
-        return redirect(url_for("mentee"))
+
+        return redirect(url_for('mentee'))
     else:
-        return render_template("user_screens/mentee_preferences_page.html", title="Your Preferences", user_info=mentee_user_info)
+        return render_template('user_screens/mentee_preferences_page.html', title='Your Preferences', user_info=mentee_user_info)
 
 
-@app.route("/mentor/mentee-list")
+@app.route('/mentor/mentee-list')
 def mentor_mentee_list():
 
     # query database for all mentees the mentor has
 
-    return render_template("user_screens/mentor_mentee_list_page.html", title="Your Mentees", user_info=user_info, mentees=mentees)
+    return render_template('user_screens/mentor_mentee_list_page.html', title='Your Mentees', user_info=user_info, mentees=mentees)
 
-@app.route("/mentee/mentor-list")
+@app.route('/mentee/mentor-list')
 def mentee_mentor_list():
 
     # query database for all mentees the mentor has
 
-    return render_template("user_screens/mentee_mentor_list_page.html", title="Your Mentors", user_info=mentee_user_info, mentors=mentors)
+    return render_template('user_screens/mentee_mentor_list_page.html', title='Your Mentors', user_info=mentee_user_info, mentors=mentors)
 
-@app.route("/mentor/mentee/<k_number_mentee>")
+@app.route('/mentor/mentee/<k_number_mentee>')
 def mentor_mentee(k_number_mentee):
 
-    return render_template("user_screens/mentor_mentee_page.html", title="Your Mentee", mentee_info=mentees[k_number_mentee], k_number_mentee=k_number_mentee)
+    return render_template('user_screens/mentor_mentee_page.html', title='Your Mentee', mentee_info=mentees[k_number_mentee], k_number_mentee=k_number_mentee)
 
-@app.route("/mentee/mentor/<k_number_mentor>")
+@app.route('/mentee/mentor/<k_number_mentor>')
 def mentee_mentor(k_number_mentor):
 
-    return render_template("user_screens/mentee_mentor_page.html", title="Your Mentor", mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+    return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
 
 
-@app.route("/admin")
+@app.route('/admin')
 def admin_dashboard():
-    
-    return render_template("admin/dashboard.html", title="Admin Dashboard")
 
-@app.route("/admin/view_students", methods=['POST', 'GET'])
+    return render_template('admin/dashboard.html', title='Admin Dashboard')
+
+@app.route('/admin/view_students', methods=['POST', 'GET'])
 def admin_view_students():
     data = basic.get_all_students_data_basic()
-    return render_template("admin/view_students.html", title="View Students", data=data)
+    return render_template('admin/view_students.html', title='View Students', data=data)
 
-@app.route("/admin/student_details", methods=['POST'])
+@app.route('/admin/student_details', methods=['POST'])
 def view_student_details():
     if(request.method == 'POST'):
-        kNum = request.form["knum"]
+        kNum = request.form['knum']
         udata = basic.get_user_data(kNum)
         info = basic.get_information(kNum)
         isTor = True #udata.is_mentor change
@@ -164,25 +165,85 @@ def view_student_details():
             matches = basic.get_mentee_details(kNum)
         else:
             matches = basic.get_mentor_details(kNum)
-                 
-        return render_template("admin/student_details.html", title="Details For " + kNum, udata=udata, info=info, matches=matches)
+
+        return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, info=info, matches=matches)
     else:
         admin_view_students()
-    
-@app.route("/admin/general_settings")
-def general_settings():
-    
-    return render_template("admin/general_settings.html", title="General Settings")
-    
-@app.route("/admin/matching_settings")
-def matching_settings():
-    
-    return render_template("admin/matching_settings.html", title="Matching Settings") # change
-@app.route("/admin/signup_settings")
-def sign_up_settings():
 
-    
-    return render_template("admin/dashboard.html", title="Sign-Up Settings")
+@app.route('/admin/general_settings')
+def general_settings():
+
+    return render_template('admin/general_settings.html', title='General Settings')
+
+@app.route('/admin/matching_settings')
+def matching_settings():
+    return render_template('admin/matching_settings.html', title='Matching Settings') # change
+
+@app.route('/admin/signup_settings')
+def sign_up_settings():
+    return render_template('admin/dashboard.html', title='Sign-Up Settings')
+
+@app.route('/admin/allocate')
+def allocate():
+    template_input = """{
+  "mentors": [
+    {
+      "ID": 0,
+      "name": "name1",
+      "age": 20,
+      "isMale": true,
+      "menteeLimit": 2
+    },
+    {
+      "ID": 1,
+      "name": "name1",
+      "age": 15,
+      "isMale": true
+    },
+    {
+      "ID": 2,
+      "name": "name2",
+      "age": 10,
+      "isMale": true
+    }
+  ],
+  "mentees": [
+    {
+      "ID": 3,
+      "name": "name1",
+      "age": 18,
+      "last name": "lastname2",
+      "specialization": "AI",
+      "isMale": true
+    },
+    {
+      "ID": 4,
+      "name": "name1",
+      "age": 19,
+      "last name": "lastname2",
+      "specialization": "AI",
+      "isMale": true
+    },
+    {
+      "ID": 5,
+      "name": "name1",
+      "age": 12,
+      "last name": "lastname2",
+      "specialization": "AI",
+      "isMale": true
+    },
+    {
+      "ID": 6,
+      "name": "name1",
+      "age": 10,
+      "last name": "lastname2",
+      "specialization": "AI",
+      "isMale": true
+    }
+  ]
+}"""
+    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = template_input)
+    return response.text #render_template('admin/matching_settings.html', title='Matching Settings')
 
 # We only need this for local dev
 if __name__ == '__main__':

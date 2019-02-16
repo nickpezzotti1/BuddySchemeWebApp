@@ -204,8 +204,11 @@ def update_hash_password(k_number, password_hash):
     """ Given the k_number, will update the password_hash"""
 
     if type(password_hash) is str:
-        return _insert(f"UPDATE Students set password_hash={ "\"" + password_hash + "\""};")    
+        password_hash_sql = "\"" + password_hash + "\""
+        return _insert(f"UPDATE Students set password_hash={password_hash_sql};")    
     else:
+        raise TypeError(f"{type(password_hash)} type isn't accepted")
+
 
 def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""
@@ -323,6 +326,7 @@ def delete_students(k_number):
 
     return delete_hobbies(k_number) and delete_interests(k_number) and delete_mentors(k_number) and delete_mentees(k_number)
 
+
 def get_all_students_data_basic():
     """ God knows what this function does"""
     
@@ -330,9 +334,18 @@ def get_all_students_data_basic():
     return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;") 
 
 
-# TODO : FOR NOW do only singular
-# TODO : Get all functions
-# TODO : Get functions with the list options?
+def get_all_mentors():
+    """ Returns all the k-number of mentors"""
+    
+    return _query("SELECT mentor_k_number FROM Allocation;")
+
+
+def get_all_mentees():
+    """ Returns all the k-number of the mentees"""
+    
+    return _query("SELECT mentee_k_number FROM Allocation;")
+
+
 if __name__ == '__main__':
     print(_query("SELECT * from Interests;"))
     update_interests("K1543367", ["AI", "ML", "DL"])

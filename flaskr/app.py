@@ -186,69 +186,44 @@ def sign_up_settings():
 
 @app.route('/admin/allocate')
 def allocate():
-    template_input = """{
-  "mentors": [
-    {
-      "ID": 0,
-      "name": "name1",
-      "age": 20,
-      "isMale": true,
-      "menteeLimit": 2
-    },
-    {
-      "ID": 1,
-      "name": "name1",
-      "age": 15,
-      "isMale": true
-    },
-    {
-      "ID": 2,
-      "name": "name2",
-      "age": 10,
-      "isMale": true
-    }
-  ],
-  "mentees": [
-    {
-      "ID": 3,
-      "name": "name1",
-      "age": 18,
-      "last name": "lastname2",
-      "specialization": "AI",
-      "isMale": true
-    },
-    {
-      "ID": 4,
-      "name": "name1",
-      "age": 19,
-      "last name": "lastname2",
-      "specialization": "AI",
-      "isMale": true
-    },
-    {
-      "ID": 5,
-      "name": "name1",
-      "age": 12,
-      "last name": "lastname2",
-      "specialization": "AI",
-      "isMale": true
-    },
-    {
-      "ID": 6,
-      "name": "name1",
-      "age": 10,
-      "last name": "lastname2",
-      "specialization": "AI",
-      "isMale": true
-    }
-  ]
-}"""
+    # Replace template_input with real input from db
 
-    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = template_input)
+
+    # Get all mentors from database
+    mentors = ["k098", "k987", "k876"]
+
+    # Get all mentees from database
+    mentees = ["k123", "k234", "k456"]
+
+    input = {"mentors" : [], "mentees": []}
+    for mentor in mentors :
+        input["mentors"].append(
+        {
+            "ID": int(mentor[1:]), #TODO
+            "age": 20,
+            "isMale": True,
+            "menteeLimit": 1
+        }
+        )
+
+    for mentee in mentees :
+        input["mentees"].append(
+        {
+            "ID": int(mentee[1:]), #TODO
+            "age": 20,
+            "isMale": True
+        }
+        )
+
+    input_string = json.dumps(input)
+
+    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = input_string)
     # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
     response_text = response.text[1:-1].replace("\\", "")
-    json_response = json.loads(response_text)
-    return json_response["assignments"][0]["mentor_id"]
+    #json_response = json.loads(response_text)
+
+    ## update the database with the new assignments
+    return response_text
 
 # We only need this for local dev
 if __name__ == '__main__':

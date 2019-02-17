@@ -64,7 +64,7 @@ def signup():
             # hashed_password = generate_password_hash(registration_form.password.data)
             hashed_password = generate_password_hash("12345678", method="sha256")
 
-            db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", hashed_password)
+            db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", 0, hashed_password, False)
             app.logger.warning('register user: ' + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences
@@ -93,15 +93,15 @@ def logout():
 @app.route("/mentor")
 #@permissioned_login_required(role="MENTOR", redirect_on_fail="/dashboard")
 def mentor():
-    print(db.get_information(current_user.k_number))
+    print(db.get_user_data(current_user.k_number))
 
-    user_info = dict(db.get_information(current_user.k_number), **db.get_user_data(current_user.k_number))
+    user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
     return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
 
 @app.route("/mentee")
 #@permissioned_login_required(role="MENTEE", redirect_on_fail="/dashboard")
 def mentee():
-    user_info = dict(db.get_information(current_user.k_number), **db.get_user_data(current_user.k_number))
+    user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
     return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_info=user_info)
 
 @app.route("/mentor/preferences", methods = ['POST', 'GET'])
@@ -115,7 +115,7 @@ def mentor_preferences():
         #### db.update_informations(current_user.k_number, hobbies=request.form.getlist('hobbies')[0], interests=request.form.getlist('interests')[0])
         return redirect(url_for("mentor"))
     else:
-        user_info = dict(db.get_information(current_user.k_number), **db.get_user_data(current_user.k_number))
+        user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
         return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
 
 @app.route("/mentee/preferences", methods = ['POST', 'GET'])
@@ -128,7 +128,7 @@ def mentee_preferences():
         #### db.update_informations(current_user.k_number, hobbies=request.form.getlist('hobbies')[0], interests=request.form.getlist('interests')[0])
         return redirect(url_for("mentee"))
     else:
-        user_info = dict(db.get_information(current_user.k_number), **db.get_user_data(current_user.k_number))
+        user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
         return render_template("user_screens/mentee/mentee_preferences_page.html", title="Your Preferences", user_info=user_info)
 
 @app.route("/mentor/mentee-list")

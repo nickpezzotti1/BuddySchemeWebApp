@@ -6,7 +6,7 @@ class User(UserMixin):
         self.k_number = k_number
         self.id = k_number
         self.password = None
-        self.email_confirmed = None
+        self.email_confirmed = False
         self.role = "ADMIN"
 
         try:

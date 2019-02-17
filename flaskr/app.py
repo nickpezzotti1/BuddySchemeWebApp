@@ -178,20 +178,20 @@ def admin_dashboard():
 
 @app.route('/admin/view_students', methods=['POST', 'GET'])
 def admin_view_students():
-    data = basic.get_all_students_data_basic()
+    data = db.get_all_students_data_basic()
     return render_template('admin/view_students.html', title='View Students', data=data)
 
 @app.route('/admin/student_details', methods=['POST'])
 def view_student_details():
     if(request.method == 'POST'):
         kNum = request.form['knum']
-        udata = basic.get_user_data(kNum)
-        info = basic.get_information(kNum)
+        udata = db.get_user_data(kNum)
+        info = db.get_information(kNum)
         isTor = True #udata.is_mentor change
         if isTor:
-            matches = basic.get_mentee_details(kNum)
+            matches = db.get_mentee_details(kNum)
         else:
-            matches = basic.get_mentor_details(kNum)
+            matches = db.get_mentor_details(kNum)
 
         return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, info=info, matches=matches)
     else:
@@ -213,7 +213,6 @@ def sign_up_settings():
 @app.route('/admin/allocate')
 def allocate():
     # Replace template_input with real input from db
-
 
     # Get all mentors from database
     mentors = ["k098", "k987", "k876"]

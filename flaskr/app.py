@@ -215,16 +215,17 @@ def allocate():
     # Replace template_input with real input from db
 
     # Get all mentors from database
-    mentors = ["k098", "k987", "k876"]
+    mentors = db.get_all_mentors()
 
     # Get all mentees from database
-    mentees = ["k123", "k234", "k456"]
+    mentees = db.get_all_mentees()
+    print(mentees)
 
     input = {"mentors" : [], "mentees": []}
     for mentor in mentors :
         input["mentors"].append(
         {
-            "ID": int(mentor[1:]), #TODO
+            "ID": int(mentor["mentor_k_number"][1:]), #TODO
             "age": 20,
             "isMale": True,
             "menteeLimit": 1
@@ -234,7 +235,7 @@ def allocate():
     for mentee in mentees :
         input["mentees"].append(
         {
-            "ID": int(mentee[1:]), #TODO
+            "ID": int(mentee["mentee_k_number"][1:]), #TODO
             "age": 20,
             "isMale": True
         }
@@ -245,10 +246,18 @@ def allocate():
     response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = input_string)
     # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
     response_text = response.text[1:-1].replace("\\", "")
-    #json_response = json.loads(response_text)
+    json_response = json.loads(response_text)
+    pairs = json_response["assignments"]
+
+    try:
+        for pair in pairs:
+            db.insert_mentor_mentee("k"+pair["mentor_id"], "k"+pair["mentee_id"])
+    except:
+        print("Error in inserting into db")
 
     ## update the database with the new assignments
-    return response_text
+
+    return "Entered the following allocations in the database" + response_text
 
 # We only need this for local dev
 if __name__ == '__main__':

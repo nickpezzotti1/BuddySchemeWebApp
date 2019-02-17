@@ -11,12 +11,15 @@ class User(UserMixin):
 
         try:
             self.password = db.get_user_hashed_password(k_number)
-            self.email_confirmed = db.get_user_data(k_number)["email_confirmed"]
+            # self.email_confirmed = db.get_user_data(k_number)["email_confirmed"]
 
         except Exception as e:
             print("Exeception occured:{}".format(e))
     
-    @property
     def is_active(self):
         # user only able to login if email is confirmed
         return self.email_confirmed
+
+    def activate(self):
+        # activates user account in database
+        print("activated")

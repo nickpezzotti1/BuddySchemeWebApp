@@ -6,11 +6,13 @@ from user import User
 import basic as db
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from auth_token import generate_token, verify_token
 import requests
 import json
 
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"
+# app.config["SECURITY_PASSWORD_SALT"]=53
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -78,6 +80,32 @@ def signup():
             return render_template("signup.html", registration_form=registration_form)
 
     return render_template("signup.html", registration_form=registration_form)
+
+
+@app.route("/confirm/<token>")
+@login_required
+def confirm_email(token):
+    try:
+        k_number = verify_token(app.config["SECRET_KEY"], token)
+    except:
+        app.logger.warning("invalid token")
+        return "invalid token"
+    if k_number:
+        if current_user.email_confirmed:
+            return "account already active"
+        else:
+            current_user.activate()
+            return "account activated"
+    else:
+        app.logger.warning("token verification failed")
+        return "token verification fail"
+
+
+@app.route("/create")
+@login_required
+def create_token():
+    return generate_token(app.config["SECRET_KEY"], current_user.k_number)
+
 
 @app.route("/dashboard")
 @login_required

@@ -13,4 +13,5 @@ class RegistrationForm(FlaskForm):
     k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     confirm_password = PasswordField('confirm_password', validators=[DataRequired(), EqualTo("password")])
+    is_mentor = BooleanField('is_mentor')
     registration_submit = SubmitField("Sign Up")

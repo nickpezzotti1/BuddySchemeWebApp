@@ -63,10 +63,11 @@ def signup():
             first_name = registration_form.first_name.data
             last_name = registration_form.last_name.data
             k_number = registration_form.k_number.data
+            is_mentor = registration_form.is_mentor.data
             # hashed_password = generate_password_hash(registration_form.password.data)
             hashed_password = generate_password_hash("12345678", method="sha256")
 
-            db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", 0, hashed_password, False)
+            db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False)
             app.logger.warning('register user: ' + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences

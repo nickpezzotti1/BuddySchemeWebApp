@@ -6,6 +6,8 @@ from user import User
 import basic as db
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+import requests
+import json
 
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"
@@ -131,7 +133,7 @@ def mentee_preferences():
         user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
         return render_template("user_screens/mentee/mentee_preferences_page.html", title="Your Preferences", user_info=user_info)
 
-@app.route("/mentor/mentee-list")
+@app.route('/mentor/mentee-list')
 def mentor_mentee_list():
     mentee_list = db.get_mentees(current_user.k_number)
 
@@ -145,7 +147,7 @@ def mentor_mentee_list():
 
     return render_template("user_screens/mentor/mentor_mentee_list_page.html", title="Your Mentees", mentees=mentee_list_data)
 
-@app.route("/mentee/mentor-list")
+@app.route('/mentee/mentor-list')
 def mentee_mentor_list():
     mentor_list = db.get_mentors(current_user.k_number)
 
@@ -159,14 +161,96 @@ def mentee_mentor_list():
 
     return render_template("user_screens/mentee/mentee_mentor_list_page.html", title="Your Mentors", mentors=mentor_list_data)
 
-@app.route("/mentor/mentee/<k_number_mentee>")
+@app.route('/mentor/mentee/<k_number_mentee>')
 def mentor_mentee(k_number_mentee):
     return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_info=db.get_user_data(k_number_mentee), k_number_mentee=k_number_mentee)
 
-@app.route("/mentee/mentor/<k_number_mentor>")
+@app.route('/mentee/mentor/<k_number_mentor>')
 def mentee_mentor(k_number_mentor):
-    return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentor_info=db.get_user_data(k_number_mentor), k_number_mentor=k_number_mentor)
+
+    return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+
+
+@app.route('/admin')
+def admin_dashboard():
+
+    return render_template('admin/dashboard.html', title='Admin Dashboard')
+
+@app.route('/admin/view_students', methods=['POST', 'GET'])
+def admin_view_students():
+    data = basic.get_all_students_data_basic()
+    return render_template('admin/view_students.html', title='View Students', data=data)
+
+@app.route('/admin/student_details', methods=['POST'])
+def view_student_details():
+    if(request.method == 'POST'):
+        kNum = request.form['knum']
+        udata = basic.get_user_data(kNum)
+        info = basic.get_information(kNum)
+        isTor = True #udata.is_mentor change
+        if isTor:
+            matches = basic.get_mentee_details(kNum)
+        else:
+            matches = basic.get_mentor_details(kNum)
+
+        return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, info=info, matches=matches)
+    else:
+        admin_view_students()
+
+@app.route('/admin/general_settings')
+def general_settings():
+
+    return render_template('admin/general_settings.html', title='General Settings')
+
+@app.route('/admin/matching_settings')
+def matching_settings():
+    return render_template('admin/matching_settings.html', title='Matching Settings') # change
+
+@app.route('/admin/signup_settings')
+def sign_up_settings():
+    return render_template('admin/dashboard.html', title='Sign-Up Settings')
+
+@app.route('/admin/allocate')
+def allocate():
+    # Replace template_input with real input from db
+
+
+    # Get all mentors from database
+    mentors = ["k098", "k987", "k876"]
+
+    # Get all mentees from database
+    mentees = ["k123", "k234", "k456"]
+
+    input = {"mentors" : [], "mentees": []}
+    for mentor in mentors :
+        input["mentors"].append(
+        {
+            "ID": int(mentor[1:]), #TODO
+            "age": 20,
+            "isMale": True,
+            "menteeLimit": 1
+        }
+        )
+
+    for mentee in mentees :
+        input["mentees"].append(
+        {
+            "ID": int(mentee[1:]), #TODO
+            "age": 20,
+            "isMale": True
+        }
+        )
+
+    input_string = json.dumps(input)
+
+    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = input_string)
+    # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
+    response_text = response.text[1:-1].replace("\\", "")
+    #json_response = json.loads(response_text)
+
+    ## update the database with the new assignments
+    return response_text
 
 # We only need this for local dev
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

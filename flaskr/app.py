@@ -97,14 +97,42 @@ def logout():
 #@permissioned_login_required(role="MENTOR", redirect_on_fail="/dashboard")
 def mentor():
     print(db.get_user_data(current_user.k_number))
+    
+    # retrieve interests from db and format into a list
+    interests = []
+    for interest_pair in db.get_interests(current_user.k_number):
+        interests.append(interest_pair["interest"])
 
-    user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
+    user_info["interests"] = interests
+
+    # retrieve hobbies from db and format into a list
+    hobbies = []
+    for hobby_pair in db.get_hobbies(current_user.k_number):
+        hobbies.append(hobby_pair["hobby"])
+
+    user_info["hobbies"] = hobbies
+
     return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
 
 @app.route("/mentee")
 #@permissioned_login_required(role="MENTEE", redirect_on_fail="/dashboard")
 def mentee():
-    user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
+    user_info = db.get_user_data(current_user.k_number)
+    
+    # retrieve interests from db and format into a list
+    interests = []
+    for interest_pair in db.get_interests(current_user.k_number):
+        interests.append(interest_pair["interest"])
+
+    user_info["interests"] = interests
+
+    # retrieve hobbies from db and format into a list
+    hobbies = []
+    for hobby_pair in db.get_hobbies(current_user.k_number):
+        hobbies.append(hobby_pair["hobby"])
+
+    user_info["hobbies"] = hobbies
+
     return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_info=user_info)
 
 @app.route("/mentor/preferences", methods = ['POST', 'GET'])

@@ -14,6 +14,7 @@ import json
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"
 # app.config["SECURITY_PASSWORD_SALT"]=53
+app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -87,7 +88,7 @@ def signup():
 @login_required
 def confirm_email(token):
     try:
-        k_number = verify_token(app.config["SECRET_KEY"], token)
+        k_number = verify_token(app.config["SECRET_KEY"], token, expiration=app.config["EMAIL_CONFIRMATION_EXPIRATION"])
     except:
         app.logger.warning("invalid token")
         return "invalid token"

@@ -7,7 +7,7 @@ def generate_token(secret_key, k_number):
     return token
 
 
-def verify_token(secret_key, token, expiration=86400):
+def verify_token(secret_key, token, expiration=3600):
     serializer = URLSafeTimedSerializer(secret_key)
     try:
         k_number = serializer.loads(token, max_age=expiration)

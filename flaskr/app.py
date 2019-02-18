@@ -96,42 +96,16 @@ def logout():
 @app.route("/mentor")
 #@permissioned_login_required(role="MENTOR", redirect_on_fail="/dashboard")
 def mentor():
-    print(db.get_user_data(current_user.k_number))
-    
-    # retrieve interests from db and format into a list
-    interests = []
-    for interest_pair in db.get_interests(current_user.k_number):
-        interests.append(interest_pair["interest"])
 
-    user_info["interests"] = interests
-
-    # retrieve hobbies from db and format into a list
-    hobbies = []
-    for hobby_pair in db.get_hobbies(current_user.k_number):
-        hobbies.append(hobby_pair["hobby"])
-
-    user_info["hobbies"] = hobbies
+    user_info = get_all_user_info(current_user.k_number)
 
     return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
 
 @app.route("/mentee")
 #@permissioned_login_required(role="MENTEE", redirect_on_fail="/dashboard")
 def mentee():
-    user_info = db.get_user_data(current_user.k_number)
     
-    # retrieve interests from db and format into a list
-    interests = []
-    for interest_pair in db.get_interests(current_user.k_number):
-        interests.append(interest_pair["interest"])
-
-    user_info["interests"] = interests
-
-    # retrieve hobbies from db and format into a list
-    hobbies = []
-    for hobby_pair in db.get_hobbies(current_user.k_number):
-        hobbies.append(hobby_pair["hobby"])
-
-    user_info["hobbies"] = hobbies
+    user_info = get_all_user_info(current_user.k_number)
 
     return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_info=user_info)
 
@@ -287,6 +261,28 @@ def allocate():
     ## update the database with the new assignments
 
     return "Entered the following allocations in the database" + response_text
+
+
+def get_all_user_info(k_number):
+    """ Get all user info from database and format into a single dict"""
+    
+    user_info = db.get_user_data(k_number)
+    
+    # retrieve interests from db and format into a list
+    interests = []
+    for interest_pair in db.get_interests(k_number):
+        interests.append(interest_pair["interest"])
+
+    user_info["interests"] = interests
+
+    # retrieve hobbies from db and format into a list
+    hobbies = []
+    for hobby_pair in db.get_hobbies(k_number):
+        hobbies.append(hobby_pair["hobby"])
+
+    user_info["hobbies"] = hobbies
+
+    return user_info
 
 # We only need this for local dev
 if __name__ == '__main__':

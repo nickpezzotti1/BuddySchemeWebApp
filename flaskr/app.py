@@ -113,11 +113,7 @@ def mentee():
 def mentor_preferences():
 
     if request.method == "POST":
-        # TODO: Perform validation before updating table
-        # user_info['hobbies'] = request.form.getlist('hobbies')
-        # user_info['interests'] = request.form.getlist('interests')
-        # print(request.form.getlist('hobbies'))
-        #### db.update_informations(current_user.k_number, hobbies=request.form.getlist('hobbies')[0], interests=request.form.getlist('interests')[0])
+        update_user_preferences(current_user.k_number, request.form.getlist('hobbies'), request.form.getlist('interests'))
         return redirect(url_for("mentor"))
     else:
         user_info = get_all_user_info(current_user.k_number)
@@ -125,12 +121,9 @@ def mentor_preferences():
 
 @app.route("/mentee/preferences", methods = ['POST', 'GET'])
 def mentee_preferences():
+
     if request.method == "POST":
-        # TODO: Perform validation before updating table
-        # mentee_user_info['hobbies'] = request.form.getlist('hobbies')
-        # mentee_user_info['interests'] = request.form.getlist('interests')
-        # print(request.form.getlist('hobbies'))
-        #### db.update_informations(current_user.k_number, hobbies=request.form.getlist('hobbies')[0], interests=request.form.getlist('interests')[0])
+        update_user_preferences(current_user.k_number, request.form.getlist('hobbies'), request.form.getlist('interests'))
         return redirect(url_for("mentee"))
     else:
         user_info = get_all_user_info(current_user.k_number)
@@ -283,6 +276,18 @@ def get_all_user_info(k_number):
     user_info["hobbies"] = hobbies
 
     return user_info
+
+def update_user_preferences(k_number, hobbies, interests):
+    # delete all hobbies and interests
+    db.delete_hobbies(k_number)
+    db.delete_interests(k_number)
+
+    # insert hobbies and interests according to those ticked
+    for hobby in hobbies:
+        db.insert_hobbies(k_number, hobby)
+
+    for interest in interests:
+        db.insert_interests(k_number, interest)
 
 # We only need this for local dev
 if __name__ == '__main__':

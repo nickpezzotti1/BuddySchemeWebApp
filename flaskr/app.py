@@ -284,10 +284,10 @@ def update_user_preferences(k_number, hobbies, interests):
 
     # insert hobbies and interests according to those ticked
     for hobby in hobbies:
-        db.insert_hobbies(k_number, hobby)
+        db.insert_hobby(k_number, hobby)
 
     for interest in interests:
-        db.insert_interests(k_number, interest)
+        db.insert_interest(k_number, interest)
 
 # We only need this for local dev
 if __name__ == '__main__':

@@ -277,13 +277,13 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
     return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)});")
 
 
-def insert_hobbies(k_number, hobbies):
+def insert_hobby(k_number, hobby):
     """ Will entirely populate an entry for the Hobbies database"""
 
     return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobbies, k_number])});")
 
 
-def insert_interests(k_number, interests):
+def insert_interest(k_number, interest):
     """ Will entirely populate an entry for Interests table"""
 
     return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")

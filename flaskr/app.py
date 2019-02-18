@@ -7,6 +7,7 @@ import basic as db
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from auth_token import generate_token, verify_token
+from emailer import send_email
 import requests
 import json
 
@@ -104,7 +105,16 @@ def confirm_email(token):
 @app.route("/create")
 @login_required
 def create_token():
-    return generate_token(app.config["SECRET_KEY"], current_user.k_number)
+    token = generate_token(app.config["SECRET_KEY"], current_user.k_number)
+
+    sender = "no-reply@sbs.kcl.ac.uk"
+    recipients = [current_user.k_number + "@kcl.ac.uk"]
+    subject = "Email Confirmation - Student Buddy System"
+    path = "http://localhost:5000/confirm/"
+    content = f'Activate your email at {path}{token}'
+
+    send_email(sender, recipients, subject, content)
+    return token
 
 
 @app.route("/dashboard")

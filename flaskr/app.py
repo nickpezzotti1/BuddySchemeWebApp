@@ -104,7 +104,7 @@ def mentor():
 @app.route("/mentee")
 #@permissioned_login_required(role="MENTEE", redirect_on_fail="/dashboard")
 def mentee():
-    
+
     user_info = get_all_user_info(current_user.k_number)
 
     return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_info=user_info)
@@ -120,7 +120,7 @@ def mentor_preferences():
         #### db.update_informations(current_user.k_number, hobbies=request.form.getlist('hobbies')[0], interests=request.form.getlist('interests')[0])
         return redirect(url_for("mentor"))
     else:
-        user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
+        user_info = get_all_user_info(current_user.k_number)
         return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
 
 @app.route("/mentee/preferences", methods = ['POST', 'GET'])
@@ -133,7 +133,7 @@ def mentee_preferences():
         #### db.update_informations(current_user.k_number, hobbies=request.form.getlist('hobbies')[0], interests=request.form.getlist('interests')[0])
         return redirect(url_for("mentee"))
     else:
-        user_info = dict(db.get_user_data(current_user.k_number), **db.get_user_data(current_user.k_number))
+        user_info = get_all_user_info(current_user.k_number)
         return render_template("user_screens/mentee/mentee_preferences_page.html", title="Your Preferences", user_info=user_info)
 
 @app.route('/mentor/mentee-list')

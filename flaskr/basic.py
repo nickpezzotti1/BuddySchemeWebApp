@@ -280,13 +280,13 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
 def insert_hobby(k_number, hobby):
     """ Will entirely populate an entry for the Hobbies database"""
 
-    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobbies, k_number])});")
+    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobby, k_number])});")
 
 
 def insert_interest(k_number, interest):
     """ Will entirely populate an entry for Interests table"""
 
-    return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")
+    return _insert(f"INSERT INTO Interests VALUES({_to_str([interest, k_number])});")
 
 
 # TODO Need to check for hobbies type

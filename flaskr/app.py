@@ -181,7 +181,6 @@ def mentee_mentor(k_number_mentor):
 
 @app.route('/admin')
 def admin_dashboard():
-
     return render_template('admin/dashboard.html', title='Admin Dashboard')
 
 @app.route('/admin/view_students', methods=['POST', 'GET'])
@@ -231,9 +230,9 @@ def general_settings():
 
     return render_template('admin/general_settings.html', title='General Settings')
 
-@app.route('/admin/matching_settings')
-def matching_settings():
-    return render_template('admin/matching_settings.html', title='Matching Settings') # change
+@app.route('/admin/allocation_algorithm')
+def allocation_algorithm():
+    return render_template('admin/allocation_algorithm.html', title='allocation_algorithm') # change
 
 @app.route('/admin/signup_settings')
 def sign_up_settings():
@@ -302,9 +301,9 @@ def manually_assign():
 
 def get_all_user_info(k_number):
     """ Get all user info from database and format into a single dict"""
-    
+
     user_info = db.get_user_data(k_number)
-    
+
     # retrieve interests from db and format into a list
     interests = []
     for interest_pair in db.get_interests(k_number):

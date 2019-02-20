@@ -53,10 +53,11 @@
         <td>{{student.gender}}</td>
         <td>{{student.year_study}}</td>
         <td>{{student.matches}}</td>
-<form method="POST" name='assign' action={{url_for("view_student_details")}}>
-    <input type="hidden" name='{% if udata.is_mentor %} {{"torNum"}} {% else %} {{"teeNum"}}{% endif %}' value="{{udata.k_number}}"></input>
-    <input type="hidden" name='{% if udata.is_mentor %} {{"teeNum"}} {% else %} {{"torNum"}}{% endif %}' value="{{student.k_number}}"></input>
-    <td><input type="submit" class="btn btn-lg btn-block btn-primary" value="Assign"></input></td>
+<form method="POST" action={{url_for("view_student_details")}}>
+    <input type='hidden' name='knum' value='{{udata.k_number}}'></input>
+    <input type="hidden" name='{% if udata.is_mentor %}{{"torNum"}}{% else %}{{"teeNum"}}{% endif %}' value="{{udata.k_number}}"></input>
+    <input type="hidden" name='{% if udata.is_mentor %}{{"teeNum"}}{% else %}{{"torNum"}}{% endif %}' value="{{student.k_number}}"></input>
+    <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='mkAlloc' onclick='return alConf("{{student.first_name + " " + student.last_name}}")' value="Assign"></input></td>
 </form>
 </tr>        
 {% endfor %}
@@ -74,19 +75,23 @@
 
 <script>
     function ele(id) {
-        return      document.getElementById(id)
+    return document.getElementById(id)
     }
 
     function filterName() {
-        var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i")
-        var tb = ele('tbody')
-        for (var i = 0, row; row = tb.rows[i]; i++) {
-            if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) {   // need to impl show/no show if other filter on 
-                row.style.display = ''
-            } else {
-                row.style.display = 'none'
-            }
-        }
+    var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i")
+            var tb = ele('tbody')
+            for (var i = 0, row; row = tb.rows[i]; i++) {
+    if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) {   // need to impl show/no show if other filter on 
+    row.style.display = ''
+    } else {
+    row.style.display = 'none'
+    }
+    }
+    }
+
+    function alConf(name){
+    return confirm("Match {{udata.first_name + " " + udata.last_name}} With " + name + "?")
     }
 </script>
 

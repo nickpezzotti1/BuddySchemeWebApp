@@ -369,6 +369,12 @@ def get_manual_allocation_matches(k_number, is_tor):
     else:
         return "Error: one of the field did not pass the sanity check"
     
+def make_manual_allocation(tee_number, tor_number):
+    if _sanity_check(tee_number) and _sanity_check(tor_number):
+        return _insert(f"INSERT INTO Allocation VALUES({_to_str(tor_number)}, {_to_str(tee_number)});")
+    else:
+        return "Error: one of the field did not pass the sanity check"
+    
 def remove_allocation(tee_number, tor_number):
     if _sanity_check(tee_number) and _sanity_check(tor_number):
         return _insert(f"DELETE FROM Allocation WHERE mentor_k_number = {_to_str(tor_number)} AND mentee_k_number = {_to_str(tee_number)};")

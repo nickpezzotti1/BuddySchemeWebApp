@@ -192,16 +192,19 @@ def admin_view_students():
 @app.route('/admin/student_details', methods=['GET', 'POST'])
 def view_student_details():
     if(request.method == 'POST' and 'knum' in request.form):
-        print(request.form)
         kNum = request.form['knum']
         if('mkAdmin' in request.form):
             res = db.alter_admin_status(kNum, True)
-        if('rmAdmin' in request.form):
-            res = db.alter_admin_status(kNum, False)                
+        elif('rmAdmin' in request.form):
+            res = db.alter_admin_status(kNum, False)
+        elif('mkAlloc' in request.form):
+            torNum = request.form['torNum']
+            teeNum = request.form['teeNum']
+            res = db.make_manual_allocation(teeNum, torNum)
         elif("rmAlloc" in request.form):
             torNum = request.form['torNum']
             teeNum = request.form['teeNum']
-            res =db.remove_allocation(teeNum, torNum) 
+            res = db.remove_allocation(teeNum, torNum)
         udata = db.get_user_data(kNum)
         hobbies = db.get_hobbies(kNum)
         interests = db.get_interests(kNum)

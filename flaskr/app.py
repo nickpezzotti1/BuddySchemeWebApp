@@ -232,7 +232,7 @@ def general_settings():
 
 @app.route('/admin/allocation_algorithm')
 def allocation_algorithm():
-    return render_template('admin/allocation_algorithm.html', title='allocation_algorithm') # change
+    return render_template('admin/allocation_algorithm.html', title='allocation_algorithm', assignments=allocate())
 
 @app.route('/admin/signup_settings')
 def sign_up_settings():
@@ -240,36 +240,7 @@ def sign_up_settings():
 
 @app.route('/admin/allocate')
 def allocate():
-    # Replace template_input with real input from db
-
-    # Get all mentors from database
-    mentors = db.get_all_mentors()
-
-    # Get all mentees from database
-    mentees = db.get_all_mentees()
-    print(mentees)
-
-    input = {"mentors": [], "mentees": []}
-    for mentor in mentors:
-        input["mentors"].append(
-                                {
-                                "ID": int(mentor["mentor_k_number"][1:]), #TODO
-                                "age": 20,
-                                "isMale": True,
-                                "menteeLimit": 1
-                                }
-                                )
-
-    for mentee in mentees:
-        input["mentees"].append(
-                                {
-                                "ID": int(mentee["mentee_k_number"][1:]), #TODO
-                                "age": 20,
-                                "isMale": True
-                                }
-                                )
-
-    input_string = json.dumps(input)
+    input_string = generate_mentee_and_mentor_json()
 
     response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
     # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
@@ -283,9 +254,36 @@ def allocate():
     except:
         print("Error in inserting into db")
 
-    ## update the database with the new assignments
+    return "The following assignments have been made:" + str(json_response["assignments"])
 
-    return "Entered the following allocations in the database" + response_text
+def generate_mentee_and_mentor_json():
+    # Get all mentors from database
+    mentors = db.get_all_mentors()
+
+    # Get all mentees from database
+    mentees = db.get_all_mentees()
+
+    input = {"mentors": [], "mentees": []}
+    for mentor in mentors:
+        input["mentors"].append(
+                                {
+                                    "ID": int(mentor["mentor_k_number"][1:]), #TODO
+                                    "age": 20,
+                                    "isMale": True,
+                                    "menteeLimit": 1
+                                }
+                            )
+
+    for mentee in mentees:
+        input["mentees"].append(
+                                {
+                                    "ID": int(mentee["mentee_k_number"][1:]), #TODO
+                                    "age": 20,
+                                    "isMale": True
+                                }
+                            )
+
+    return json.dumps(input)
 
 @app.route('/admin/manually_assign', methods=['GET', 'POST'])
 def manually_assign():
@@ -296,8 +294,6 @@ def manually_assign():
         return render_template('admin/manually_assign.html', title='Manually Assign Match', udata=udata, potentials=potentials) # imprv title?
     else:
         return redirect(url_for('admin_view_students'))
-
-
 
 def get_all_user_info(k_number):
     """ Get all user info from database and format into a single dict"""

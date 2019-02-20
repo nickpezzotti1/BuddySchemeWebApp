@@ -90,9 +90,9 @@ def _to_str(my_str, password_hash=False):
             return str(my_str) 
         # For better looking sql queries
         elif my_str is True:
-            return "\"TRUE\""
+            return 1 
         elif my_str is False:
-            return "\"FALSE\""
+            return 0
  
     raise TypeError(f"{type(my_str)} type isn't accepted.")
 

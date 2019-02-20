@@ -90,10 +90,10 @@ def _to_str(my_str, password_hash=False):
             return str(my_str)
         # For better looking sql queries
         elif my_str is True:
-            return "\"TRUE\""
+            return 1 
         elif my_str is False:
-            return "\"FALSE\""
-
+            return 0
+ 
     raise TypeError(f"{type(my_str)} type isn't accepted.")
 
 
@@ -102,8 +102,8 @@ def _update_students(** kwargs):
         You will need to precise the specific field"""
 
     accepted_fields = {"first_name":str, "last_name":str, "degree_title":str,
-        "year_study":int, "gender":str, "k_number":int, "is_mentor":bool,
-        "email_confirmed": bool}
+        "year_study":int, "gender":str, "k_number":str, "is_mentor":bool,
+        "email_confirmed": bool, "is_admin": bool}
 
     # We need the k_number to update
     if "k_number" not in kwargs:
@@ -127,8 +127,9 @@ def _update_students(** kwargs):
         raise Exception("Need at least one argument.")
 
 
-def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False, is_mentor=False, is_admin=False):
-    """ Front end interface of the private function,
+
+def update_students(k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[]):
+    """ Front end interface of the private function, 
         don't need to know the underlying interface """
 
     accepted_fields = {"k_number": k_number, "first_name": first_name,
@@ -137,7 +138,7 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
         "is_admin": is_admin}
 
     # Set the dictionarry like it's needed
-    dict_fields = {field:value for field, value in  accepted_fields.items() if value is not False}
+    dict_fields = {field:value for field, value in  accepted_fields.items() if type(value) is not list}
 
     return _update_students(** dict_fields)
 
@@ -324,8 +325,15 @@ def delete_mentees(mentor_k_number):
 def delete_students(k_number):
     """ Delete the students entry in the Tables"""
 
-    return delete_hobbies(k_number) and delete_interests(k_number) and delete_mentors(k_number) and delete_mentees(k_number)
+    
+    delete_hobbies(k_number)
+    delete_interests(k_number)
+    delete_mentors(k_number)
+    delete_mentees(k_number)
+    
+    return _insert(f"DELETE FROM Students where k_number={_to_str(k_number)};")
 
+    
 
 def get_all_students_data_basic():
     """ God knows what this function does"""

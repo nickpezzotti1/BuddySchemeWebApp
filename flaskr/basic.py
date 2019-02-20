@@ -11,15 +11,15 @@ HASH_COL = 'password_hash'
 
 def _query(sql_query):
     """ Returns a list of results of query """
-    
+
     # Connect to the database
     conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
 
     # Define result
-    result = []   
+    result = []
 
     try:
-    
+
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute(sql_query)
             result = cursor.fetchall()
@@ -38,7 +38,7 @@ def _query(sql_query):
 
 
 def _insert(sql_query):
-    """ Will push a query to the DB"""    
+    """ Will push a query to the DB"""
 
     # Connect to the database
     conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
@@ -48,19 +48,19 @@ def _insert(sql_query):
             result = cursor.execute(sql_query)
 
         conn.commit()
-            
+
     except Exception as e:
         raise Exception(f"{e}")
         return False
 
     finally:
         conn.close()
-    
+
     return True
 
 
 def _sanity_check(sql_fields):
-    """ Will sanity check the fields 
+    """ Will sanity check the fields
         return true, if we can run it"""
 
     if (type(sql_fields) in [int, bool]) or sql_fields.replace(" ", "").isalnum():
@@ -70,11 +70,11 @@ def _sanity_check(sql_fields):
 
 
 def _to_str(my_str, password_hash=False):
-    """ Will return the string surrounded by 
+    """ Will return the string surrounded by
         double quotes, useful for SQL query
         Or if it's a bool return TRUE/FALSE
         Or if it's a number the number as it is
-        Or if it's a list will call back this function 
+        Or if it's a list will call back this function
         and return all the field separated by ',' """
 
     if password_hash:
@@ -82,12 +82,12 @@ def _to_str(my_str, password_hash=False):
 
     if type(my_str) is list:
         return ",".join([_to_str(i) for i in my_str])
-    
+
     if _sanity_check(my_str):
         if type(my_str) is str:
             return "\"" + my_str + "\""
         elif type(my_str) is int:
-            return str(my_str) 
+            return str(my_str)
         # For better looking sql queries
         elif my_str is True:
             return 1 
@@ -104,11 +104,11 @@ def _update_students(** kwargs):
     accepted_fields = {"first_name":str, "last_name":str, "degree_title":str,
         "year_study":int, "gender":str, "k_number":str, "is_mentor":bool,
         "email_confirmed": bool, "is_admin": bool}
-    
+
     # We need the k_number to update
     if "k_number" not in kwargs:
         raise NameError("K-number could not be found in the list of arguments")
-    
+
     # Will check that the field is valid, only alphanum and right type
     for field, value in kwargs.items():
 
@@ -117,23 +117,24 @@ def _update_students(** kwargs):
         elif type(value) != accepted_fields[field]:
             raise TypeError(f"{field} is the wrong type")
 
-    # Ie if there's k_number and another field to update 
+    # Ie if there's k_number and another field to update
     if len(kwargs) > 1:
         sql_query = "UPDATE Students set "
         sql_query += ", ".join([f"{field} = {_to_str(value)}" for field, value in kwargs.items() if field != "k_number"])
-        sql_query += f" where k_number={_to_str(kwargs['k_number'])};" 
+        sql_query += f" where k_number={_to_str(kwargs['k_number'])};"
         return _insert(sql_query)
     else:
-        raise Exception("Need at least one argument.") 
+        raise Exception("Need at least one argument.")
+
 
 
 def update_students(k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[]):
     """ Front end interface of the private function, 
         don't need to know the underlying interface """
 
-    accepted_fields = {"k_number": k_number, "first_name": first_name, 
-        "last_name": last_name, "degree_title": degree_title, 
-        "year_study": year_study, "gender": gender, "is_mentor": is_mentor, 
+    accepted_fields = {"k_number": k_number, "first_name": first_name,
+        "last_name": last_name, "degree_title": degree_title,
+        "year_study": year_study, "gender": gender, "is_mentor": is_mentor,
         "is_admin": is_admin}
 
     # Set the dictionarry like it's needed
@@ -148,9 +149,9 @@ def update_hobbies(k_number, hobbies):
 
     if type(hobbies) is not list:
         raise TypeError("Hobby/ies must be passed as a list.")
-    
+
     delete_hobbies(k_number)
-    
+
     for hobby in hobbies:
         insert_hobbies(k_number, hobby)
 
@@ -160,7 +161,7 @@ def update_hobbies(k_number, hobbies):
 def update_interests(k_number, interests):
     """ Given the k-number of the students and new interests
         Will replace all the interests by the new one"""
-    
+
     if type(interests) is not list:
         raise TypeError("Interest/s must be passed as a list")
 
@@ -176,7 +177,7 @@ def update_mentee(mentor_k_number, mentees_k_number):
     """ Given the mentor_k_number will update all his mentees"""
 
     if type(mentees_k_number) is not list:
-        raise TypeError("Mentee/s must be passed as a list.") 
+        raise TypeError("Mentee/s must be passed as a list.")
 
     delete_mentees(mentor_k_number)
 
@@ -205,25 +206,25 @@ def update_hash_password(k_number, password_hash):
 
     if type(password_hash) is str:
         password_hash_sql = "\"" + password_hash + "\""
-        return _insert(f"UPDATE Students set password_hash={password_hash_sql};")    
+        return _insert(f"UPDATE Students set password_hash={password_hash_sql};")
     else:
         raise TypeError(f"{type(password_hash)} type isn't accepted")
 
 
 def get_user_data(k_number):
     """ Returns all the data in the Students table except from password hash"""
-    
-    try:        
+
+    try:
         result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
         result.pop(HASH_COL, None) # can check not none
-        return result       
+        return result
 
     except IndexError:
         raise IndexError(f"{k_number} doesn't exist.")
     except KeyError:
         raise KeyError(f"{HASH_COL} not found in table.")
 
-#TODO Should I return something here?    
+#TODO Should I return something here?
 
 
 def get_user_hashed_password(k_number):
@@ -234,7 +235,7 @@ def get_user_hashed_password(k_number):
         return result[0].pop(HASH_COL, None)
 
     except IndexError:
-        raise IndexError(f"{k_number} does not exist.")        
+        raise IndexError(f"{k_number} does not exist.")
     except KeyError:
         raise KeyError(f"{HASH_COL} not found in table")
 
@@ -262,7 +263,7 @@ def get_hobbies(k_number):
 def get_interests(k_number):
     """ Given the k_number will return all the student's interests"""
 
-    return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)}") 
+    return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)}")
 
 
 def insert_mentor_mentee(mentor_k_number, mentee_k_number):
@@ -277,21 +278,21 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
     return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)});")
 
 
-def insert_hobbies(k_number, hobbies):
+def insert_hobby(k_number, hobby):
     """ Will entirely populate an entry for the Hobbies database"""
 
-    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobbies, k_number])});")
+    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobby, k_number])});")
 
 
-def insert_interests(k_number, interests):
+def insert_interest(k_number, interest):
     """ Will entirely populate an entry for Interests table"""
-    
-    return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")
+
+    return _insert(f"INSERT INTO Interests VALUES({_to_str([interest, k_number])});")
 
 
 # TODO Need to check for hobbies type
 def delete_hobbies(k_number, hobbies=False):
-    """ Will delete all the rows where K_number is 
+    """ Will delete all the rows where K_number is
          Or only where hobbies and k-number are"""
 
     if hobbies:
@@ -302,17 +303,17 @@ def delete_hobbies(k_number, hobbies=False):
 
 def delete_interests(k_number, interests=False):
     """ Will delete all the rows where the k-number is
-        Or only where interests and k-number are"""  
+        Or only where interests and k-number are"""
 
     if interests:
         return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)} and interest={_to_str(interests)};")
     else:
-        return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)};")     
+        return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)};")
 
 
 def delete_mentors(mentee_k_number):
     """ Given the mentee k-number will delete all his mentors"""
-        
+
     return _insert(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)};")
 
 def delete_mentees(mentor_k_number):
@@ -336,21 +337,32 @@ def delete_students(k_number):
 
 def get_all_students_data_basic():
     """ God knows what this function does"""
-    
-    # Add has matches 
-    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;") 
+
+    # Add has matches
+    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")
 
 
 def get_all_mentors():
     """ Returns all the k-number of mentors"""
-    
+
     return _query("SELECT mentor_k_number FROM Allocation;")
 
 
 def get_all_mentees():
     """ Returns all the k-number of the mentees"""
-    
+
     return _query("SELECT mentee_k_number FROM Allocation;")
+
+
+
+def get_all_students_data_basic():
+    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
+
+def get_mentee_details(k_number):
+    if _sanity_check(k_number):
+        return _query(f"SELECT k_number, first_name, last_name FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
+    else:
+        return "Error: one of the field did not pass the sanity check"
 
 
 if __name__ == '__main__':

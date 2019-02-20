@@ -1,0 +1,74 @@
+{% extends "shared/user_screen_layout.html" %}
+
+{% block content_block %}
+
+
+
+<!-- Change when is_mentor updated -->
+
+<h2> K-Number: {{udata.k_number}}</h2> 
+<h2> First Name: {{udata.first_name}}</h2> 
+<h2> Last Name: {{udata.last_name}}</h2> 
+<h2> Age: {{udata.age}}</h2> 
+<h2> Hobbies:</h2>
+<ul>
+    {% for hobby in info.hobbies %}
+    <li>{{ hobby }}</li>
+    {% endfor %}
+</ul>
+
+<h2> Academic Interests: </h2>
+<ul>
+    {% for interest in info.fields %}
+    <li>{{ interest }}</li>
+    {% endfor %}
+</ul>
+<br />
+{% if matches|length  %}
+<table class="table table-striped table-hover" id='table'>
+    <thead>
+        <tr colspan=5><h1 class='text-center'>Allocations</h1></tr>
+<tr>
+    <th scope="col" class="text-center">K Number</th>
+    <th scope="col">First Name</th>
+    <th scope="col">Last Name</th>
+    <th scope="col">More Info To include?</th> <!-- chnage when DB updated -->
+    <th scope="col" class="text-center">Action</th>
+</tr>
+</thead>
+<tbody id='tbody'>
+    {% for student in matches %} 
+    <tr>
+        <td>{{student.k_number}}</td>
+        <td>{{student.first_name}}</td>
+        <td>{{student.last_name}}</td>
+        <td>{% if student.is_mentor %} {{"Yes"}} {% else %} {{"No"}}{% endif %}</td>
+<form method="POST" action={{url_for("view_student_details")}}>
+    <input type="hidden" name="knum" value="{{student.k_number}}"></input>
+    <td><input type="submit" class="btn btn-lg btn-block btn-primary" value="Change Allocation"></input></td>
+</form>
+</tr>        
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<h1 class='text-center'> No Matches </h1>
+{% endif %}
+<form method="POST" action="changethis" name='manAlloc'>
+    <input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="Manually Assign Allocation"></input> <!-- change btn to dynamic? -->
+</form>
+<br />
+<br />
+<form method="POST" action="changethis">
+    <input type="submit" class="btn btn-lg btn-block btn-primary my-3" onclick='return delConf()' value="Delete Account And Data" /> 
+</form>
+
+<script>
+    function delConf() {
+        return confirm("This Will Delete The Account, Allocations And All Other Associated Data In Compliance With GDPR Policy. Do You Wish To Continue?") // noscript???
+    }
+</script>
+
+
+{% endblock content_block %}
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--DISCLAIMER: this is inspired from the template that can be downloaded here: https://bootsnipp.com/snippets/z8l2X -->
+<html lang="en">
+
+<head>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/login.css")}}">
+    <script type="text/javascript" src="{{ url_for("static", filename="js/login.js")}}" defer> </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 mx-auto">
+                <div id="second" style="inline">
+                    <div class="myform form ">
+                        <div class="logo mb-3">
+                            <div class="col-md-12 text-center">
+                                <h1>Signup</h1>
+                            </div>
+                        </div>
+                        <form action="#" name="registration" method="post">
+                            {{ registration_form.csrf_token }}
+                            <div class="form-group">
+                                {{ registration_form.first_name.label(class="form-control-label") }}
+                                {{ registration_form.first_name(class="form-control form-control-lg", placeholder="Enter First Name") }}
+                            </div>
+                            <div class="form-group">
+                                {{ registration_form.last_name.label(class="form-control-label") }}
+                                {{ registration_form.last_name(class="form-control form-control-lg", placeholder="Enter Last Name") }}
+                            </div>
+                            <div class="form-group">
+                                {{ registration_form.k_number.label(class="form-control-label") }}
+                                {% if registration_form.k_number.errors %}
+                                {{ registration_form.k_number(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in registration_form.k_number.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ registration_form.k_number(class="form-control form-control-lg", placeholder="Enter k-number") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ registration_form.password.label(class="form-control-label") }}
+                                {{ registration_form.password(class="form-control form-control-lg", placeholder="Enter Password") }}
+
+                            </div>
+                            <div class="form-group">
+                                {{ registration_form.confirm_password.label(class="form-control-label") }}
+                                {% if registration_form.confirm_password.errors %}
+                                {{ registration_form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in registration_form.confirm_password.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ registration_form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-12 text-center ">
+                                {{ registration_form.registration_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+                            </div>
+                            <div class="form-group">
+                                {{ registration_form.is_mentor.label(class="form-control-label") }}
+                                {{ registration_form.is_mentor() }}
+                            </div>
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <p class="text-center"><a href="/login" id="signin">Already have an account?</a></p>
+                                </div>
+                            </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

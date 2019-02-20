@@ -191,19 +191,35 @@ def admin_view_students():
 
 @app.route('/admin/student_details', methods=['GET', 'POST'])
 def view_student_details():
-    if(request.method == 'POST'):
+    if(request.method == 'POST' and 'knum' in request.form):
+        print(request.form)
         kNum = request.form['knum']
+        if('mkAdmin' in request.form):
+            res = db.alter_admin_status(kNum, True)
+        if('rmAdmin' in request.form):
+            res = db.alter_admin_status(kNum, False)                
+        elif("rmAlloc" in request.form):
+            torNum = request.form['torNum']
+            teeNum = request.form['teeNum']
+            res =db.remove_allocation(teeNum, torNum) 
         udata = db.get_user_data(kNum)
-        print(udata)
         hobbies = db.get_hobbies(kNum)
         interests = db.get_interests(kNum)
-        isTor = True     #udata['is_mentor']
+        isTor = udata['is_mentor']
         if isTor:
             matches = db.get_mentee_details(kNum)
         else:
             matches = db.get_mentor_details(kNum)
-
         return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, hobbies=hobbies, interests=interests, matches=matches)
+    else:
+        return redirect(url_for('admin_view_students'))
+
+@app.route('/admin/delete_student', methods=['POST'])
+def delete_student_details():
+    if(request.method == 'POST' and 'knum' in request.form):
+        kNum = request.form['knum']
+        res = db.delete_students(kNum)
+        return render_template('admin/delete_student.html', title='Delete Student Profile ' + kNum, res=res, k_number=kNum)
     else:
         return redirect(url_for('admin_view_students'))
 

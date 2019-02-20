@@ -7,12 +7,12 @@
 <!--h1>  </h1-->
 <div class="text-center">
     Search By Name:
-    <input type='text' id='nameFilt' onkeyup='return filterName()'/>
+    <input type='text' id='nameFilt' onkeyup='return filter()'/>
     <br />
     Filter:     
-    <input type='radio' id='all' name='filter' onclick='return filterall()' checked ='checked' />All
-    <input type='radio' id='over' name='filter' onclick='return filterTors()' />Mentors
-    <input type='radio' id='out' name='filter' onclick='return filterTees()' />Mentees
+    <input type='radio' id='all' name='menFilter' onclick='return filter()' checked ='checked' value='All'/>All
+    <input type='radio' id='over' name='menFilter' onclick='return filter()' value='tor'/>Mentors
+    <input type='radio' id='out' name='menFilter' onclick='return filter()' value='tee'/>Mentees
 </div>
 
 
@@ -22,7 +22,7 @@
             <th scope="col" class="text-center">K Number</th>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
-            <th scope="col"><button id="mentorBtn" onclick='return filterMentor()'>Is Mentor?</button></th> <!-- best way??? -->
+            <th scope="col">Mentor?</th> 
             <th scope="col" class="text-center">Action</th>
         </tr>
     </thead>
@@ -32,13 +32,13 @@
             <td>{{student.k_number}}</td>
             <td>{{student.first_name}}</td>
             <td>{{student.last_name}}</td>
-            <td>{% if student.is_mentor %} {{"Yes"}} {% else %} {{"No"}}{% endif %}</td>
+            <td>{% if student.is_mentor %}{{"Yes"}}{% else %}{{"No"}}{% endif %}</td>
     <form method="POST" action={{url_for("view_student_details")}}>
         <input type="hidden" name="knum" value="{{student.k_number}}"></input>
         <td><input type="submit" class="btn btn-lg btn-block btn-primary" value="More Details"></input></td>
     </form>
 </tr>        
-       {% endfor %}
+{% endfor %}
 </tbody>
 
 </table>
@@ -48,11 +48,12 @@
         return      document.getElementById(id)
     }
 
-    function filterName() {
-        var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i")
+    function filter() {
         var tb = ele('tbody')
+        var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i")
+        var menFil = selMenFil()
         for (var i = 0, row; row = tb.rows[i]; i++) {
-            if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) {   // need to impl show/no show if other filter on 
+            if (filterName(row, reg) && (menFil === 'All' || mentorFilter(row, menFil))) {
                 row.style.display = ''
             } else {
                 row.style.display = 'none'
@@ -60,6 +61,32 @@
         }
     }
 
+    function filterName(row, reg) {
+        if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) {   // need to impl show/no show if other filter on 
+            return true
+        } else {
+            return false
+        }
+    }
+
+    function selMenFil() {
+        var radios = document.getElementsByName('menFilter');
+        for (var i = 0, length = radios.length; i < length; i++)
+        {
+            if (radios[i].checked)
+            {
+                return radios[i].value;
+            }
+        }
+    }
+
+    function mentorFilter(row, fil) {
+        if ((row.cells[3].innerHTML === 'Yes' && fil === 'tor') || (row.cells[3].innerHTML === 'No' && fil === 'tee')) {
+            return true
+        } else {
+            return false
+        }
+    }
 
 </script>
 {% endblock content_block %}

@@ -1,16 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_login import LoginManager, UserMixin, login_required, logout_user, current_user, login_user
-from forms import LoginForm, RegistrationForm
-from flask_wtf import FlaskForm
-from user import User
 import basic as db
-from permissions import permissioned_login_required
-from werkzeug.security import generate_password_hash, check_password_hash
-import requests
+from flask import Flask
+from flask import flash
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask_login import LoginManager
+from flask_login import UserMixin
+from flask_login import current_user
+from flask_login import login_required
+from flask_login import login_user
+from flask_login import logout_user
+from flask_wtf import FlaskForm
+from forms import LoginForm
+from forms import RegistrationForm
 import json
+from permissions import permissioned_login_required
+import requests
+from user import User
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
-app.config["SECRET_KEY"]="powerful secretkey"
+app.config["SECRET_KEY"] = "powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -109,7 +121,7 @@ def mentee():
 
     return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_info=user_info)
 
-@app.route("/mentor/preferences", methods = ['POST', 'GET'])
+@app.route("/mentor/preferences", methods=['POST', 'GET'])
 def mentor_preferences():
 
     if request.method == "POST":
@@ -119,7 +131,7 @@ def mentor_preferences():
         user_info = get_all_user_info(current_user.k_number)
         return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
 
-@app.route("/mentee/preferences", methods = ['POST', 'GET'])
+@app.route("/mentee/preferences", methods=['POST', 'GET'])
 def mentee_preferences():
 
     if request.method == "POST":
@@ -177,21 +189,23 @@ def admin_view_students():
     data = db.get_all_students_data_basic()
     return render_template('admin/view_students.html', title='View Students', data=data)
 
-@app.route('/admin/student_details', methods=['POST'])
+@app.route('/admin/student_details', methods=['GET', 'POST'])
 def view_student_details():
     if(request.method == 'POST'):
         kNum = request.form['knum']
         udata = db.get_user_data(kNum)
-        info = db.get_information(kNum)
-        isTor = True #udata.is_mentor change
+        print(udata)
+        hobbies = db.get_hobbies(kNum)
+        interests = db.get_interests(kNum)
+        isTor = True     #udata['is_mentor']
         if isTor:
             matches = db.get_mentee_details(kNum)
         else:
             matches = db.get_mentor_details(kNum)
 
-        return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, info=info, matches=matches)
+        return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, hobbies=hobbies, interests=interests, matches=matches)
     else:
-        admin_view_students()
+        return redirect(url_for('admin_view_students'))
 
 @app.route('/admin/general_settings')
 def general_settings():
@@ -217,29 +231,29 @@ def allocate():
     mentees = db.get_all_mentees()
     print(mentees)
 
-    input = {"mentors" : [], "mentees": []}
-    for mentor in mentors :
+    input = {"mentors": [], "mentees": []}
+    for mentor in mentors:
         input["mentors"].append(
-        {
-            "ID": int(mentor["mentor_k_number"][1:]), #TODO
-            "age": 20,
-            "isMale": True,
-            "menteeLimit": 1
-        }
-        )
+                                {
+                                "ID": int(mentor["mentor_k_number"][1:]), #TODO
+                                "age": 20,
+                                "isMale": True,
+                                "menteeLimit": 1
+                                }
+                                )
 
-    for mentee in mentees :
+    for mentee in mentees:
         input["mentees"].append(
-        {
-            "ID": int(mentee["mentee_k_number"][1:]), #TODO
-            "age": 20,
-            "isMale": True
-        }
-        )
+                                {
+                                "ID": int(mentee["mentee_k_number"][1:]), #TODO
+                                "age": 20,
+                                "isMale": True
+                                }
+                                )
 
     input_string = json.dumps(input)
 
-    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data = input_string)
+    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
     # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
     response_text = response.text[1:-1].replace("\\", "")
     json_response = json.loads(response_text)
@@ -247,13 +261,24 @@ def allocate():
 
     try:
         for pair in pairs:
-            db.insert_mentor_mentee("k"+pair["mentor_id"], "k"+pair["mentee_id"])
+            db.insert_mentor_mentee("k" + pair["mentor_id"], "k" + pair["mentee_id"])
     except:
         print("Error in inserting into db")
 
     ## update the database with the new assignments
 
     return "Entered the following allocations in the database" + response_text
+
+@app.route('/admin/manually_assign', methods=['GET', 'POST'])
+def manually_assign():
+    if(request.method == 'POST'):
+        kNum = request.form['knum']
+        udata = db.get_user_data(kNum)
+        potentials = db.get_manual_allocation_matches(kNum, udata['is_mentor'])
+        return render_template('admin/manually_assign.html', title='Manually Assign Match', udata=udata, potentials=potentials) # imprv title?
+    else:
+        return redirect(url_for('admin_view_students'))
+
 
 
 def get_all_user_info(k_number):

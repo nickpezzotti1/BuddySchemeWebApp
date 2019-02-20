@@ -331,7 +331,7 @@ def get_all_students_data_basic():
     """ God knows what this function does"""
 
     # Add has matches
-    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")
+    return _query("SELECT k_number, first_name, last_name, is_mentor FROM Students ORDER BY last_name ASC;")
 
 
 def get_all_mentors():
@@ -348,14 +348,20 @@ def get_all_mentees():
 
 
 def get_all_students_data_basic():
-    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
+    return _query("SELECT k_number, first_name, last_name, is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
 
 def get_mentee_details(k_number):
     if _sanity_check(k_number):
-        return _query(f"SELECT k_number, first_name, last_name FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
+        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 
+def get_manual_allocation_matches(k_number, is_tor):
+    if _sanity_check(k_number):    # and _sanity_check(is_tor):
+        join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
+        return _query(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
+    else:
+        return "Error: one of the field did not pass the sanity check"
 
 if __name__ == '__main__':
     print(_query("SELECT * from Interests;"))

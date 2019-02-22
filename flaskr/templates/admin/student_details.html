@@ -81,6 +81,11 @@
     <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" onclick='return delConf()' value="Delete Account And Data" /> 
 </form>
+<br />
+<form method="POST" action="{{url_for('admin_view_students')}}">
+    <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
+    <input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="Back"/> 
+</form>
 
 <script>
     function delConf() {

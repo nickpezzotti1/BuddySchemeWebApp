@@ -6,6 +6,11 @@
 
 <!-- put in centered div -->
 <div class="text-center">
+    {% if udata['is_mentor'] %}
+    <h2> Mentor </h2>
+    {% else %}
+    <h2> Mentee </h2>
+    {% endif %}
     <h2> K-Number: {{udata.k_number}}</h2> 
     <h2> First Name: {{udata.first_name}}</h2> 
     <h2> Last Name: {{udata.last_name}}</h2> 

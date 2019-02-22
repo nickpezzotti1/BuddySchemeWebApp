@@ -1,25 +1,13 @@
 import basic as db
-from flask import Flask
-from flask import flash
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
-from flask_login import LoginManager
-from flask_login import UserMixin
-from flask_login import current_user
-from flask_login import login_required
-from flask_login import login_user
-from flask_login import logout_user
+from flask import Flask, flash, redirect, render_template, request, url_for
+from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
-from forms import LoginForm
-from forms import RegistrationForm
+from forms import LoginForm, RegistrationForm
 import json
 from permissions import permissioned_login_required
 import requests
 from user import User
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "powerful secretkey"

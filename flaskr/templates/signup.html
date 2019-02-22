@@ -20,6 +20,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-5 mx-auto">
+              {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-warning">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
+              {% block content %}{% endblock %}
                 <div id="second" style="inline">
                     <div class="myform form ">
                         <div class="logo mb-3">

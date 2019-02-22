@@ -6,9 +6,10 @@ CREATE TABLE Students
  degree_title VARCHAR(255) NOT NULL,
  year_study INT NOT NULL,
  gender VARCHAR(255) NOT NULL,
- is_mentor BIT(1) NOT NULL,
- email_confirmed BIT(1) NOT NULL DEFAULT b'0',
- password_hash VARCHAR(255) NOT NULL, 
+ is_mentor tinyint(1) NOT NULL,
+ email_confirmed tinyint(1) NOT NULL DEFAULT 0,
+ password_hash VARCHAR(255) NOT NULL,
+ is_admin tinyint(1) NOT NULL, DEFAULT 0,
  PRIMARY KEY(k_number)
 );
 

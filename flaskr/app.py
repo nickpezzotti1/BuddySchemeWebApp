@@ -51,16 +51,14 @@ def login():
                 if check_password_hash(user.password, login_form.password.data):
                     # redirect to profile page, where he must insert his preferences
                     login_user(user, remember=False)
-                    app.logger.warning('logged in')
                     return redirect("/dashboard")
                 else:
-                    app.logger.warning('wrong password')
+                    flash('The password you entered is incorrect')
                     return redirect("/login")
             else:
                 return redirect("/login")
-        else: # if the form was NOT valid
-            # Flash the error message
-            app.logger.warning('error logging in')
+        else:
+            flash("Error logging in, please check the data that was entered")
             return render_template("login.html", login_form=login_form)
 
     return render_template("login.html", login_form=login_form)
@@ -84,9 +82,8 @@ def signup():
 
             #redirect to profile page, where he must insert his preferences
             return redirect("/dashboard")
-        else: # if the form was NOT valid
-            # Flash the error message
-            app.logger.warning('error registering')
+        else:
+            flash("Error logging in, please check the data that was entered correctly")
             return render_template("signup.html", registration_form=registration_form)
 
     return render_template("signup.html", registration_form=registration_form)

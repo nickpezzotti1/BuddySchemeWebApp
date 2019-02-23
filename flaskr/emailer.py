@@ -1,5 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
+import user
+from auth_token import generate_token
 
 COMMASPACE = ', '
 
@@ -19,3 +21,15 @@ def send_email(sender, recipients, subject, content):
         server.close()
     except Exception as e:
         print(e)
+
+def send_email_confirmation_to_user(user, secret_key):
+    ## TODO: Possible feature to check if email
+    #  was already confirmed and keep track of multiple requests
+    token = generate_token(secret_key, user.k_number)
+    sender = "no-reply@sbs.kcl.ac.uk"
+    recipients = [str(user.k_number) + "@kcl.ac.uk"]
+    subject = "Email Confirmation - Student Buddy System"
+    path = "http://localhost:5000/confirm/"
+    content = f"Welcome to KCL\'s Student Buddy System. \n Please activate your email at {path}{token}"
+    
+    send_email(sender, recipients, subject, content)

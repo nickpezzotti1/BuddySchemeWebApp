@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from emailer import send_email
 import basic as db
 
 
@@ -12,7 +13,7 @@ class User(UserMixin):
 
         try:
             self.password = db.get_user_hashed_password(k_number)
-            self.email_confirmed = bool(ord(db.get_user_data(k_number)["email_confirmed"]))
+            self.email_confirmed = bool(db.get_user_data(k_number)["email_confirmed"])
 
         except Exception as e:
             print("Exeception occured:{}".format(e))
@@ -22,6 +23,7 @@ class User(UserMixin):
         # user only able to login if email is confirmed
         return self.email_confirmed
 
+    
     def activate(self):
         # activates user account in database
-        print("activated")
+        db.update_students(k_number=str(self.k_number), email_confirmed=True)

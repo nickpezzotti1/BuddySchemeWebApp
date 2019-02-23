@@ -6,8 +6,8 @@ from user import User
 import basic as db
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from auth_token import generate_token, verify_token
-from emailer import send_email
+from auth_token import verify_token
+from emailer import send_email, send_email_confirmation_to_user
 import requests
 import json
 
@@ -18,6 +18,7 @@ app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
 
 @login_manager.user_loader
 def load_user(id):
@@ -42,6 +43,7 @@ def login():
                 # check if he is authorised
                 if check_password_hash(user.password, login_form.password.data):
                     # redirect to profile page, where he must insert his preferences
+                    user.confirm_email(secret_key=app.config["SECRET_KEY"])
                     login_user(user, remember=False)
                     app.logger.warning('logged in')
                     return redirect("/dashboard")
@@ -61,6 +63,9 @@ def login():
 def signup():
     registration_form = RegistrationForm(request.form)
 
+    # if current_user.is_authenticated:
+    #     return "Please logout before trying to signup"
+
     if registration_form.registration_submit.data: # if the registation form was submitted
         if registration_form.validate_on_submit(): # if the form was valid
             # hash the user password
@@ -72,7 +77,13 @@ def signup():
             hashed_password = generate_password_hash("12345678", method="sha256")
 
             db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False)
-            app.logger.warning('register user: ' + str(db_insert_success))
+            app.logger.warning("register user: " + k_number)
+            user = User(k_number)
+
+            app.logger.warning("user's knumber: " + user.k_number)
+            send_email_confirmation_to_user(user=user, secret_key=app.config["SECRET_KEY"])
+
+            app.logger.warning("register user: " + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences
             return redirect("/dashboard")
@@ -85,37 +96,22 @@ def signup():
 
 
 @app.route("/confirm/<token>")
-@login_required
 def confirm_email(token):
-    try:
-        k_number = verify_token(app.config["SECRET_KEY"], token, expiration=app.config["EMAIL_CONFIRMATION_EXPIRATION"])
-    except:
-        app.logger.warning("invalid token")
-        return "invalid token"
+    logout_user()
+    k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=3600)
+
     if k_number:
-        if current_user.email_confirmed:
+        # return "this is: " + str(k_number)
+        user = User(k_number)
+        if user.email_confirmed:
             return "account already active"
         else:
-            current_user.activate()
+            user.activate()
+            return str(user.email_confirmed)
             return "account activated"
     else:
         app.logger.warning("token verification failed")
         return "token verification fail"
-
-
-@app.route("/create")
-@login_required
-def create_token():
-    token = generate_token(app.config["SECRET_KEY"], current_user.k_number)
-
-    sender = "no-reply@sbs.kcl.ac.uk"
-    recipients = [current_user.k_number + "@kcl.ac.uk"]
-    subject = "Email Confirmation - Student Buddy System"
-    path = "http://localhost:5000/confirm/"
-    content = f'Activate your email at {path}{token}'
-
-    send_email(sender, recipients, subject, content)
-    return token
 
 
 @app.route("/dashboard")

@@ -5,15 +5,23 @@ from flask_wtf import FlaskForm
 from forms import LoginForm, RegistrationForm
 import json
 from permissions import permissioned_login_required
+from werkzeug.security import generate_password_hash, check_password_hash
+from auth_token import verify_token
 import requests
 from user import User
 from werkzeug.security import check_password_hash, generate_password_hash
+from emailer import send_email, send_email_confirmation_to_user
+
 
 app = Flask(__name__)
+app.config["SECRET_KEY"]="powerful secretkey"
+# app.config["SECURITY_PASSWORD_SALT"]=53
+app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
 app.config["SECRET_KEY"] = "powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
 
 @login_manager.user_loader
 def load_user(id):
@@ -38,6 +46,7 @@ def login():
                 # check if he is authorised
                 if check_password_hash(user.password, login_form.password.data):
                     # redirect to profile page, where he must insert his preferences
+                    user.confirm_email(secret_key=app.config["SECRET_KEY"])
                     login_user(user, remember=False)
                     return redirect("/dashboard")
                 else:
@@ -55,6 +64,9 @@ def login():
 def signup():
     registration_form = RegistrationForm(request.form)
 
+    # if current_user.is_authenticated:
+    #     return "Please logout before trying to signup"
+
     if registration_form.registration_submit.data: # if the registation form was submitted
         if registration_form.validate_on_submit(): # if the form was valid
             # hash the user password
@@ -66,7 +78,13 @@ def signup():
             hashed_password = generate_password_hash("12345678", method="sha256")
 
             db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False)
-            app.logger.warning('register user: ' + str(db_insert_success))
+            app.logger.warning("register user: " + k_number)
+            user = User(k_number)
+
+            app.logger.warning("user's knumber: " + user.k_number)
+            send_email_confirmation_to_user(user=user, secret_key=app.config["SECRET_KEY"])
+
+            app.logger.warning("register user: " + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences
             return redirect("/dashboard")
@@ -75,6 +93,26 @@ def signup():
             return render_template("signup.html", registration_form=registration_form)
 
     return render_template("signup.html", registration_form=registration_form)
+
+
+@app.route("/confirm/<token>")
+def confirm_email(token):
+    logout_user()
+    k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=3600)
+
+    if k_number:
+        # return "this is: " + str(k_number)
+        user = User(k_number)
+        if user.email_confirmed:
+            return "account already active"
+        else:
+            user.activate()
+            return str(user.email_confirmed)
+            return "account activated"
+    else:
+        app.logger.warning("token verification failed")
+        return "token verification fail"
+
 
 @app.route("/dashboard")
 @login_required

@@ -90,20 +90,20 @@ def _to_str(my_str, password_hash=False):
             return str(my_str)
         # For better looking sql queries
         elif my_str is True:
-            return "\"TRUE\""
+            return 1
         elif my_str is False:
-            return "\"FALSE\""
+            return 0
 
     raise TypeError(f"{type(my_str)} type isn't accepted.")
 
 
-def _update_students(** kwargs):
+def _update_students( ** kwargs):
     """ Will update fields in Students based on the k_number
         You will need to precise the specific field"""
 
     accepted_fields = {"first_name":str, "last_name":str, "degree_title":str,
-        "year_study":int, "gender":str, "k_number":int, "is_mentor":bool,
-        "email_confirmed": bool}
+        "year_study":int, "gender":str, "k_number":str, "is_mentor":bool,
+        "email_confirmed": bool, "is_admin": bool}
 
     # We need the k_number to update
     if "k_number" not in kwargs:
@@ -127,7 +127,8 @@ def _update_students(** kwargs):
         raise Exception("Need at least one argument.")
 
 
-def update_students(k_number, first_name=False, last_name=False, degree_title=False, year_study=False, gender=False, is_mentor=False, is_admin=False):
+
+def update_students(k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[]):
     """ Front end interface of the private function,
         don't need to know the underlying interface """
 
@@ -137,9 +138,9 @@ def update_students(k_number, first_name=False, last_name=False, degree_title=Fa
         "is_admin": is_admin}
 
     # Set the dictionarry like it's needed
-    dict_fields = {field:value for field, value in  accepted_fields.items() if value is not False}
+    dict_fields = {field:value for field, value in  accepted_fields.items() if type(value) is not list}
 
-    return _update_students(** dict_fields)
+    return _update_students( ** dict_fields)
 
 
 def update_hobbies(k_number, hobbies):
@@ -277,16 +278,16 @@ def insert_student(k_number, first_name, last_name, degree_title, year_study, ge
     return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)});")
 
 
-def insert_hobbies(k_number, hobbies):
+def insert_hobby(k_number, hobby):
     """ Will entirely populate an entry for the Hobbies database"""
 
-    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobbies, k_number])});")
+    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobby, k_number])});")
 
 
-def insert_interests(k_number, interests):
+def insert_interest(k_number, interest):
     """ Will entirely populate an entry for Interests table"""
 
-    return _insert(f"INSERT INTO Interests VALUES({_to_str([interests, k_number])});")
+    return _insert(f"INSERT INTO Interests VALUES({_to_str([interest, k_number])});")
 
 
 # TODO Need to check for hobbies type
@@ -324,14 +325,21 @@ def delete_mentees(mentor_k_number):
 def delete_students(k_number):
     """ Delete the students entry in the Tables"""
 
-    return delete_hobbies(k_number) and delete_interests(k_number) and delete_mentors(k_number) and delete_mentees(k_number)
+
+    delete_hobbies(k_number)
+    delete_interests(k_number)
+    delete_mentors(k_number)
+    delete_mentees(k_number)
+
+    return _insert(f"DELETE FROM Students where k_number={_to_str(k_number)};")
+
 
 
 def get_all_students_data_basic():
     """ God knows what this function does"""
 
     # Add has matches
-    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")
+    return _query("SELECT k_number, first_name, last_name, is_mentor FROM Students ORDER BY last_name ASC;")
 
 
 def get_all_mentors():
@@ -348,14 +356,44 @@ def get_all_mentees():
 
 
 def get_all_students_data_basic():
-    return _query("SELECT k_number, first_name, last_name, CASE WHEN (year_study > 1) THEN TRUE ELSE FALSE END AS is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
+    return _query("SELECT k_number, first_name, last_name, gender, is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
 
 def get_mentee_details(k_number):
     if _sanity_check(k_number):
-        return _query(f"SELECT k_number, first_name, last_name FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
+        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 
+def get_mentor_details(k_number):
+    if _sanity_check(k_number):
+        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {_to_str(k_number)};")
+    else:
+        return "Error: one of the field did not pass the sanity check"
+
+def get_manual_allocation_matches(k_number, is_tor):
+    if _sanity_check(k_number):    # and _sanity_check(is_tor):
+        join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
+        return _query(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
+    else:
+        return "Error: one of the field did not pass the sanity check"
+
+def make_manual_allocation(tee_number, tor_number):
+    if _sanity_check(tee_number) and _sanity_check(tor_number):
+        return _insert(f"INSERT INTO Allocation VALUES({_to_str(tor_number)}, {_to_str(tee_number)});")
+    else:
+        return "Error: one of the field did not pass the sanity check"
+
+def remove_allocation(tee_number, tor_number):
+    if _sanity_check(tee_number) and _sanity_check(tor_number):
+        return _insert(f"DELETE FROM Allocation WHERE mentor_k_number = {_to_str(tor_number)} AND mentee_k_number = {_to_str(tee_number)};")
+    else:
+        return "Error: one of the field did not pass the sanity check"
+
+def alter_admin_status(k_number, is_admin):
+    if _sanity_check(k_number) and _sanity_check(is_admin):
+        return _insert(f"UPDATE Students SET is_admin = {is_admin} WHERE k_number = {_to_str(k_number)};")
+    else:
+        return "Error: one of the field did not pass the sanity check"
 
 if __name__ == '__main__':
     print(_query("SELECT * from Interests;"))

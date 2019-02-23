@@ -98,7 +98,7 @@ def signup():
 @app.route("/confirm/<token>")
 def confirm_email(token):
     logout_user()
-    k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=3600)
+    k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=app.config["EMAIL_CONFIRMATION_EXPIRATION"])
 
     if k_number:
         # return "this is: " + str(k_number)

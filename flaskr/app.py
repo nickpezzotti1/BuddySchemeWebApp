@@ -46,7 +46,6 @@ def login():
                 # check if he is authorised
                 if check_password_hash(user.password, login_form.password.data):
                     # redirect to profile page, where he must insert his preferences
-                    user.confirm_email(secret_key=app.config["SECRET_KEY"])
                     login_user(user, remember=False)
                     return redirect("/dashboard")
                 else:

@@ -7,10 +7,11 @@ import json
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from auth_token import verify_token
-from emailer import send_email, send_email_confirmation_to_user
 import requests
 from user import User
 from werkzeug.security import check_password_hash, generate_password_hash
+from emailer import send_email, send_email_confirmation_to_user
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"

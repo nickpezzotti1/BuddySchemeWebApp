@@ -128,14 +128,14 @@ def _update_students( ** kwargs):
 
 
 
-def update_students(k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[]):
+def update_students(k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[], email_confirmed=[]):
     """ Front end interface of the private function,
         don't need to know the underlying interface """
 
     accepted_fields = {"k_number": k_number, "first_name": first_name,
         "last_name": last_name, "degree_title": degree_title,
         "year_study": year_study, "gender": gender, "is_mentor": is_mentor,
-        "is_admin": is_admin}
+        "is_admin": is_admin, "email_confirmed": email_confirmed}
 
     # Set the dictionarry like it's needed
     dict_fields = {field:value for field, value in  accepted_fields.items() if type(value) is not list}

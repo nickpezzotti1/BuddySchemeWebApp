@@ -26,4 +26,4 @@ class User(UserMixin):
     
     def activate(self):
         # activates user account in database
-        db.update_students(k_number=str(self.k_number), email_confirmed=True)
+        db.update_students(k_number=self.k_number, email_confirmed=True)

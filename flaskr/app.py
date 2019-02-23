@@ -107,7 +107,6 @@ def confirm_email(token):
             return "account already active"
         else:
             user.activate()
-            return str(user.email_confirmed)
             return "account activated"
     else:
         app.logger.warning("token verification failed")

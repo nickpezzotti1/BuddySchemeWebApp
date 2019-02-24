@@ -2,7 +2,7 @@ import basic as db
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
-from forms import LoginForm, RegistrationForm, RequestPasswordResetForm
+from forms import LoginForm, RegistrationForm, RequestPasswordResetForm, ResetPasswordForm
 import json
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -98,7 +98,7 @@ def signup():
 
 @app.route("/confirm/<token>")
 def confirm_email(token):
-    logout_user()
+    #logout_user()
     k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=app.config["EMAIL_CONFIRMATION_EXPIRATION"])
 
     if k_number:
@@ -120,28 +120,32 @@ def reset_password_via_email():
     request_password_reset_form = RequestPasswordResetForm(request.form)
 
     if request_password_reset_form.request_reset_password_submit.data: #if the user requested the password reset (inserting his k num)
-        send_email_reset_password(user=User(request_password_reset_form.k_number.data), secret_key=app.config["SECRET_KEY"])
-        flash("Password reset email sent")
-        
+        if request_password_reset_form.validate_on_submit():
+            send_email_reset_password(user=User(request_password_reset_form.k_number.data), secret_key=app.config["SECRET_KEY"])
+            flash("Password reset email sent")
+
     return render_template("request_password_reset.html", request_password_reset_form=RequestPasswordResetForm())
 
-@app.route("/reset-password/<token>")
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     # if token is valid, reset users account
     k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=app.config["PASSWORD_RESET_EXPIRATION"])
+    reset_password_form = ResetPasswordForm(request.form)
 
-    if k_number:
-        # return "this is: " + str(k_number)
+    if k_number: # if the token is valid
         user = User(k_number)
-        new_password = "12345678"
+        if reset_password_form.reset_password_submit.data: #if the user password reset (inserting his k num)
+            if reset_password_form.validate_on_submit():
+                user.reset_password(reset_password_form.password.data)
+                flash("Password reset successfully")
+                return redirect("/login")
 
-        user.reset_password(new_password)
-
-        return "success"
+        return render_template("reset_password.html", reset_password_form=reset_password_form)
 
     else:
         app.logger.warning("password reset failed")
-        return "password reset fail"
+        flash("Invalid link")
+        return redirect("/request-password-reset")
 
 
 @app.route("/dashboard")

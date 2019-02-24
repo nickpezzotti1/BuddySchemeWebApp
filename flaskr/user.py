@@ -2,7 +2,6 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 import basic as db
 
-
 class User(UserMixin):
     def __init__(self, k_number):
         self.k_number = k_number

@@ -11,6 +11,8 @@ import requests
 from user import User
 from werkzeug.security import check_password_hash, generate_password_hash
 from emailer import send_email, send_email_confirmation_to_user
+import controllers.adminctrl as adminctrl
+import logging
 
 
 app = Flask(__name__)
@@ -22,16 +24,19 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+app.register_blueprint(adminctrl.admin_blueprint)
+log = logging.getLogger(__name__)
+
+@app.route("/")
+@app.route("/home")
+def home():
+    return render_template("index.html")
 
 @login_manager.user_loader
 def load_user(id):
     user = User(id)
     return user
 
-@app.route("/")
-@app.route("/home")
-def home():
-    return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -200,82 +205,7 @@ def mentee_mentor(k_number_mentor):
     return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
 
 
-@app.route('/admin')
-def admin_dashboard():
-    return render_template('admin/dashboard.html', title='Admin Dashboard')
 
-@app.route('/admin/view_students', methods=['POST', 'GET'])
-def admin_view_students():
-    data = db.get_all_students_data_basic()
-    return render_template('admin/view_students.html', title='View Students', data=data)
-
-@app.route('/admin/student_details', methods=['GET', 'POST'])
-def view_student_details():
-    if(request.method == 'POST' and 'knum' in request.form):
-        kNum = request.form['knum']
-        if('mkAdmin' in request.form):
-            res = db.alter_admin_status(kNum, True)
-        elif('rmAdmin' in request.form):
-            res = db.alter_admin_status(kNum, False)
-        elif('mkAlloc' in request.form):
-            torNum = request.form['torNum']
-            teeNum = request.form['teeNum']
-            res = db.make_manual_allocation(teeNum, torNum)
-        elif("rmAlloc" in request.form):
-            torNum = request.form['torNum']
-            teeNum = request.form['teeNum']
-            res = db.remove_allocation(teeNum, torNum)
-        udata = db.get_user_data(kNum)
-        hobbies = db.get_hobbies(kNum)
-        interests = db.get_interests(kNum)
-        isTor = udata['is_mentor']
-        if isTor:
-            matches = db.get_mentee_details(kNum)
-        else:
-            matches = db.get_mentor_details(kNum)
-        return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, hobbies=hobbies, interests=interests, matches=matches)
-    else:
-        return redirect(url_for('admin_view_students'))
-
-@app.route('/admin/delete_student', methods=['POST'])
-def delete_student_details():
-    if(request.method == 'POST' and 'knum' in request.form):
-        kNum = request.form['knum']
-        res = db.delete_students(kNum)
-        return render_template('admin/delete_student.html', title='Delete Student Profile ' + kNum, res=res, k_number=kNum)
-    else:
-        return redirect(url_for('admin_view_students'))
-
-@app.route('/admin/general_settings')
-def general_settings():
-
-    return render_template('admin/general_settings.html', title='General Settings')
-
-@app.route('/admin/allocation_algorithm')
-def allocation_algorithm():
-    return render_template('admin/allocation_algorithm.html', title='allocation_algorithm', assignments=allocate())
-
-@app.route('/admin/signup_settings')
-def sign_up_settings():
-    return render_template('admin/dashboard.html', title='Sign-Up Settings')
-
-@app.route('/admin/allocate')
-def allocate():
-    input_string = generate_mentee_and_mentor_json()
-
-    response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
-    # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
-    response_text = response.text[1:-1].replace("\\", "")
-    json_response = json.loads(response_text)
-    pairs = json_response["assignments"]
-
-    try:
-        for pair in pairs:
-            db.insert_mentor_mentee("k" + pair["mentor_id"], "k" + pair["mentee_id"])
-    except:
-        print("Error in inserting into db")
-
-    return "The following assignments have been made:" + str(json_response["assignments"])
 
 def generate_mentee_and_mentor_json():
     # Get all mentors from database
@@ -306,15 +236,6 @@ def generate_mentee_and_mentor_json():
 
     return json.dumps(input)
 
-@app.route('/admin/manually_assign', methods=['GET', 'POST'])
-def manually_assign():
-    if(request.method == 'POST'):
-        kNum = request.form['knum']
-        udata = db.get_user_data(kNum)
-        potentials = db.get_manual_allocation_matches(kNum, udata['is_mentor'])
-        return render_template('admin/manually_assign.html', title='Manually Assign Match', udata=udata, potentials=potentials) # imprv title?
-    else:
-        return redirect(url_for('admin_view_students'))
 
 def get_all_user_info(k_number):
     """ Get all user info from database and format into a single dict"""

@@ -52,7 +52,7 @@
         <td>{{student.first_name}}</td>
         <td>{{student.last_name}}</td>
         <td>{{student.year_study}}</td>
-<form method="POST" action='{{url_for("view_student_details")}}'>
+<form method="POST" action='{{url_for("admin.view_student_details")}}'>
     <input type='hidden' name='knum' value='{{udata.k_number}}'></input>
     <input type="hidden" name='{% if udata.is_mentor %}{{"torNum"}}{% else %}{{"teeNum"}}{% endif %}' value="{{udata.k_number}}"></input>
     <input type="hidden" name='{% if udata.is_mentor %}{{"teeNum"}}{% else %}{{"torNum"}}{% endif %}' value="{{student.k_number}}"></input>
@@ -65,29 +65,29 @@
 {% else %}
 <h1 class='text-center'> No Allocations </h1>
 {% endif %}
-<form method="POST" action="{{url_for("manually_assign")}}">
+<form method="POST" action="{{url_for("admin.manually_assign")}}">
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='manAlloc' value="Manually Assign Allocation"></input> 
     <input type='hidden' name='knum' value='{{udata.k_number}}'></input>
 </form>
 <br />
 {% if udata.is_admin  %}
-<form method="POST" action="{{url_for('view_student_details')}}">
+<form method="POST" action="{{url_for('admin.view_student_details')}}">
     <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='rmAdmin' onclick='return rmAdConf()' value="Remove Admin Status" /> 
 </form>
 {% else %}
-<form method="POST" action="{{url_for('view_student_details')}}">
+<form method="POST" action="{{url_for('admin.view_student_details')}}">
     <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='mkAdmin' onclick='return mkAdConf()' value="Make Admin" /> 
 </form>
 {% endif %}
 <br />
-<form method="POST" action="{{url_for('delete_student_details')}}">
+<form method="POST" action="{{url_for('admin.delete_student_details')}}">
     <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" onclick='return delConf()' value="Delete Account And Data" /> 
 </form>
 <br />
-<form method="POST" action="{{url_for('admin_view_students')}}">
+<form method="POST" action="{{url_for('admin.admin_view_students')}}">
     <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="Back"/> 
 </form>

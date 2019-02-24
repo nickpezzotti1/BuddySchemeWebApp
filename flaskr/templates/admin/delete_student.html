@@ -8,7 +8,7 @@
 {% else %}
 <h1>Unable To Delete Profile, Please Try Again And Contact System Administrator If This Issue Persists</h1>
 <br />
-<form method="POST" action="{{url_for('admin_view_students')}}">
+<form method="POST" action="{{url_for('admin.admin_view_students')}}">
     <input type="hidden" name="knum" value="{{k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="back"/> 
 </form>

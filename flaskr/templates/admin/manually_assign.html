@@ -53,7 +53,7 @@
         <td>{{student.gender}}</td>
         <td>{{student.year_study}}</td>
         <td>{{student.matches}}</td>
-<form method="POST" action={{url_for("view_student_details")}}>
+<form method="POST" action={{url_for("admin.view_student_details")}}>
     <input type='hidden' name='knum' value='{{udata.k_number}}'></input>
     <input type="hidden" name='{% if udata.is_mentor %}{{"torNum"}}{% else %}{{"teeNum"}}{% endif %}' value="{{udata.k_number}}"></input>
     <input type="hidden" name='{% if udata.is_mentor %}{{"teeNum"}}{% else %}{{"torNum"}}{% endif %}' value="{{student.k_number}}"></input>
@@ -68,7 +68,7 @@
 {% endif %}
 <br />
 <br />
-<form method="POST" action="{{url_for('view_student_details')}}">
+<form method="POST" action="{{url_for('admin.view_student_details')}}">
     <input type="hidden" name="knum" value="{{udata.k_number}}"></input>
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="Back"/> 
 </form>

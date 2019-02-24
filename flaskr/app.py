@@ -2,7 +2,7 @@ import basic as db
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, RequestPasswordResetForm
 import json
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -115,12 +115,12 @@ def confirm_email(token):
         app.logger.warning("token verification failed")
         return "token verification fail"
 
-@app.route("/reset-password")
+@app.route("/s")
 def reset_password_via_email():
     # input k number and receive email to reset
     k_number = "k1764171"
     send_email_reset_password(user=User(k_number), secret_key=app.config["SECRET_KEY"])
-    return k_number
+    return render_template("request_password_reset.html", request_password_reset_form=RequestPasswordResetForm())
 
 @app.route("/reset-password/<token>")
 def reset_password(token):

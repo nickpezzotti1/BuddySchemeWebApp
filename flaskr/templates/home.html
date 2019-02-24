@@ -1,0 +1,18 @@
+{%extends "index.html" %}
+
+{% block nav_block %}
+<li class="active"><a href="#">Home</a></li>
+<li><a href="#">Features</a></li>
+<li><a href="#">Contact</a></li>
+{% endblock nav_block %}
+
+{% block content_block %}
+<div>
+    <h1 class="cover-heading">Welcome to KCL Buddy.</h1>                                  
+        <p class="lead">KCL Buddy is a scheme put in place by the departement of Informatics. The goal is to make students adapt to their new life at university faster.</p>
+        <p class="lead">
+            <a href="{{url_for('login')}}" class="btn btn-lg btn-default">Log In</a>
+        </p>
+</div>
+
+{% endblock content_block %}

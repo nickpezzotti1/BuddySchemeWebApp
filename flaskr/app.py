@@ -115,11 +115,14 @@ def confirm_email(token):
         app.logger.warning("token verification failed")
         return "token verification fail"
 
-@app.route("/s")
+@app.route("/request-password-reset", methods=["GET", "POST"])
 def reset_password_via_email():
-    # input k number and receive email to reset
-    k_number = "k1764171"
-    send_email_reset_password(user=User(k_number), secret_key=app.config["SECRET_KEY"])
+    request_password_reset_form = RequestPasswordResetForm(request.form)
+
+    if request_password_reset_form.request_reset_password_submit.data: #if the user requested the password reset (inserting his k num)
+        send_email_reset_password(user=User(request_password_reset_form.k_number.data), secret_key=app.config["SECRET_KEY"])
+        flash("Password reset email sent")
+        
     return render_template("request_password_reset.html", request_password_reset_form=RequestPasswordResetForm())
 
 @app.route("/reset-password/<token>")

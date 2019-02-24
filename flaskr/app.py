@@ -73,8 +73,8 @@ def signup():
             last_name = registration_form.last_name.data
             k_number = registration_form.k_number.data
             is_mentor = registration_form.is_mentor.data
-            # hashed_password = generate_password_hash(registration_form.password.data)
-            hashed_password = generate_password_hash("12345678", method="sha256")
+
+            hashed_password = generate_password_hash(registration_form.password.data, method="sha256")
 
             db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False)
             app.logger.warning("register user: " + k_number)
@@ -86,7 +86,8 @@ def signup():
             app.logger.warning("register user: " + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences
-            return redirect("/dashboard")
+            flash("Please confirm your email then login into your account.")
+            return redirect("/login")
         else:
             flash("Error logging in, please check the data that was entered correctly")
             return render_template("signup.html", registration_form=registration_form)
@@ -103,10 +104,12 @@ def confirm_email(token):
         # return "this is: " + str(k_number)
         user = User(k_number)
         if user.email_confirmed:
-            return "account already active"
+            flash("Email already confirmed")
+            return redirect("/login")
         else:
             user.activate()
-            return "account activated"
+            flash("Email confirmed")
+            return redirect("/login")
     else:
         app.logger.warning("token verification failed")
         return "token verification fail"

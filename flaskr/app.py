@@ -10,13 +10,14 @@ from auth_token import verify_token
 import requests
 from user import User
 from werkzeug.security import check_password_hash, generate_password_hash
-from emailer import send_email, send_email_confirmation_to_user
+from emailer import send_email, send_email_confirmation_to_user, send_email_reset_password
 
 
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"
 # app.config["SECURITY_PASSWORD_SALT"]=53
 app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
+app.config["PASSWORD_RESET_EXPIRATION"] = 86400
 app.config["SECRET_KEY"] = "powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -113,6 +114,31 @@ def confirm_email(token):
     else:
         app.logger.warning("token verification failed")
         return "token verification fail"
+
+@app.route("/reset-password")
+def reset_password_via_email():
+    # input k number and receive email to reset
+    k_number = "k1764171"
+    send_email_reset_password(user=User(k_number), secret_key=app.config["SECRET_KEY"])
+    return k_number
+
+@app.route("/reset-password/<token>")
+def reset_password(token):
+    # if token is valid, reset users account
+    k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=app.config["PASSWORD_RESET_EXPIRATION"])
+
+    if k_number:
+        # return "this is: " + str(k_number)
+        user = User(k_number)
+        new_password = "12345678"
+
+        user.reset_password(new_password)
+
+        return "success"
+
+    else:
+        app.logger.warning("password reset failed")
+        return "password reset fail"
 
 
 @app.route("/dashboard")

@@ -9,14 +9,14 @@
 
     </h2>
     <div id="browse_app">
-        <a class="btn btn-large btn-info" href="{{url_for('mentee_mentor', k_number_mentor=k_number)}}">More Info </a>
+        <a class="btn btn-large btn-info" href="{{url_for('mentee.mentee_mentor', k_number_mentor=k_number)}}">More Info </a>
     </div>
 </div>
 {% endfor %}
     
 
 <div id="browse_app">
-    <a class="btn btn-large btn-info" href="{{url_for('mentee')}}">Back to Dashboard </a>
+    <a class="btn btn-large btn-info" href="{{url_for('mentee.mentee')}}">Back to Dashboard </a>
 </div>
 
 

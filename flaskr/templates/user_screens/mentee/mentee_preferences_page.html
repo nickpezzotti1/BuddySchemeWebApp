@@ -7,7 +7,7 @@
 <h2> Last Name: {{user_info["last_name"]}}<h2> 
 <h2> Age: {{user_info["age"]}}<h2> 
 
-<form action = "{{url_for('mentee_preferences')}}" method = "post">
+<form action = "{{url_for('mentee.mentee_preferences')}}" method = "post">
     <div class="form-group">
         <h2> Hobbies:</h2>
      
@@ -34,7 +34,7 @@
 </form>
 
 <div id="browse_app">
-    <a class="btn btn-large btn-info" href="{{url_for('mentee')}}">Back to Dashboard</a>
+    <a class="btn btn-large btn-info" href="{{url_for('mentee.mentee')}}">Back to Dashboard</a>
 </div>
 {% endblock content_block %}
 

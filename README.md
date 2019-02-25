@@ -20,14 +20,6 @@ We are using pythons virtual enviorements to make sure we are all using the same
 1. `$ source env/bin/activate`
 2. `(env) $ python app.py`
 
-## Connect to database
-
-(Assumption) mysql is installed on your machine
-
-1. `(env) $ mysql -h buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com -u admin -p`
-2. Enter the password: `r5!!eXFNVC5qMDL3$o&m`
-3. `Use Buddy;`
-
 ## Setup Local SMTP Server
 
 For debugging purposes, setup a local SMTP Server to send emails to while we don't use Amazon's SES

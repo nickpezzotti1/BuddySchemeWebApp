@@ -307,7 +307,7 @@ def allocate():
 
     try:
         for pair in pairs:
-            db.insert_mentor_mentee("k" + pair["mentor_id"], "k" + pair["mentee_id"])
+            db.insert_mentor_mentee(pair["mentor_id"], pair["mentee_id"])
     except:
         print("Error in inserting into db")
 
@@ -324,7 +324,7 @@ def generate_mentee_and_mentor_json():
     for mentor in mentors:
         input["mentors"].append(
                                 {
-                                    "ID": int(mentor["mentor_k_number"][1:]), #TODO
+                                    "ID": mentor["mentor_k_number"],
                                     "age": 20,
                                     "isMale": True,
                                     "menteeLimit": 1
@@ -334,7 +334,7 @@ def generate_mentee_and_mentor_json():
     for mentee in mentees:
         input["mentees"].append(
                                 {
-                                    "ID": int(mentee["mentee_k_number"][1:]), #TODO
+                                    "ID": mentee["mentee_k_number"],
                                     "age": 20,
                                     "isMale": True
                                 }

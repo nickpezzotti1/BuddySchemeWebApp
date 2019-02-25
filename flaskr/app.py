@@ -288,7 +288,7 @@ def generate_mentee_and_mentor_json():
     for mentor in mentors:
         input["mentors"].append(
                                 {
-                                    "ID": int(mentor["mentor_k_number"][1:]), #TODO
+                                    "ID": mentor["k_number"],
                                     "age": 20,
                                     "isMale": True,
                                     "menteeLimit": 1
@@ -298,7 +298,7 @@ def generate_mentee_and_mentor_json():
     for mentee in mentees:
         input["mentees"].append(
                                 {
-                                    "ID": int(mentee["mentee_k_number"][1:]), #TODO
+                                    "ID": mentee["k_number"],
                                     "age": 20,
                                     "isMale": True
                                 }

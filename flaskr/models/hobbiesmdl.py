@@ -1,6 +1,5 @@
-import dao
-from helpers import sanity_check, to_str
-from basicmdl import BasicModel
+from models.helpers import sanity_check, to_str
+from models.basicmdl import BasicModel
 import logging
 
 class HobbiesModel(BasicModel):

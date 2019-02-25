@@ -31,5 +31,16 @@ def send_email_confirmation_to_user(user, secret_key):
     subject = "Email Confirmation - Student Buddy System"
     path = "http://localhost:5000/confirm/"
     content = f"Welcome to KCL\'s Student Buddy System. \n Please activate your email at {path}{token}"
-    
+
+    send_email(sender, recipients, subject, content)
+
+
+def send_email_reset_password(user, secret_key):
+    token = generate_token(secret_key, user.k_number)
+    sender = "no-reply@sbs.kcl.ac.uk"
+    recipients = [str(user.k_number) + "@kcl.ac.uk"]
+    subject = "Forgot my password"
+    path = "http://localhost:5000/reset-password/"
+    content = f"Please click on the following link to reset your password {path}{token}"
+
     send_email(sender, recipients, subject, content)

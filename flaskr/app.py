@@ -2,7 +2,7 @@ import basic as db
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, RequestPasswordResetForm, ResetPasswordForm
 import json
 from permissions import permissioned_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,13 +10,14 @@ from auth_token import verify_token
 import requests
 from user import User
 from werkzeug.security import check_password_hash, generate_password_hash
-from emailer import send_email, send_email_confirmation_to_user
+from emailer import send_email, send_email_confirmation_to_user, send_email_reset_password
 
 
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"
 # app.config["SECURITY_PASSWORD_SALT"]=53
 app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
+app.config["PASSWORD_RESET_EXPIRATION"] = 86400
 app.config["SECRET_KEY"] = "powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -73,8 +74,8 @@ def signup():
             last_name = registration_form.last_name.data
             k_number = registration_form.k_number.data
             is_mentor = registration_form.is_mentor.data
-            # hashed_password = generate_password_hash(registration_form.password.data)
-            hashed_password = generate_password_hash("12345678", method="sha256")
+
+            hashed_password = generate_password_hash(registration_form.password.data, method="sha256")
 
             db_insert_success = db.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False)
             app.logger.warning("register user: " + k_number)
@@ -86,7 +87,8 @@ def signup():
             app.logger.warning("register user: " + str(db_insert_success))
 
             #redirect to profile page, where he must insert his preferences
-            return redirect("/dashboard")
+            flash("Please confirm your email then login into your account.")
+            return redirect("/login")
         else:
             flash("Error logging in, please check the data that was entered correctly")
             return render_template("signup.html", registration_form=registration_form)
@@ -96,20 +98,54 @@ def signup():
 
 @app.route("/confirm/<token>")
 def confirm_email(token):
-    logout_user()
+    #logout_user()
     k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=app.config["EMAIL_CONFIRMATION_EXPIRATION"])
 
     if k_number:
         # return "this is: " + str(k_number)
         user = User(k_number)
         if user.email_confirmed:
-            return "account already active"
+            flash("Email already confirmed")
+            return redirect("/login")
         else:
             user.activate()
-            return "account activated"
+            flash("Email confirmed")
+            return redirect("/login")
     else:
         app.logger.warning("token verification failed")
         return "token verification fail"
+
+@app.route("/request-password-reset", methods=["GET", "POST"])
+def reset_password_via_email():
+    request_password_reset_form = RequestPasswordResetForm(request.form)
+
+    if request_password_reset_form.request_reset_password_submit.data: #if the user requested the password reset (inserting his k num)
+        if request_password_reset_form.validate_on_submit():
+            send_email_reset_password(user=User(request_password_reset_form.k_number.data), secret_key=app.config["SECRET_KEY"])
+            flash("Password reset email sent")
+
+    return render_template("request_password_reset.html", request_password_reset_form=RequestPasswordResetForm())
+
+@app.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    # if token is valid, reset users account
+    k_number = verify_token(secret_key=app.config["SECRET_KEY"], token=token, expiration=app.config["PASSWORD_RESET_EXPIRATION"])
+    reset_password_form = ResetPasswordForm(request.form)
+
+    if k_number: # if the token is valid
+        user = User(k_number)
+        if reset_password_form.reset_password_submit.data: #if the user password reset (inserting his k num)
+            if reset_password_form.validate_on_submit():
+                user.reset_password(reset_password_form.password.data)
+                flash("Password reset successfully")
+                return redirect("/login")
+
+        return render_template("reset_password.html", reset_password_form=reset_password_form)
+
+    else:
+        app.logger.warning("password reset failed")
+        flash("Invalid link")
+        return redirect("/request-password-reset")
 
 
 @app.route("/dashboard")
@@ -271,7 +307,7 @@ def allocate():
 
     try:
         for pair in pairs:
-            db.insert_mentor_mentee("k" + pair["mentor_id"], "k" + pair["mentee_id"])
+            db.insert_mentor_mentee(pair["mentor_id"], pair["mentee_id"])
     except:
         print("Error in inserting into db")
 

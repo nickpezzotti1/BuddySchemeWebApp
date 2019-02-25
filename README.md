@@ -10,9 +10,7 @@ We are using pythons virtual enviorements to make sure we are all using the same
 2. `$ python3 -m venv env`
 3. `$ source env/bin/activate`
 4. `$ pip install -r requirements.txt`
-7. Set up the database*:  
-  7.1 `(env) $ export BUDDY_DB_USER='admin'`  
-  7.2 `(env) $ export BUDDY_DB_PASSWORD='r5!!eXFNVC5qMDL3$o&m'`  
+7. Install AWS CLI and configure role credentials (details in group chat)  
 8. Run the application
 
 *To set the variables permanently, you should edit your `.bashrc` in your home directory.

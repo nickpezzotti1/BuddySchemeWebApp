@@ -23,7 +23,7 @@ class Dao():
                 db = self._credentials['dbname'],
                 charset = "utf8mb4"
             )
-            self.__cursor = self.__connection.cursor()
+            self.__cursor = self.__connection.cursor(pymysql.cursors.DictCursor)
             self._log.info("Created DB connection")
         except Exception as e:
             self._log.exception("Could not create DB connection")

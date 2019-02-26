@@ -77,7 +77,7 @@ class AdminLogic():
 
     
     def allocation_algorithm(self):
-        return render_template('admin/allocation_algorithm.html', title='allocation_algorithm', assignments=allocate())
+        return render_template('admin/allocation_algorithm.html', title='allocation_algorithm', assignments=self.allocate())
 
     
     def sign_up_settings(self):

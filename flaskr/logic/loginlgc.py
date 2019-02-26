@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
+from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -12,8 +12,6 @@ from models.studentmdl import StudentModel
 
 class LoginLogic():
 
-    SECRET_KEY = "powerful secretkey"
-    EMAIL_CONFIRMATION_EXPIRATION = 86400
 
     def login(self, request):
 
@@ -78,7 +76,7 @@ class LoginLogic():
                     user = User(k_number)
 
                     #app.logger.warning("user's knumber: " + user.k_number)
-                    send_email_confirmation_to_user(user=user, secret_key=self.SECRET_KEY)
+                    send_email_confirmation_to_user(user=user, secret_key=current_app.config["SECRET_KEY"])
 
                     #app.logger.warning("register user: " + str(db_insert_success))
 
@@ -98,7 +96,7 @@ class LoginLogic():
     def confirm_email(self,token):
 
         try:
-            k_number = verify_token(secret_key=self.SECRET_KEY, token=token, expiration=self.EMAIL_CONFIRMATION_EXPIRATION)
+            k_number = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
         
         except Exception as e:
             self._log.exception("Could not verify token")

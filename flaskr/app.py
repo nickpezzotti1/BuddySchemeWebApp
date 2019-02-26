@@ -9,10 +9,12 @@ import controllers.menteectrl as menteectrl
 import logging
 
 
+
 app = Flask(__name__)
 app.config["SECRET_KEY"]="powerful secretkey"
 # app.config["SECURITY_PASSWORD_SALT"]=53
 app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
+app.config["PASSWORD_RESET_EXPIRATION"] = 86400
 app.config["SECRET_KEY"] = "powerful secretkey"
 login_manager = LoginManager()
 login_manager.init_app(app)

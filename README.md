@@ -13,6 +13,7 @@ We are using pythons virtual enviorements to make sure we are all using the same
 5. Check chat for instructions and credentials to set up AWS CLI
 6. Run the application
 
+
 *To set the variables permanently, you should edit your `.bashrc` in your home directory.
 
 ## Run the application

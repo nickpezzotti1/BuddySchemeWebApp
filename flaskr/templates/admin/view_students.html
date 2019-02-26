@@ -1,9 +1,15 @@
-{% extends "shared/user_screen_layout.html" %}
+{% extends "index.html" %}
+
+{% block nav_block %}
+<li><a href="#">Home</a></li>
+<li><a href="#">Features</a></li>
+<li><a href="#">Contact</a></li>                                                             
+{% endblock nav_block %}
 
 {% block content_block %}
 
 
-
+<div class="container">
 <!--h1>  </h1-->
 <div class="text-center">
     Search By Name:
@@ -14,9 +20,9 @@
     <input type='radio' id='over' name='menFilter' onclick='return filter()' value='tor'/>Mentors
     <input type='radio' id='out' name='menFilter' onclick='return filter()' value='tee'/>Mentees
 </div>
+</div>
 
-
-<table class="table table-striped table-hover" id='table'>
+<table class="table" id='table'>
     <thead>
         <tr>
             <th scope="col" class="text-center">K Number</th>

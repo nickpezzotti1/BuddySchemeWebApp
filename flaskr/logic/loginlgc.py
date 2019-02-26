@@ -14,6 +14,9 @@ class LoginLogic():
 
 
     def login(self, request):
+        
+        if current_user.is_authenticated:
+            return redirect("/dashboard")
 
         try:
             login_form = LoginForm(request.form)

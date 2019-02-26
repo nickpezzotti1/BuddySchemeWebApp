@@ -10,11 +10,11 @@ We are using pythons virtual enviorements to make sure we are all using the same
 2. `$ python3 -m venv env`
 3. `$ source env/bin/activate`
 4. `$ pip install -r requirements.txt`
-5. Check chat for instructions and credentials to set up AWS CLI
-6. Run the application
+5. `$ aws configure`
+6. You will be asked to input AWS credentials (check chat description for latest).
+7. Run the application
 
 
-*To set the variables permanently, you should edit your `.bashrc` in your home directory.
 
 ## Run the application
 

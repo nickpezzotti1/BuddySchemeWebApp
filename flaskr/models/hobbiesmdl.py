@@ -32,7 +32,7 @@ class HobbiesModel(BasicModel):
         """ Given the k_number will return all the student's hobbies"""
 
         try:
-            return self._dao.execute(f"SELECT * FROM Hobbies where k_number={_to_str(k_number)};")
+            return self._dao.execute(f"SELECT * FROM Hobbies where k_number={to_str(k_number)};")
 
         except Exception as e:
             self._log.exception("Could not get hobbies")
@@ -42,7 +42,7 @@ class HobbiesModel(BasicModel):
     def insert_hobby(self,k_number, hobby):
         """ Will entirely populate an entry for the Hobbies database"""
         try:
-            self._dao.execute(f"INSERT INTO Hobbies VALUES({_to_str([hobby, k_number])});")
+            self._dao.execute(f"INSERT INTO Hobbies VALUES({to_str([hobby, k_number])});")
             self._dao.commit()
 
         except Exception as e:
@@ -57,7 +57,7 @@ class HobbiesModel(BasicModel):
 
         if hobbies:
             try:
-                self._dao.execute(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} and hobby={_to_str(hobbies)};")
+                self._dao.execute(f"DELETE FROM Hobbies where k_number={to_str(k_number)} and hobby={to_str(hobbies)};")
                 self._dao.commit()
 
             except Exception as e:
@@ -65,7 +65,7 @@ class HobbiesModel(BasicModel):
                 raise e
         else:
             try:
-                self._dao.execute(f"DELETE FROM Hobbies where k_number={_to_str(k_number)};")
+                self._dao.execute(f"DELETE FROM Hobbies where k_number={to_str(k_number)};")
                 self._dao.commit()
 
             except Exception as e:

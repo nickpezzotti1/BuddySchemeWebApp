@@ -78,7 +78,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)};")
         
             except Exception as e:
                 self._log.exception("Could not get mentee details")
@@ -91,7 +91,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {_to_str(k_number)};")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)};")
         
             except Exception as e:
                 self._log.exception("Could not get mentor details")
@@ -104,7 +104,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):    # and _sanity_check(is_tor):
             join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
             
             except Exception as e:
                 self._log.exception("Could not get manual allocation matches")
@@ -117,7 +117,7 @@ class AllocationModel(BasicModel):
         if sanity_check(tee_number) and sanity_check(tor_number):
 
             try:
-                return self._dao.execute(f"INSERT INTO Allocation VALUES({_to_str(tor_number)}, {_to_str(tee_number)});")
+                return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(tor_number)}, {to_str(tee_number)});")
                 self._dao.commit()
 
             except Exception as e:
@@ -131,7 +131,7 @@ class AllocationModel(BasicModel):
         if sanity_check(tee_number) and sanity_check(tor_number):
 
             try:
-                return self._dao.execute(f"DELETE FROM Allocation WHERE mentor_k_number = {_to_str(tor_number)} AND mentee_k_number = {_to_str(tee_number)};")
+                return self._dao.execute(f"DELETE FROM Allocation WHERE mentor_k_number = {to_str(tor_number)} AND mentee_k_number = {to_str(tee_number)};")
                 self._dao.commit()
 
             except Exception as e:
@@ -176,7 +176,7 @@ class AllocationModel(BasicModel):
     def delete_mentors(self,mentee_k_number):
         """ Given the mentee k-number will delete all his mentors"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(mentee_k_number)};")
             self._dao.commit()
 
         except Exception as e:
@@ -186,7 +186,7 @@ class AllocationModel(BasicModel):
     def delete_mentees(self,mentor_k_number):
         """ Given the mentor k-number will delete all his mentees"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(mentor_k_number)};")
             self._dao.commit()
 
         except Exception as e:

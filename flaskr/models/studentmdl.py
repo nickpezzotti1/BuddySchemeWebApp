@@ -30,8 +30,8 @@ class StudentModel(BasicModel):
         # Ie if there's k_number and another field to update
         if len(kwargs) > 1:
             sql_query = "UPDATE Students set "
-            sql_query += ", ".join([f"{field} = {_to_str(value)}" for field, value in kwargs.items() if field != "k_number"])
-            sql_query += f" where k_number={_to_str(kwargs['k_number'])};"
+            sql_query += ", ".join([f"{field} = {to_str(value)}" for field, value in kwargs.items() if field != "k_number"])
+            sql_query += f" where k_number={to_str(kwargs['k_number'])};"
             try:
                 self._dao.execute(sql_query)
                 self._dao.commit()
@@ -106,7 +106,7 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Students table"""
 
         try:
-            self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)});")
+            self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)});")
             self._dao.commit()
 
         except Exception as e:
@@ -140,7 +140,7 @@ class StudentModel(BasicModel):
         if sanity_check(k_number) and sanity_check(is_admin):
 
             try:
-                self._dao.execute(f"UPDATE Students SET is_admin = {is_admin} WHERE k_number = {_to_str(k_number)};")
+                self._dao.execute(f"UPDATE Students SET is_admin = {is_admin} WHERE k_number = {to_str(k_number)};")
                 self._dao.commit()
 
             except Exception as e:
@@ -153,7 +153,7 @@ class StudentModel(BasicModel):
     def delete_mentees(self,mentor_k_number):
         """ Given the mentor k-number will delete all his mentees"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(mentor_k_number)};")
             self._dao.commit()
 
         except Exception as e:

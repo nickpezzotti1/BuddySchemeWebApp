@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from permissions import permissioned_login_required
+from user import User
 import controllers.adminctrl as adminctrl
 import controllers.loginctrl as loginctrl
 import controllers.mentorctrl as mentorctrl

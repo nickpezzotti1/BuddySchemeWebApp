@@ -26,9 +26,9 @@ def mentor_mentee_list():
 
 @mentor_blueprint.route('/mentor/mentee/<k_number_mentee>')
 def mentor_mentee(k_number_mentee):
-    return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_info=db.get_user_data(k_number_mentee), k_number_mentee=k_number_mentee)
+    return handler.mentor_mentee(k_number_mentee)
 
 @mentor_blueprint.route('/mentee/mentor/<k_number_mentor>')
 def mentee_mentor(k_number_mentor):
 
-    return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+    return handler.mentee_mentor(k_number_mentor)

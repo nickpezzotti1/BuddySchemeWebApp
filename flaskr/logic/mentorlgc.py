@@ -96,6 +96,26 @@ class MentorLogic():
                 self._log.exception("Could not execute update user preferences logic")
                 return abort(404)
 
+
+    def mentor_mentee(self,k_number_mentee):
+
+        try:
+            return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_info=self._student_handler.get_user_data(k_number_mentee), k_number_mentee=k_number_mentee)
+
+        except Exception as e:
+            self._log.exception("Could not execute mentor mentee logic")
+            return abort(404)
+    
+    def mentee_mentor(self,k_number_mentor):
+
+        try:
+            return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+
+        except Exception as e:
+            self._log.exception("Could not execute mentee mentor logic")
+            return abort(404)
+
+
     def __init__(self):
         try:
             self._log = logging.getLogger(__name__)

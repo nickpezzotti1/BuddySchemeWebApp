@@ -2,6 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for, Blu
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 import logging
 import json
+import requests
 from models.allocationmdl import AllocationModel
 from models.interestmdl import InterestModel
 from models.hobbiesmdl import HobbiesModel
@@ -87,7 +88,7 @@ class AdminLogic():
     def allocate(self):
 
         try:
-            input_string = generate_mentee_and_mentor_json()
+            input_string = self.generate_mentee_and_mentor_json()
 
             response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
             # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
@@ -120,7 +121,7 @@ class AdminLogic():
             for mentor in mentors:
                 input["mentors"].append(
                                         {
-                                            "ID": int(mentor["mentor_k_number"][1:]), #TODO
+                                            "ID": mentor["mentor_k_number"][1:], #TODO
                                             "age": 20,
                                             "isMale": True,
                                             "menteeLimit": 1
@@ -130,7 +131,7 @@ class AdminLogic():
             for mentee in mentees:
                 input["mentees"].append(
                                         {
-                                            "ID": int(mentee["mentee_k_number"][1:]), #TODO
+                                            "ID": mentee["mentee_k_number"][1:], #TODO
                                             "age": 20,
                                             "isMale": True
                                         }
@@ -169,6 +170,3 @@ class AdminLogic():
         except Exception as e:
                 self._log.exception("Could not create model instance")
                 return abort(404)
-
-
-

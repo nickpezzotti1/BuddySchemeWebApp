@@ -93,12 +93,15 @@ class AdminLogic():
             response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
             # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
             response_text = response.text[1:-1].replace("\\", "")
+            from flask import current_app
+            current_app.logger.warning(input_string)
+            current_app.logger.warning(response_text)
             json_response = json.loads(response_text)
             pairs = json_response["assignments"]
 
             try:
                 for pair in pairs:
-                    self._allocation_handler.insert_mentor_mentee("k" + pair["mentor_id"], "k" + pair["mentee_id"])
+                    self._allocation_handler.insert_mentor_mentee(pair["mentor_id"], pair["mentee_id"])
             except:
                 print("Error in inserting into db")
 
@@ -121,7 +124,7 @@ class AdminLogic():
             for mentor in mentors:
                 input["mentors"].append(
                                         {
-                                            "ID": mentor["mentor_k_number"],
+                                            "ID": mentor["k_number"],
                                             "age": 20,
                                             "isMale": True,
                                             "menteeLimit": 1
@@ -131,7 +134,7 @@ class AdminLogic():
             for mentee in mentees:
                 input["mentees"].append(
                                         {
-                                            "ID": mentee["mentee_k_number"],
+                                            "ID": mentee["k_number"],
                                             "age": 20,
                                             "isMale": True
                                         }

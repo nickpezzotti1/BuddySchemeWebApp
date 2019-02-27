@@ -345,13 +345,13 @@ def get_all_students_data_basic():
 def get_all_mentors():
     """ Returns all the k-number of mentors"""
 
-    return _query("SELECT k_number FROM Students Where is_mentor=0;")
+    return _query("SELECT k_number FROM Students Where is_mentor=1;")
 
 
 def get_all_mentees():
     """ Returns all the k-number of the mentees"""
 
-    return _query("SELECT k_number FROM Students Where is_mentor=1;")
+    return _query("SELECT k_number FROM Students Where is_mentor=0;")
 
 
 

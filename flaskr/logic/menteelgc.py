@@ -56,6 +56,14 @@ class MenteeLogic():
                 self._log.exception("Could not execute mentee mentor list logic")
                 return abort(404)
 
+    def mentor_view(self, k_number):
+        try:
+            mentor_info = self._student_handler.get_user_data(k_number)
+            return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentor_info=mentor_info)
+
+        except Exception as e:
+                self._log.exception("Could not execute mentor view logic")
+                return abort(404)
 
     def get_all_user_info(self,k_number):
         """ Get all user info from database and format into a single dict"""

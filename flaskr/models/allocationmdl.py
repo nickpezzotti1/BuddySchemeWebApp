@@ -115,7 +115,7 @@ class AllocationModel(BasicModel):
 
     def make_manual_allocation(self,tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
-            
+
             try:
                 return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(tor_number)}, {to_str(tee_number)});")
                 self._dao.commit()
@@ -143,7 +143,7 @@ class AllocationModel(BasicModel):
 
     def get_mentors(self,mentee_k_number):
         """ Given the mentee K-Number will return its mentor(s) k-number"""
-        
+
         try:
             return self._dao.execute(f"SELECT mentor_k_number from Allocation where mentee_k_number={to_str(mentee_k_number)};")
 

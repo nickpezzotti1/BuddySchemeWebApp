@@ -44,8 +44,12 @@ class Dao():
             """ Execute a provided query and return result"""
 
             try:
+                self._create_connection()
                 self.__cursor.execute(query)
-                return self.__cursor.fetchall()
+                data = self.__cursor.fetchall()
+                self.commit()
+                self.close()
+                return data
             except:
                 self._log.exception("Could not execute query")
                 raise
@@ -99,4 +103,4 @@ class Dao():
             self._schema = schema
             self._get_credentials()
             self._credentials['dbname'] = schema
-            self._create_connection()
+            #self._create_connection()

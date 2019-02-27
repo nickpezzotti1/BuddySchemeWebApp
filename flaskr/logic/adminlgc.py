@@ -10,11 +10,11 @@ from models.studentmdl import StudentModel
 
 class AdminLogic():
 
-    
+
     def admin_dashboard(self):
         return render_template('admin/dashboard.html', title='Admin Dashboard')
 
-    
+
     def admin_view_students(self):
         try:
             data = self._student_handler.get_all_students_data_basic()
@@ -23,7 +23,7 @@ class AdminLogic():
             self._log.exception("Could not execute admin view")
             return abort(404)
 
-    
+
     def view_student_details(self):
         try:
             if(request.method == 'POST' and 'knum' in request.form):
@@ -56,7 +56,7 @@ class AdminLogic():
             self._log.exception("Could not execute student details")
             return abort(404)
 
-    
+
     def delete_student_details(self):
 
         try:
@@ -71,20 +71,20 @@ class AdminLogic():
             self._log.exception("Could not execute delete student details")
             return abort(404)
 
-    
+
     def general_settings(self):
 
         return render_template('admin/general_settings.html', title='General Settings')
 
-    
+
     def allocation_algorithm(self):
         return render_template('admin/allocation_algorithm.html', title='allocation_algorithm', assignments=self.allocate())
 
-    
+
     def sign_up_settings(self):
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
 
-    
+
     def allocate(self):
 
         try:
@@ -121,7 +121,7 @@ class AdminLogic():
             for mentor in mentors:
                 input["mentors"].append(
                                         {
-                                            "ID": mentor["mentor_k_number"][1:], #TODO
+                                            "ID": mentor["mentor_k_number"],
                                             "age": 20,
                                             "isMale": True,
                                             "menteeLimit": 1
@@ -131,7 +131,7 @@ class AdminLogic():
             for mentee in mentees:
                 input["mentees"].append(
                                         {
-                                            "ID": mentee["mentee_k_number"][1:], #TODO
+                                            "ID": mentee["mentee_k_number"],
                                             "age": 20,
                                             "isMale": True
                                         }
@@ -143,7 +143,7 @@ class AdminLogic():
             self._log.exception("Could not execute generate mentor mentee json")
             return "Error"
 
-    
+
     def manually_assign(self):
 
         try:

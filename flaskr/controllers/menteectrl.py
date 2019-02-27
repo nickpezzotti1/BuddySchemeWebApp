@@ -24,8 +24,7 @@ def mentee_mentor_list():
 
 @mentee_blueprint.route('/mentee/mentor/<k_number_mentor>')
 def mentee_mentor(k_number_mentor):
-
-    return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+    return handler.mentor_view(k_number_mentor)
 
 @mentee_blueprint.route("/dashboard")
 @login_required

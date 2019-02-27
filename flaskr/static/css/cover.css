@@ -139,7 +139,7 @@ body {
     top: 0;
   }
   .mastfoot {
-    position: fixed;
+    position: static;
     bottom: 0;
   }
   /* Start the vertical centering */
@@ -160,4 +160,18 @@ body {
   .cover-container {
     width: 700px;
   }
+}
+
+
+/*
+ * Specific
+ */
+
+.content {
+  padding-top: 15%;
+  padding-bottom: 15%;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #FF0000;
 }

@@ -93,9 +93,6 @@ class AdminLogic():
             response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
             # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
             response_text = response.text[1:-1].replace("\\", "")
-            from flask import current_app
-            current_app.logger.warning(input_string)
-            current_app.logger.warning(response_text)
             json_response = json.loads(response_text)
             pairs = json_response["assignments"]
 

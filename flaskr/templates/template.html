@@ -10,7 +10,11 @@
 
     <link rel="shortcut icon" href="https://s3-eu-west-1.amazonaws.com/website-buddy-kcl/pictures/kcl_logo.jpg">
 
-    <title>KCL Buddy</title>
+    {% if title %}  
+      <title> {{title}} </title>
+    {% else %}
+        <title> KCL Buddy </title>
+    {% endif %}
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='dist/css/bootstrap.min.css') }}" rel="stylesheet">

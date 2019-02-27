@@ -10,15 +10,17 @@ We are using pythons virtual enviorements to make sure we are all using the same
 2. `$ python3 -m venv env`
 3. `$ source env/bin/activate`
 4. `$ pip install -r requirements.txt`
-7. Install AWS CLI and configure role credentials (details in group chat)  
-8. Run the application
+5. `$ aws configure`
+6. You will be asked to input AWS credentials (check chat description for latest).
+7. Run the application
 
-*To set the variables permanently, you should edit your `.bashrc` in your home directory.
+
 
 ## Run the application
 
 1. `$ source env/bin/activate`
 2. `(env) $ python app.py`
+
 
 ## Setup Local SMTP Server
 

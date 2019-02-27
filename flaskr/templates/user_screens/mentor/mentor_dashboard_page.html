@@ -24,8 +24,10 @@
 
 <div style="text-align: center">
 <div id="browse_app">
-    <a class="btn btn-large btn-info" href="{{url_for('mentor_preferences')}}">Preferences</a>
-    <a class="btn btn-large btn-info" href="{{url_for('mentor_mentee_list')}}">My Mentees</a>
+
+    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_preferences')}}">Preferences</a>
+    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_mentee_list')}}">My Mentees</a>
+
 </div>
 </div>
 {% endblock content_block %}

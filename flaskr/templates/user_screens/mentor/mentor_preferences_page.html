@@ -7,7 +7,7 @@
 <h4> Last Name: {{user_info["last_name"]}}<h4>
 <h4> Age: {{user_info["age"]}}<h4>
 
-<form action = "{{url_for('mentor_preferences')}}" method = "post">
+<form action = "{{url_for('mentor.mentor_preferences')}}" method = "post">
     <div class="form-group">
         <h4> Hobbies:</h4>
 
@@ -34,6 +34,6 @@
 </form>
 
 <div id="browse_app">
-    <a class="btn btn-large btn-info" href="{{url_for('mentor')}}">Back to Dashboard</a>
+    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard</a>
 </div>
 {% endblock content_block %}

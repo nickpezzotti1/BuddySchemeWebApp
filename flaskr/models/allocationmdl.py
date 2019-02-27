@@ -115,7 +115,7 @@ class AllocationModel(BasicModel):
 
     def make_manual_allocation(self,tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
-            print(f"INSERT INTO Allocation VALUES({to_str(tor_number)}, {to_str(tee_number)});")
+            
             try:
                 return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(tor_number)}, {to_str(tee_number)});")
                 self._dao.commit()

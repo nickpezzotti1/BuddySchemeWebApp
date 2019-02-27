@@ -40,7 +40,7 @@ class MenteeLogic():
 
         try:
             mentor_list = self._allocation_handler.get_mentors(current_user.k_number)
-            print(mentor_list)
+            
 
             # Object to hold all the mentees. This takes the form of a nested dictionary indexed by k_numbers
             mentor_list_data = {}

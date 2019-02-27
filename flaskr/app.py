@@ -15,7 +15,6 @@ app.config["SECRET_KEY"] = "powerful secretkey"
 # app.config["SECURITY_PASSWORD_SALT"]=53
 app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
 app.config["PASSWORD_RESET_EXPIRATION"] = 86400
-app.config["PASSWORD_RESET_EXPIRATION"] = 86400
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login.login"

@@ -1,29 +1,30 @@
 {% extends "index.html" %}
 
 {% block content_block %}
-<h1> Preferences </h1>
-<h2> K-Number: {{user_info["k_number"]}}<h2> 
-<h2> First Name: {{user_info["first_name"]}}<h2> 
-<h2> Last Name: {{user_info["last_name"]}}<h2> 
-<h2> Age: {{user_info["age"]}}<h2> 
+
+<h3> Preferences </h3>
+<h4> K-Number: {{user_info["k_number"]}}<h4>
+<h4> First Name: {{user_info["first_name"]}}<h4>
+<h4> Last Name: {{user_info["last_name"]}}<h4>
+<h4> Age: {{user_info["age"]}}<h4>
 
 <form action = "{{url_for('mentee.mentee_preferences')}}" method = "post">
     <div class="form-group">
-        <h2> Hobbies:</h2>
-     
+        <h4> Hobbies:</h4>
+
         <label class="checkbox"><input type="checkbox" name="hobbies" value="Football" {% if "Football" in user_info["hobbies"] %} checked {% endif %}>Football</label>
         <label class="checkbox"><input type="checkbox" name="hobbies" value="Poker" {% if "Poker" in user_info["hobbies"] %} checked {% endif %}>Poker</label>
         <label class="checkbox"><input type="checkbox" name="hobbies" value="Gaming" {% if "Gaming" in user_info["hobbies"] %} checked {% endif %}>Gaming</label>
         <label class="checkbox"><input type="checkbox" name="hobbies" value="Smoking" {% if "Smoking" in user_info["hobbies"] %} checked {% endif %}>Smoking</label>
     </div>
-    <div class="forn-group">
-    <h2> Academic Interests:</h2>
-   
+    <div class="form-group">
+    <h4> Academic Interests:</h4>
+
     <label class="checkbox"><input type="checkbox"  name="interests" value="AI" {% if "AI" in user_info["interests"] %} checked {% endif %}>AI</label>
         <label class="checkbox"><input type="checkbox" name="interests" value="Blockchain" {% if "Blockchain" in user_info["interests"] %} checked {% endif %}>Blockchain</label>
         <label class="checkbox"><input type="checkbox" name="interests" value="Data Science" {% if "Data Science" in user_info["interests"] %} checked {% endif %}>Data Science</label>
         <label class="checkbox"><input type="checkbox" name="interests" value="Quantum" {% if "Quantum" in user_info["interests"] %} checked {% endif %}>Quantum</label>
-</div>
+      </div>
 
 
 
@@ -33,9 +34,9 @@
 
 </form>
 
-<div id="browse_app">
+
+<div id="dashboard">
     <a class="btn btn-large btn-info" href="{{url_for('mentee.mentee')}}">Back to Dashboard</a>
+
 </div>
 {% endblock content_block %}
-
-

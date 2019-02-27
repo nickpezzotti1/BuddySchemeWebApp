@@ -117,9 +117,6 @@ class AdminLogic():
         # Get all mentees from database
         mentees = self._allocation_handler.get_all_mentees()
 
-        if (len(mentees) > len(mentors)):
-            raise Exception("TODO: allow for less mentees than mentors. \n For now more mentors than mentees have to be present")
-
         input = {"mentors": [], "mentees": []}
         for mentor in mentors:
             input["mentors"].append(

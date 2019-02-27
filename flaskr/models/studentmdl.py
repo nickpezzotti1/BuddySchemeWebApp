@@ -102,11 +102,11 @@ class StudentModel(BasicModel):
             raise KeyError(f"{self.HASH_COL} not found in table")
 
 
-    def insert_student(self,k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin):
+    def insert_student(self,k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin, buddy_limit):
         """ Will entirely populate an entry for Students table"""
 
         try:
-            self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)});")
+            self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, buddy_limit])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, 1);")
             self._dao.commit()
 
         except Exception as e:

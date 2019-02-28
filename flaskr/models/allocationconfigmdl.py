@@ -16,7 +16,7 @@ class AllocationConfigModel(BasicModel):
 
     def update_allocation_config(self, config):
         """ Update the allocation configuration table with the new """
-        print(config)
+        
         # Sanity check all config fields
         for config_field, config_value in config.items():
             if not sanity_check(config_value):

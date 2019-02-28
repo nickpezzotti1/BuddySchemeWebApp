@@ -73,8 +73,13 @@ class LoginLogic():
                     is_mentor = registration_form.is_mentor.data
                     hashed_password = generate_password_hash(registration_form.password.data)
                     # hashed_password = generate_password_hash("12345678", method="sha256")
-
                     
+                    if self._student_handler.user_exist(k_number):
+                        flash("User already exists")
+                        return render_template("signup.html", registration_form=registration_form)
+                    else:
+                        flash("User doesn't exist")
+                        return render_template("signup.html", registration_form=registration_form)
 
                     db_insert_success = self._student_handler.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)

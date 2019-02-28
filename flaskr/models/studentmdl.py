@@ -88,6 +88,16 @@ class StudentModel(BasicModel):
         except KeyError:
             raise KeyError(f"{self.HASH_COL} not found in table.")
 
+    
+    def user_exist(self, k_number):
+        try:
+            get_user_data(k_number=k_number)
+            return True
+        
+        except Exception as e:
+            return False
+        
+
     #TODO Should I return something here?
 
     def get_user_hashed_password(self,k_number):

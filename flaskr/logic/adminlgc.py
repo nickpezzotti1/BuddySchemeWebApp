@@ -80,6 +80,7 @@ class AdminLogic():
 
     def allocation_config(self):
         if(request.method == 'POST'):
+            # Format the results in a dict and call the update query
             config = {
                 'age_weight': request.form['age_weight'],
                 'gender_weight': request.form['gender_weight'],
@@ -89,6 +90,7 @@ class AdminLogic():
 
             self._allocation_config_handler.update_allocation_config(config)
 
+            # Text displayed after updating the config - as feedback for the user
             update_message = 'Configuration Updated'
         else:
             update_message = ''

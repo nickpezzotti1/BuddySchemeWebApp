@@ -1,7 +1,12 @@
 {% extends "index.html" %}
 
 {% block content_block %}
+<h2>Allocations Completed</h2>
 
 {{assignments}}
+
+<div id="back_to_dashboard">
+    <a class="btn btn-large btn-info" href="{{url_for('mentee.mentee_mentor_list')}}">Back to Dashboard </a>
+</div>
 
 {% endblock content_block %}

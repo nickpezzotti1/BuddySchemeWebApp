@@ -10,6 +10,7 @@ CREATE TABLE Students
  email_confirmed tinyint(1) NOT NULL DEFAULT 0,
  password_hash VARCHAR(255) NOT NULL,
  is_admin tinyint(1) NOT NULL, DEFAULT 0,
+ buddy_limit int NOT NULL, DEFAULT 1,
  PRIMARY KEY(k_number)
 );
 

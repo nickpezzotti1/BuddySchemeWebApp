@@ -14,7 +14,7 @@ class LoginLogic():
 
 
     def login(self, request):
-        
+
         if current_user.is_authenticated:
             return redirect("/dashboard")
 
@@ -27,7 +27,7 @@ class LoginLogic():
 
         try:
 
-            if login_form.login_submit.data: 
+            if login_form.login_submit.data:
                 if login_form.validate_on_submit():
                     user = User(login_form.k_number.data)
 
@@ -53,7 +53,7 @@ class LoginLogic():
             self._log.exception("Could not parse login form")
             return abort(404)
 
-    
+
     def signup(self,request):
 
         try:
@@ -74,7 +74,7 @@ class LoginLogic():
                     # hashed_password = generate_password_hash(registration_form.password.data)
                     hashed_password = generate_password_hash("12345678", method="sha256")
 
-                    db_insert_success = self._student_handler.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False)
+                    db_insert_success = self._student_handler.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)
                     user = User(k_number)
 
@@ -100,7 +100,7 @@ class LoginLogic():
 
         try:
             k_number = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
-        
+
         except Exception as e:
             self._log.exception("Could not verify token")
             return abort(404)
@@ -129,4 +129,3 @@ class LoginLogic():
         except Exception as e:
                 self._log.exception("Could not create model instance")
                 return abort(404)
-

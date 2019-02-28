@@ -56,7 +56,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of mentors"""
 
         try:
-            return self._dao.execute("SELECT mentor_k_number FROM Allocation;")
+            return self._dao.execute("SELECT k_number FROM Students WHERE is_mentor=1;")
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
@@ -67,7 +67,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of the mentees"""
 
         try:
-            return self._dao.execute("SELECT mentee_k_number FROM Allocation;")
+            return self._dao.execute("SELECT k_number FROM Students WHERE is_mentor=0;")
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")
@@ -79,7 +79,7 @@ class AllocationModel(BasicModel):
 
             try:
                 return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)};")
-        
+
             except Exception as e:
                 self._log.exception("Could not get mentee details")
                 raise e
@@ -92,7 +92,7 @@ class AllocationModel(BasicModel):
 
             try:
                 return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)};")
-        
+
             except Exception as e:
                 self._log.exception("Could not get mentor details")
                 raise e
@@ -105,7 +105,7 @@ class AllocationModel(BasicModel):
             join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
             try:
                 return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
-            
+
             except Exception as e:
                 self._log.exception("Could not get manual allocation matches")
                 raise e
@@ -115,7 +115,7 @@ class AllocationModel(BasicModel):
 
     def make_manual_allocation(self,tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
-            
+
             try:
                 return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(tor_number)}, {to_str(tee_number)});")
                 self._dao.commit()
@@ -143,7 +143,7 @@ class AllocationModel(BasicModel):
 
     def get_mentors(self,mentee_k_number):
         """ Given the mentee K-Number will return its mentor(s) k-number"""
-        
+
         try:
             return self._dao.execute(f"SELECT mentor_k_number from Allocation where mentee_k_number={to_str(mentee_k_number)};")
 

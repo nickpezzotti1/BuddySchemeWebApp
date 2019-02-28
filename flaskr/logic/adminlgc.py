@@ -98,50 +98,47 @@ class AdminLogic():
 
             try:
                 for pair in pairs:
-                    self._allocation_handler.insert_mentor_mentee("k" + pair["mentor_id"], "k" + pair["mentee_id"])
+                    self._allocation_handler.insert_mentor_mentee(pair["mentor_id"], pair["mentee_id"])
             except:
                 print("Error in inserting into db")
 
             return "The following assignments have been made:" + str(json_response["assignments"])
 
         except Exception as e:
-            self._log.exception("Could not execute update user preferences logic")
-            return "Error"
+            self._log.exception(e)
+            return e
 
+    #TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
 
-        try:
-            # Get all mentors from database
-            mentors = self._allocation_handler.get_all_mentors()
+        # Get all mentors from database
+        mentors = self._allocation_handler.get_all_mentors()
 
-            # Get all mentees from database
-            mentees = self._allocation_handler.get_all_mentees()
+        # Get all mentees from database
+        mentees = self._allocation_handler.get_all_mentees()
 
-            input = {"mentors": [], "mentees": []}
-            for mentor in mentors:
-                input["mentors"].append(
-                                        {
-                                            "ID": mentor["mentor_k_number"],
-                                            "age": 20,
-                                            "isMale": True,
-                                            "menteeLimit": 1
-                                        }
-                                    )
+        input = {"mentors": [], "mentees": []}
+        for mentor in mentors:
+            input["mentors"].append(
+                                    {
+                                        "ID": mentor["k_number"],
+                                        "age": 20,
+                                        "isMale": True,
+                                        "menteeLimit": 1
+                                    }
+                                )
 
-            for mentee in mentees:
-                input["mentees"].append(
-                                        {
-                                            "ID": mentee["mentee_k_number"],
-                                            "age": 20,
-                                            "isMale": True
-                                        }
-                                    )
+        for mentee in mentees:
+            input["mentees"].append(
+                                    {
+                                        "ID": mentee["k_number"],
+                                        "age": 20,
+                                        "isMale": True
+                                    }
+                                )
 
-            return json.dumps(input)
+        return json.dumps(input)
 
-        except Exception as e:
-            self._log.exception("Could not execute generate mentor mentee json")
-            return "Error"
 
 
     def manually_assign(self):

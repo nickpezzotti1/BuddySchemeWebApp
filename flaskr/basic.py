@@ -272,10 +272,10 @@ def insert_mentor_mentee(mentor_k_number, mentee_k_number):
     return _insert(f"INSERT INTO Allocation VALUES({_to_str([mentor_k_number, mentee_k_number])});")
 
 
-def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin):
+def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin, buddy_limit):
     """ Will entirely populate an entry for Students table"""
 
-    return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)});")
+    return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, buddy_limit])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)}, 1);")
 
 
 def insert_hobby(k_number, hobby):
@@ -345,13 +345,13 @@ def get_all_students_data_basic():
 def get_all_mentors():
     """ Returns all the k-number of mentors"""
 
-    return _query("SELECT k_number FROM Students Where is_mentor=0;")
+    return _query("SELECT k_number FROM Students Where is_mentor=1;")
 
 
 def get_all_mentees():
     """ Returns all the k-number of the mentees"""
 
-    return _query("SELECT k_number FROM Students Where is_mentor=1;")
+    return _query("SELECT k_number FROM Students Where is_mentor=0;")
 
 
 

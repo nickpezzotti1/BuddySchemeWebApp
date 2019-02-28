@@ -183,3 +183,7 @@ body {
 #nameFilt {
   background-color: dimgray;
 }
+
+.searchBar {
+  padding: 10%;
+}

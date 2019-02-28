@@ -8,30 +8,28 @@
     <form action = "{{url_for('admin.allocation_config')}}" method="post">
         
         <label class="form-text">Age</label>
-        <input class="form-control" type="number" name="age_weight" value="{{allocation_config['age_weight']}}">
+        <input class="form-control help-block" type="number" name="age_weight" value="{{allocation_config['age_weight']}}">
         <label class="form-text">Gender</label>
-        <input class="form-control" type="number" name="gender_weight" value="{{allocation_config['gender_weight']}}">
+        <input class="form-control help-block" type="number" name="gender_weight" value="{{allocation_config['gender_weight']}}">
         <label class="form-text">Hobby</label>
-        <input class="form-control" type="number" name="hobby_weight" value="{{allocation_config['hobby_weight']}}">
+        <input class="form-control help-block" type="number" name="hobby_weight" value="{{allocation_config['hobby_weight']}}">
         <label class="form-text">Interest</label>
-        <input class="form-control " type="number" name="interest_weight" value="{{allocation_config['interest_weight']}}">
+        <input class="form-control help-block" type="number" name="interest_weight" value="{{allocation_config['interest_weight']}}">
 
-        <input class="btn btn-large btn-info form-control" type ="submit" value="Update" />
+        <input class="btn btn-block btn-lg help-block btn-primary my-3" type ="submit" value="Update" />
 
     </form>
 </div>
 
+<div class="help-block" id="allocate">
+    <a class="btn btn-block btn-lg help-block btn-primary my-3" href="{{url_for('admin.allocation_algorithm')}}">Allocate</a>
+</div>
+
+<div class="help-block" id="back_to_dashboard">
+    <a class="btn btn-block btn-lg help-block btn-primary my-3" href="{{url_for('admin.admin_dashboard')}}">Back to Dashboard </a>
+</div>
+
 {{update_message}}
-
-<div id="allocate">
-    <a class="btn btn-large btn-info" href="{{url_for('admin.allocation_algorithm')}}">Allocate</a>
-</div>
-
-<div id="back_to_dashboard">
-    <a class="btn btn-large btn-info" href="{{url_for('admin.admin_dashboard')}}">Back to Dashboard </a>
-</div>
-
-    
     
 
 

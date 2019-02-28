@@ -8,7 +8,7 @@ class AllocationConfigModel(BasicModel):
         """ Retrieve the current allocation configuration"""
 
         try:
-            return self._dao.execute("SELECT age_weight, gender_weight, hobby_weight, interest_weight FROM Allocation_Config;")
+            return self._dao.execute("SELECT age_weight, gender_weight, hobby_weight, interest_weight FROM Allocation_Config;")[0]
 
         except Exception as e:
             self._log.exception("Could not get allocation config")
@@ -16,7 +16,7 @@ class AllocationConfigModel(BasicModel):
 
     def update_allocation_config(self, config):
         """ Update the allocation configuration table with the new """
-
+        print(config)
         # Sanity check all config fields
         for config_field, config_value in config.items():
             if not sanity_check(config_value):
@@ -25,7 +25,7 @@ class AllocationConfigModel(BasicModel):
         try:
             self._dao.execute(f"UPDATE Allocation_Config SET age_weight = {config['age_weight']}, gender_weight = {config['gender_weight']}, hobby_weight = {config['hobby_weight']}, interest_weight = {config['interest_weight']};")
             self._dao.commit()
-#WHERE k_number = {to_str(k_number)}
+
         except Exception as e:
             self._log.exception("Could not update allocation config")
             raise e

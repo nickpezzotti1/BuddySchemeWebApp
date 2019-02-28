@@ -107,7 +107,9 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Students table"""
 
         try:
-            self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)});")
+            test = f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, 0, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)});"
+            print(test)
+            self._dao.execute(test)
             self._dao.commit()
 
         except Exception as e:

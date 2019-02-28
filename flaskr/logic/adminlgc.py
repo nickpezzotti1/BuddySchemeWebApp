@@ -130,6 +130,9 @@ class AdminLogic():
 
     #TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
+        
+        # Get allocation configuration from database
+        allocation_config = self._allocation_config_handler.get_allocation_config()
 
         # Get all mentors from database
         mentors = self._allocation_handler.get_all_mentors()
@@ -137,7 +140,15 @@ class AdminLogic():
         # Get all mentees from database
         mentees = self._allocation_handler.get_all_mentees()
 
-        input = {"mentors": [], "mentees": []}
+        input = {"configurations": {}, "mentors": [], "mentees": []}
+
+        input["configurations"] = {
+            "age_importance": allocation_config["age_weight"],
+            "sex_importance": allocation_config["gender_weight"],
+            "hobby_importance": allocation_config["hobby_weight"],
+            "interest_importance": allocation_config["interest_weight"]
+        }
+
         for mentor in mentors:
             input["mentors"].append(
                                     {

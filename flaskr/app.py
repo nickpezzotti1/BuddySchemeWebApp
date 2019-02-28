@@ -9,9 +9,6 @@ import controllers.menteectrl as menteectrl
 import logging
 
 
-import models.studentmdl as a 
-
-
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "powerful secretkey"

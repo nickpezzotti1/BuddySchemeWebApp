@@ -24,7 +24,7 @@ class MentorLogic():
         try:
             if request.method == "POST":
                 self.update_user_preferences(current_user.k_number, request.form.getlist('hobbies'), request.form.getlist('interests'))
-                return redirect(url_for("mentor"))
+                return redirect(url_for("mentor.mentor"))
             else:
                 user_info = self.get_all_user_info(current_user.k_number)
                 return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)

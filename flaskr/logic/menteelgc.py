@@ -26,7 +26,7 @@ class MenteeLogic():
         try:
             if request.method == "POST":
                 self.update_user_preferences(current_user.k_number, request.form.getlist('hobbies'), request.form.getlist('interests'))
-                return redirect(url_for("mentee"))
+                return redirect(url_for("mentee.mentee"))
             else:
                 user_info = self.get_all_user_info(current_user.k_number)
                 return render_template("user_screens/mentee/mentee_preferences_page.html", title="Your Preferences", user_info=user_info)

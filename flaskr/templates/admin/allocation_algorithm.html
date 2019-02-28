@@ -1,7 +1,15 @@
 {% extends "template.html" %}
 
 {% block content_block %}
+<h2>Allocations Completed</h2>
 
 {{assignments}}
+
+</br>
+</br>
+
+<div id="back_to_dashboard">
+    <a class="btn btn-block btn-lg help-block btn-primary my-3" href="{{url_for('admin.admin_dashboard')}}">Back to Dashboard </a>
+</div>
 
 {% endblock content_block %}

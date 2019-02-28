@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, current_user, login_required, l
 import logging
 import json
 import requests
+from models.allocationconfigmdl import AllocationConfigModel
 from models.allocationmdl import AllocationModel
 from models.interestmdl import InterestModel
 from models.hobbiesmdl import HobbiesModel
@@ -77,9 +78,30 @@ class AdminLogic():
         return render_template('admin/general_settings.html', title='General Settings')
 
 
-    def allocation_algorithm(self):
-        return render_template('admin/allocation_algorithm.html', title='allocation_algorithm', assignments=self.allocate())
+    def allocation_config(self):
+        if(request.method == 'POST'):
+            # Format the results in a dict and call the update query
+            config = {
+                'age_weight': request.form['age_weight'],
+                'gender_weight': request.form['gender_weight'],
+                'hobby_weight': request.form['hobby_weight'],
+                'interest_weight': request.form['interest_weight'],
+            }
 
+            self._allocation_config_handler.update_allocation_config(config)
+
+            # Text displayed after updating the config - as feedback for the user
+            update_message = 'Configuration Updated'
+        else:
+            update_message = ''
+
+        # Always render the page
+        allocation_config = self._allocation_config_handler.get_allocation_config()
+
+        return render_template('admin/allocation_config.html', title='Allocation Algorithm', allocation_config=allocation_config, update_message=update_message)
+
+    def allocation_algorithm(self):
+        return render_template('admin/allocation_algorithm.html', title='Allocation Algorithm', assignments=self.allocate())
 
     def sign_up_settings(self):
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
@@ -110,6 +132,9 @@ class AdminLogic():
 
     #TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
+        
+        # Get allocation configuration from database
+        allocation_config = self._allocation_config_handler.get_allocation_config()
 
         # Get all mentors from database
         mentors = self._allocation_handler.get_all_mentors()
@@ -117,7 +142,15 @@ class AdminLogic():
         # Get all mentees from database
         mentees = self._allocation_handler.get_all_mentees()
 
-        input = {"mentors": [], "mentees": []}
+        input = {"configurations": {}, "mentors": [], "mentees": []}
+
+        input["configurations"] = {
+            "age_importance": allocation_config["age_weight"],
+            "sex_importance": allocation_config["gender_weight"],
+            "hobby_importance": allocation_config["hobby_weight"],
+            "interest_importance": allocation_config["interest_weight"]
+        }
+
         for mentor in mentors:
             input["mentors"].append(
                                     {
@@ -160,6 +193,7 @@ class AdminLogic():
     def __init__(self):
         try:
             self._log = logging.getLogger(__name__)
+            self._allocation_config_handler = AllocationConfigModel()
             self._allocation_handler = AllocationModel()
             self._student_handler = StudentModel()
             self._hobbies_handler = HobbiesModel()

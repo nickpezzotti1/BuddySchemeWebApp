@@ -29,6 +29,10 @@ def general_settings():
 
     return render_template('admin/general_settings.html', title='General Settings')
 
+@admin_blueprint.route('/admin/allocation_config', methods=['GET', 'POST'])
+def allocation_config():
+    return handler.allocation_config()
+
 @admin_blueprint.route('/admin/allocation_algorithm')
 def allocation_algorithm():
     return handler.allocation_algorithm()

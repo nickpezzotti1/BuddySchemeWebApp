@@ -1,4 +1,4 @@
-{% extends "index.html" %}
+{% extends "template.html" %}
 
 {% block content_block %}
 
@@ -26,12 +26,12 @@
 </div>
 <br />
 {% if potentials|length  %}
-<table class="table table-striped table-hover" id='table'>
+<table class="table table-hover" id='table'>
     <thead>
         <tr colspan=5><h1 class='text-center'>Potential {% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %} To Match</h1></tr>
 <tr>
 <tr>
-<div class="text-center">
+<div class="searchBar">
     Filter By Name:
     <input type='text' id='nameFilt' onkeyup='return filterName()'/>
 </div></tr>

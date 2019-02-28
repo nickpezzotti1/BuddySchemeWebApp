@@ -58,6 +58,7 @@ class StudentModel(BasicModel):
 
         return _update_students( ** dict_fields)
 
+
     def update_hash_password(self,k_number, password_hash):
         """ Given the k_number, will update the password_hash"""
 
@@ -106,6 +107,7 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Students table"""
 
         try:
+
             self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, buddy_limit])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, 1);")
             self._dao.commit()
 
@@ -117,6 +119,10 @@ class StudentModel(BasicModel):
         """ Delete the students entry in the Tables"""
 
         try:
+            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(k_number)};")
+            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(k_number)};") 
+            self._dao.execute(f"DELETE FROM Hobbies where k_number={to_str(k_number)};") 
+            self._dao.execute(f"DELETE FROM Interests where k_number={to_str(k_number)};")
             self._dao.execute(f"DELETE FROM Students where k_number={to_str(k_number)};")
             self._dao.commit()
 

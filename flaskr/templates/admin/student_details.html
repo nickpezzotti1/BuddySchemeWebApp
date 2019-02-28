@@ -1,11 +1,10 @@
-{% extends "index.html" %}
+{% extends "template.html" %}
 
 {% block content_block %}
 
 
 
-<!-- put in centered div -->
-<div class="text-center">
+<div>
     {% if udata['is_mentor'] %}
     <h2> Mentor </h2>
     {% else %}
@@ -17,7 +16,7 @@
     <h2> Age: {{udata.age}}</h2> 
 </div>
 <br />
-<div class="container">
+<div>
     <h2> Hobbies:</h2>
     <ul>
         {% for hobby in hobbies %}
@@ -34,7 +33,7 @@
 </div>
 <br />
 {% if matches|length  %}
-<table class="table table-striped table-hover" id='table'>
+<table class="table table-hover" id='table'>
     <thead>
         <tr colspan=5><h1 class='text-center'>{% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %}</h1></tr>
 <tr>

@@ -1,9 +1,0 @@
-    <div class="container" id="content_block_container">
-      {% block content_block %} {% endblock content_block %}
-    </div>
-
-      {% if title %}
-  <title> {{title}} </title>
-  {% else %}
-  <title> No title Selected </title>
-  {% endif %}

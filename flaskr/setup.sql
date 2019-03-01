@@ -1,4 +1,4 @@
-CREATE TABLE Students
+CREATE TABLE Student
 (
  k_number VARCHAR(255) NOT NULL,
  first_name  VARCHAR(255) NOT NULL,
@@ -14,20 +14,34 @@ CREATE TABLE Students
  PRIMARY KEY(k_number)
 );
 
-CREATE TABLE Hobbies
+CREATE TABLE Student_Hobby
 (
- hobby VARCHAR(255) NOT NULL,
+ hobby_id VARCHAR(255) NOT NULL,
  k_number VARCHAR(255) NOT NULL,
- FOREIGN KEY (k_number) REFERENCES Students(k_number),
- PRIMARY KEY (hobby, k_number)
+ FOREIGN KEY (hobby_id) REFERENCES Hobby(id),
+ FOREIGN KEY (k_number) REFERENCES Student(k_number),
+ PRIMARY KEY (hobby_id, k_number)
 );
 
-CREATE TABLE Interests
+CREATE TABLE Student_Interest
 (
- interest VARCHAR(255) NOT NULL,
+ interest_id VARCHAR(255) NOT NULL,
  k_number VARCHAR(255) NOT NULL,
- FOREIGN KEY (k_number) REFERENCES Students(k_number),
- PRIMARY KEY (interest, k_number)
+ FOREIGN KEY (interest_id) REFERENCES Interest(id),
+ FOREIGN KEY (k_number) REFERENCES Student(k_number),
+ PRIMARY KEY (interest_id, k_number)
+);
+
+CREATE TABLE Hobby
+(
+ id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+ hobby_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Interest
+(
+ id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+ interest_name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Allocation
@@ -35,8 +49,8 @@ CREATE TABLE Allocation
  mentor_k_number VARCHAR(255) NOT NULL,
  mentee_k_number VARCHAR(255) NOT NULL,
  PRIMARY KEY (mentor_k_number, mentee_k_number),
- FOREIGN KEY (mentor_k_number) REFERENCES Students(k_number),
- FOREIGN KEY (mentee_k_number) REFERENCES Students(k_number)
+ FOREIGN KEY (mentor_k_number) REFERENCES Student(k_number),
+ FOREIGN KEY (mentee_k_number) REFERENCES Student(k_number)
 );
 
 CREATE TABLE Allocation_Config

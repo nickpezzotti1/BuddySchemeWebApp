@@ -6,7 +6,7 @@ class StudentModel(BasicModel):
     HASH_COL = 'password_hash'
 
     def _update_students(self, ** kwargs):
-        """ Will update fields in Students based on the k_number
+        """ Will update fields in Student based on the k_number
             You will need to precise the specific field"""
 
         accepted_fields = {"first_name":str, "last_name":str, "degree_title":str,
@@ -29,7 +29,7 @@ class StudentModel(BasicModel):
 
         # Ie if there's k_number and another field to update
         if len(kwargs) > 1:
-            sql_query = "UPDATE Students set "
+            sql_query = "UPDATE Student set "
             sql_query += ", ".join([f"{field} = {to_str(value)}" for field, value in kwargs.items() if field != "k_number"])
             sql_query += f" where k_number={to_str(kwargs['k_number'])};"
             try:
@@ -65,7 +65,7 @@ class StudentModel(BasicModel):
         if type(password_hash) is str:
             password_hash_sql = "\"" + password_hash + "\""
             try:
-                self._dao.execute(f"UPDATE Students set password_hash={password_hash_sql};")
+                self._dao.execute(f"UPDATE Student set password_hash={password_hash_sql};")
                 self._dao.commit()
 
             except Exception as e:
@@ -75,11 +75,11 @@ class StudentModel(BasicModel):
             raise TypeError(f"{type(password_hash)} type isn't accepted")
 
 
-    def get_user_data(self,k_number):
-        """ Returns all the data in the Students table except from password hash"""
+    def get_user_data(self, k_number):
+        """ Returns all the data in the Student table except from password hash"""
 
         try:
-            result = self._dao.execute(f"SELECT * FROM Students where k_number={to_str(k_number)};")[0]
+            result = self._dao.execute(f"SELECT * FROM Student where k_number={to_str(k_number)};")[0]
             result.pop(self.HASH_COL, None) # can check not none
             return result
 
@@ -94,7 +94,7 @@ class StudentModel(BasicModel):
         """ Returns the hashed password for the user"""
 
         try:
-            result = self._dao.execute(f"select password_hash from Students where k_number={to_str(k_number)};")
+            result = self._dao.execute(f"select password_hash from Student where k_number={to_str(k_number)};")
             return result[0].pop(self.HASH_COL, None)
 
         except IndexError:
@@ -104,11 +104,11 @@ class StudentModel(BasicModel):
 
 
     def insert_student(self,k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin, buddy_limit):
-        """ Will entirely populate an entry for Students table"""
+        """ Will entirely populate an entry for Student table"""
 
         try:
 
-            self._dao.execute(f"INSERT INTO Students VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, buddy_limit])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, 1);")
+            self._dao.execute(f"INSERT INTO Student VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, buddy_limit);")
             self._dao.commit()
 
         except Exception as e:
@@ -116,14 +116,14 @@ class StudentModel(BasicModel):
             raise e
 
     def delete_students(self,k_number):
-        """ Delete the students entry in the Tables"""
+        """ Delete the student entry in the Tables"""
 
         try:
             self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(k_number)};")
             self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(k_number)};") 
-            self._dao.execute(f"DELETE FROM Hobbies where k_number={to_str(k_number)};") 
-            self._dao.execute(f"DELETE FROM Interests where k_number={to_str(k_number)};")
-            self._dao.execute(f"DELETE FROM Students where k_number={to_str(k_number)};")
+            self._dao.execute(f"DELETE FROM Hobby where k_number={to_str(k_number)};") 
+            self._dao.execute(f"DELETE FROM Interest where k_number={to_str(k_number)};")
+            self._dao.execute(f"DELETE FROM Student where k_number={to_str(k_number)};")
             self._dao.commit()
 
         except Exception as e:
@@ -134,7 +134,7 @@ class StudentModel(BasicModel):
     def get_all_students_data_basic(self):
 
         try:
-            return self._dao.execute("SELECT k_number, first_name, last_name, gender, is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
+            return self._dao.execute("SELECT k_number, first_name, last_name, gender, is_mentor FROM Student ORDER BY last_name ASC;")   ## add has matches
 
         except Exception as e:
             self._log.exception("Could not get all data for a student")
@@ -146,7 +146,7 @@ class StudentModel(BasicModel):
         if sanity_check(k_number) and sanity_check(is_admin):
 
             try:
-                self._dao.execute(f"UPDATE Students SET is_admin = {is_admin} WHERE k_number = {to_str(k_number)};")
+                self._dao.execute(f"UPDATE Student SET is_admin = {is_admin} WHERE k_number = {to_str(k_number)};")
                 self._dao.commit()
 
             except Exception as e:

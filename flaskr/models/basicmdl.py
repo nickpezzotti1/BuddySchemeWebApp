@@ -3,7 +3,7 @@ import logging
 
 class BasicModel:
 
-    def __init__(self, schema='Buddy'):
+    def __init__(self, schema='jardin_test'):
         try:
             self._dao = dao.Dao(schema)
             self._log = logging.getLogger(__name__)

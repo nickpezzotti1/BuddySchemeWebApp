@@ -92,19 +92,14 @@ class MenteeLogic():
             interests = {}
             for interest in self._student_interest_handler.get_interests(k_number):
                 interests[interest["interest_id"]] = interest["interest_name"]
-                print(interests)
-                #interests.append(interest["interest_id"])
 
-            print(interests)
             user_data["interests"] = interests
 
             # retrieve hobbies from db and format into a list
             hobbies = {}
             for hobby in self._student_hobby_handler.get_hobbies(k_number):
-                #hobbies.append(hobby["hobby_id"])
                 hobbies[hobby["hobby_id"]] = hobby["hobby_name"]
             
-            print(hobbies)
             user_data["hobbies"] = hobbies
 
             return user_data

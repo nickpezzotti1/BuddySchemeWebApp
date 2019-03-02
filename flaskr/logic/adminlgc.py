@@ -43,15 +43,13 @@ class AdminLogic():
                     torNum = request.form['torNum']
                     teeNum = request.form['teeNum']
                     res = self._allocation_handler.remove_allocation(teeNum, torNum)
-                udata = self._student_handler.get_user_data(kNum)
-                hobbies = self._hobbies_handler.get_hobbies(kNum)
-                interests = self._interest_handler.get_interests(kNum)
+                udata = self.get_all_user_data(kNum)
                 isTor = udata['is_mentor']
                 if isTor:
                     matches = self._allocation_handler.get_mentee_details(kNum)
                 else:
                     matches = self._allocation_handler.get_mentor_details(kNum)
-                return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, hobbies=hobbies, interests=interests, matches=matches)
+                return render_template('admin/student_details.html', title='Details For ' + kNum, udata=udata, matches=matches)
             else:
                 return redirect(url_for('admin.admin_view_students'))
 
@@ -191,6 +189,30 @@ class AdminLogic():
             self._log.exception("Could not execute manual assignment")
             return abort(404)
 
+    def get_all_user_data(self, k_number):
+        """ Get all user data from database and format into a single dict"""
+        try:
+            user_data = self._student_handler.get_user_data(k_number)
+
+            # retrieve interests from db and format into a list
+            interests = {}
+            for interest in self._student_interest_handler.get_interests(k_number):
+                interests[interest["interest_id"]] = interest["interest_name"]
+
+            user_data["interests"] = interests
+
+            # retrieve hobbies from db and format into a list
+            hobbies = {}
+            for hobby in self._student_hobby_handler.get_hobbies(k_number):
+                hobbies[hobby["hobby_id"]] = hobby["hobby_name"]
+            
+            user_data["hobbies"] = hobbies
+
+            return user_data
+
+        except Exception as e:
+                self._log.exception("Could not execute get all user data logic")
+                return abort(404)
 
     def __init__(self):
         try:

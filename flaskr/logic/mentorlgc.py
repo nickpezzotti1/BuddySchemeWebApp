@@ -2,8 +2,10 @@ from flask import Flask, flash, redirect, render_template, request, url_for, Blu
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 import logging
 from models.allocationmdl import AllocationModel
+from models.student_interestmdl import StudentInterestModel
+from models.student_hobbymdl import StudentHobbyModel
 from models.interestmdl import InterestModel
-from models.hobbiesmdl import HobbiesModel
+from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
 
 class MentorLogic():
@@ -11,9 +13,10 @@ class MentorLogic():
     def mentor(self):
 
         try:
-            user_info = self.get_all_user_info(current_user.k_number)
+            data_definitions = self.get_data_definitions()
+            user_data = self.get_all_user_data(current_user.k_number)
 
-            return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_info=user_info)
+            return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_data=user_data)
 
         except Exception as e:
                 self._log.exception("Could not execute get mentor logic")
@@ -23,11 +26,13 @@ class MentorLogic():
 
         try:
             if request.method == "POST":
-                self.update_user_preferences(current_user.k_number, request.form.getlist('hobbies'), request.form.getlist('interests'))
+                self._student_hobby_handler.update_hobbies(current_user.k_number, request.form.getlist('hobby'))
+                self._student_interest_handler.update_interests(current_user.k_number, request.form.getlist('interest'))
                 return redirect(url_for("mentor.mentor"))
             else:
-                user_info = self.get_all_user_info(current_user.k_number)
-                return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_info=user_info)
+                data_definitions = self.get_data_definitions()
+                user_data = self.get_all_user_data(current_user.k_number)
+                return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, data_definitions=data_definitions)
 
         except Exception as e:
                 self._log.exception("Could not execute mentor preferences logic")
@@ -55,60 +60,58 @@ class MentorLogic():
 
     def mentee_view(self, k_number):
         try:
-            mentee_info = self._student_handler.get_user_data(k_number)
-            return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentee_info=mentee_info)
+            mentee_data = self._student_handler.get_user_data(k_number)
+            return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentee_data=mentee_data)
 
         except Exception as e:
                 self._log.exception("Could not execute mentee view logic")
                 return abort(404)
 
-    def get_all_user_info(self,k_number):
-        """ Get all user info from database and format into a single dict"""
+    #### HELPER FUNCTIONS
+
+    def get_data_definitions(self):
+        """ Get a list of all possible hobbies and interests """
         try:
-            user_info = self._student_handler.get_user_data(k_number)
+            data_definitions = {
+                "hobbies": self._hobby_handler.get_hobby_list(),
+                "interests": self._interest_handler.get_interest_list()
+            }
+
+            return data_definitions
+
+        except Exception as e:
+                self._log.exception("Could not execute mentor get preference list logic")
+                return abort(404)
+
+    def get_all_user_data(self,k_number):
+        """ Get all user data from database and format into a single dict"""
+        try:
+            user_data = self._student_handler.get_user_data(k_number)
 
             # retrieve interests from db and format into a list
             interests = []
-            for interest_pair in self._interest_handler.get_interests(k_number):
+            for interest_pair in self._student_interest_handler.get_interests(k_number):
                 interests.append(interest_pair["interest"])
 
-            user_info["interests"] = interests
+            user_data["interests"] = interests
 
             # retrieve hobbies from db and format into a list
             hobbies = []
             for hobby_pair in self._hobbies_handler.get_hobbies(k_number):
                 hobbies.append(hobby_pair["hobby"])
 
-            user_info["hobbies"] = hobbies
+            user_data["hobbies"] = hobbies
 
-            return user_info
-
-        except Exception as e:
-                self._log.exception("Could not execute get all user info logic")
-                return abort(404)
-
-    def update_user_preferences(self,k_number, hobbies, interests):
-        # delete all hobbies and interests
-        try:
-            self._hobbies_handler.delete_hobbies(k_number)
-            self._interest_handler.delete_interests(k_number)
-
-            # insert hobbies and interests according to those ticked
-            for hobby in hobbies:
-                self._hobbies_handler.insert_hobby(k_number, hobby)
-
-            for interest in interests:
-                self._interest_handler.insert_interest(k_number, interest)
+            return user_data
 
         except Exception as e:
-                self._log.exception("Could not execute update user preferences logic")
+                self._log.exception("Could not execute get all user data logic")
                 return abort(404)
-
 
     def mentor_mentee(self,k_number_mentee):
 
         try:
-            return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_info=self._student_handler.get_user_data(k_number_mentee), k_number_mentee=k_number_mentee)
+            return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_data=self._student_handler.get_user_data(k_number_mentee), k_number_mentee=k_number_mentee)
 
         except Exception as e:
             self._log.exception("Could not execute mentor mentee logic")
@@ -117,7 +120,7 @@ class MentorLogic():
     def mentee_mentor(self,k_number_mentor):
 
         try:
-            return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_info=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+            return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_data=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
 
         except Exception as e:
             self._log.exception("Could not execute mentee mentor logic")
@@ -129,7 +132,9 @@ class MentorLogic():
             self._log = logging.getLogger(__name__)
             self._allocation_handler = AllocationModel()
             self._student_handler = StudentModel()
-            self._hobbies_handler = HobbiesModel()
+            self._student_hobby_handler = StudentHobbyModel()
+            self._student_interest_handler = StudentInterestModel()
+            self._hobby_handler = HobbyModel()
             self._interest_handler = InterestModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")

@@ -6,11 +6,11 @@ CREATE TABLE Student
  degree_title VARCHAR(255) NOT NULL,
  year_study INT NOT NULL,
  gender VARCHAR(255) NOT NULL,
- is_mentor tinyint(1) NOT NULL,
- email_confirmed tinyint(1) NOT NULL DEFAULT 0,
+ is_mentor TINYINT(1) NOT NULL,
+ email_confirmed TINYINT(1) NOT NULL DEFAULT 0,
  password_hash VARCHAR(255) NOT NULL,
- is_admin tinyint(1) NOT NULL DEFAULT 0,
- buddy_limit int NOT NULL DEFAULT 1,
+ is_admin TINYINT(1) NOT NULL DEFAULT 0,
+ buddy_limit INT NOT NULL DEFAULT 1,
  PRIMARY KEY(k_number)
 );
 

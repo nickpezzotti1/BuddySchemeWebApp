@@ -5,8 +5,10 @@ import json
 import requests
 from models.allocationconfigmdl import AllocationConfigModel
 from models.allocationmdl import AllocationModel
+from models.student_interestmdl import StudentInterestModel
+from models.student_hobbymdl import StudentHobbyModel
 from models.interestmdl import InterestModel
-from models.hobbiesmdl import HobbiesModel
+from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
 
 class AdminLogic():
@@ -196,7 +198,9 @@ class AdminLogic():
             self._allocation_config_handler = AllocationConfigModel()
             self._allocation_handler = AllocationModel()
             self._student_handler = StudentModel()
-            self._hobbies_handler = HobbiesModel()
+            self._student_hobby_handler = StudentHobbyModel()
+            self._student_interest_handler = StudentInterestModel()
+            self._hobby_handler = HobbyModel()
             self._interest_handler = InterestModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")

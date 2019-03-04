@@ -8,7 +8,7 @@ class AllocationConfigModel(BasicModel):
         """ Retrieve the current allocation configuration"""
 
         try:
-            return self._dao.execute("SELECT age_weight, gender_weight, hobby_weight, interest_weight FROM Allocation_Config;")[0]
+            return self._dao.execute("SELECT age_weight, gender_weight, hobby_weight, interest_weight FROM Allocation_Config;")
 
         except Exception as e:
             self._log.exception("Could not get allocation config")

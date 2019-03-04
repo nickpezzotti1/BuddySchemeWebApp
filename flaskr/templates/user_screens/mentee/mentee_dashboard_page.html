@@ -2,22 +2,22 @@
 
 {% block content_block %}
 <h1> Your Profile </h1>
-<h2> K-Number: {{user_info["k_number"]}}<h2>
-<h2> First Name: {{user_info["first_name"]}}<h2>
-<h2> Last Name: {{user_info["last_name"]}}<h2>
-<h2> Age: {{user_info["age"]}}<h2>
+<h2> K-Number: {{user_data["k_number"]}}<h2>
+<h2> First Name: {{user_data["first_name"]}}<h2>
+<h2> Last Name: {{user_data["last_name"]}}<h2>
+<h2> Age: {{user_data["age"]}}<h2>
 <h2> Hobbies:</h2>
 <ul>
-    {% for hobby in user_info["hobbies"] %}
-    <li>{{ hobby }}</li>
+    {% for hobby_id, hobby_name in user_data["hobbies"].items() %}
+    <li>{{ hobby_name }}</li>
     {% endfor %}
 </ul>
 
 
 <h2> Academic Interests: </h2>
 <ul>
-    {% for interest in user_info["interests"] %}
-    <li>{{ interest }}</li>
+    {% for interest_id, interest_name in user_data["interests"].items() %}
+    <li>{{ interest_name }}</li>
     {% endfor %}
 </ul>
 

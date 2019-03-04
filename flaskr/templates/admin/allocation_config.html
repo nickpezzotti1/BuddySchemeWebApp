@@ -6,19 +6,35 @@
 <p>Note: The weighting applied for hobbies and interests, will be applied for each individual hobby or interest.</p>
 <div class="form-group">
     <form action = "{{url_for('admin.allocation_config')}}" method="post">
-        
+
         <label class="form-text">Age</label>
-        <input class="form-control help-block" type="number" name="age_weight" value="{{allocation_config['age_weight']}}">
+        <div class="slidecontainer">
+            <input name="age_weight" type="range" min="0" max="100" value="{{allocation_config['age_weight']}}" class="slider" id="ageSlider">
+            <p id="ageTextBox"> </p>
+        </div>
+
         <label class="form-text">Gender</label>
-        <input class="form-control help-block" type="number" name="gender_weight" value="{{allocation_config['gender_weight']}}">
-        <label class="form-text">Hobby</label>
-        <input class="form-control help-block" type="number" name="hobby_weight" value="{{allocation_config['hobby_weight']}}">
-        <label class="form-text">Interest</label>
-        <input class="form-control help-block" type="number" name="interest_weight" value="{{allocation_config['interest_weight']}}">
+        <div class="slidecontainer">
+            <input name="gender_weight" type="range" min="0" max="100" value="{{allocation_config['gender_weight']}}" class="slider" id="genderSlider">
+            <p id="genderTextBox"> </p>
+        </div>
+
+        <label class="form-text">Hobbies</label>
+        <div class="slidecontainer">
+            <input name="hobby_weight" type="range" min="0" max="100" value="{{allocation_config['hobby_weight']}}" class="slider" id="hobbySlider">
+            <p id="hobbyTextBox"> </p>
+        </div>
+
+        <label class="form-text">Interests</label>
+        <div class="slidecontainer">
+            <input name="interest_weight" type="range" min="0" max="100" value="{{allocation_config['interest_weight']}}" class="slider" id="interestSlider">
+            <p id="interestTextBox"> </p>
+        </div>
 
         <input class="btn btn-block btn-lg help-block btn-primary my-3" type ="submit" value="Update" />
 
     </form>
+    <script src="{{ url_for('static',filename='js/admin_allocation_config_sliders.js') }}"> </script>
 </div>
 
 <div class="help-block" id="allocate">
@@ -30,7 +46,7 @@
 </div>
 
 {{update_message}}
-    
+
 
 
 {% endblock content_block %}

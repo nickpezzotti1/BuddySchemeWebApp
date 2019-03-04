@@ -32,7 +32,9 @@ class Dao():
                     user = self._credentials['username'],
                     password = self._credentials['password'],
                     db = self._credentials['dbname'],
-                    charset = "utf8mb4"
+                    charset = "utf8mb4",
+                    write_timeout = 5,
+                    autocommit = True
                 )
                 self.__cursor = self.__connection.cursor(pymysql.cursors.DictCursor)
                 self._log.info("Created DB connection")
@@ -44,14 +46,13 @@ class Dao():
             """ Execute a provided query and return result"""
 
             try:
-                self._create_connection()
                 self.__cursor.execute(query)
                 data = self.__cursor.fetchall()
-                self.commit()
-                self.close()
                 return data
             except:
                 self._log.exception("Could not execute query")
+                self.close()
+                self._create_connection()
                 raise
 
         def close(self):
@@ -103,4 +104,4 @@ class Dao():
             self._schema = schema
             self._get_credentials()
             self._credentials['dbname'] = schema
-            #self._create_connection()
+            self._create_connection()

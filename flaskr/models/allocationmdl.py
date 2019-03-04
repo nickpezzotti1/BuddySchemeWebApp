@@ -56,7 +56,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of mentors"""
 
         try:
-            return self._dao.execute("SELECT k_number FROM Students WHERE is_mentor=1;")
+            return self._dao.execute("SELECT k_number FROM Student WHERE is_mentor=1;")
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
@@ -67,7 +67,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of the mentees"""
 
         try:
-            return self._dao.execute("SELECT k_number FROM Students WHERE is_mentor=0;")
+            return self._dao.execute("SELECT k_number FROM Student WHERE is_mentor=0;")
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")
@@ -78,7 +78,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)};")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)};")
 
             except Exception as e:
                 self._log.exception("Could not get mentee details")
@@ -91,7 +91,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)};")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)};")
 
             except Exception as e:
                 self._log.exception("Could not get mentor details")
@@ -104,7 +104,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):    # and _sanity_check(is_tor):
             join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} GROUP BY Student.k_number ORDER BY matches, k_number ASC;")
 
             except Exception as e:
                 self._log.exception("Could not get manual allocation matches")

@@ -19,15 +19,15 @@
 <div>
     <h2> Hobbies:</h2>
     <ul>
-        {% for hobby in hobbies %}
-        <li>{{ hobby.hobby }}</li>
+        {% for hobby_id, hobby_name in udata["hobbies"].items() %}
+        <li>{{ hobby_name }}</li>
         {% endfor %}
     </ul>
     <br />
     <h2> Academic Interests: </h2>
     <ul>
-        {% for interest in interests %}
-        <li>{{ interest.interest }}</li>
+        {% for interest_id, interest_name in udata["interests"].items() %}
+        <li>{{ interest_name }}</li>
         {% endfor %}
     </ul>
 </div>

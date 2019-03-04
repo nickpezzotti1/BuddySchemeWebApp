@@ -1,4 +1,4 @@
-CREATE TABLE Students
+CREATE TABLE Student
 (
  k_number VARCHAR(255) NOT NULL,
  first_name  VARCHAR(255) NOT NULL,
@@ -6,28 +6,42 @@ CREATE TABLE Students
  degree_title VARCHAR(255) NOT NULL,
  year_study INT NOT NULL,
  gender VARCHAR(255) NOT NULL,
- is_mentor tinyint(1) NOT NULL,
- email_confirmed tinyint(1) NOT NULL DEFAULT 0,
+ is_mentor TINYINT(1) NOT NULL,
+ email_confirmed TINYINT(1) NOT NULL DEFAULT 0,
  password_hash VARCHAR(255) NOT NULL,
- is_admin tinyint(1) NOT NULL, DEFAULT 0,
- buddy_limit int NOT NULL, DEFAULT 1,
+ is_admin TINYINT(1) NOT NULL DEFAULT 0,
+ buddy_limit INT NOT NULL DEFAULT 1,
  PRIMARY KEY(k_number)
 );
 
-CREATE TABLE Hobbies
+CREATE TABLE Hobby
 (
- hobby VARCHAR(255) NOT NULL,
- k_number VARCHAR(255) NOT NULL,
- FOREIGN KEY (k_number) REFERENCES Students(k_number),
- PRIMARY KEY (hobby, k_number)
+ id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+ hobby_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Interests
+CREATE TABLE Interest
 (
- interest VARCHAR(255) NOT NULL,
+ id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+ interest_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Student_Hobby
+(
+ hobby_id INT NOT NULL,
  k_number VARCHAR(255) NOT NULL,
- FOREIGN KEY (k_number) REFERENCES Students(k_number),
- PRIMARY KEY (interest, k_number)
+ PRIMARY KEY (hobby_id, k_number),
+ FOREIGN KEY (hobby_id) REFERENCES Hobby(id),
+ FOREIGN KEY (k_number) REFERENCES Student(k_number)
+);
+
+CREATE TABLE Student_Interest
+(
+ interest_id INT NOT NULL,
+ k_number VARCHAR(255) NOT NULL,
+ PRIMARY KEY (interest_id, k_number),
+ FOREIGN KEY (interest_id) REFERENCES Interest(id),
+ FOREIGN KEY (k_number) REFERENCES Student(k_number)
 );
 
 CREATE TABLE Allocation
@@ -35,8 +49,8 @@ CREATE TABLE Allocation
  mentor_k_number VARCHAR(255) NOT NULL,
  mentee_k_number VARCHAR(255) NOT NULL,
  PRIMARY KEY (mentor_k_number, mentee_k_number),
- FOREIGN KEY (mentor_k_number) REFERENCES Students(k_number),
- FOREIGN KEY (mentee_k_number) REFERENCES Students(k_number)
+ FOREIGN KEY (mentor_k_number) REFERENCES Student(k_number),
+ FOREIGN KEY (mentee_k_number) REFERENCES Student(k_number)
 );
 
 CREATE TABLE Allocation_Config

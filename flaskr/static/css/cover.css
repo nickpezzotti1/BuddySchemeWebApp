@@ -106,7 +106,8 @@ body {
     float: left;
   }
   .masthead-nav {
-    float: right;
+    float: left;
+    padding-left: 50%;
   }
 }
 

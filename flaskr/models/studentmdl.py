@@ -88,6 +88,16 @@ class StudentModel(BasicModel):
         except KeyError:
             raise KeyError(f"{self.HASH_COL} not found in table.")
 
+    
+    def user_exist(self, k_number):
+        try:
+            get_user_data(k_number=k_number)
+            return True
+        
+        except Exception as e:
+            return False
+        
+
     #TODO Should I return something here?
 
     def get_user_hashed_password(self,k_number):
@@ -107,7 +117,6 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Student table"""
 
         try:
-
             self._dao.execute(f"INSERT INTO Student VALUES({to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, buddy_limit);")
             self._dao.commit()
 

@@ -47,18 +47,17 @@
           <div class="masthead clearfix">
             <div class="inner">
               <h3 class="masthead-brand"><a href="{{ url_for('home') }}">KCL Buddy</a></h3>
-              <nav>
                 <ul class="nav masthead-nav">
                   <li><a href="https://keats.kcl.ac.uk/my/">Keats</a></li>
                   <li><a href="https://www.facebook.com/kisscollegelondon/">KissCollege</a></li>               
-                    {% block nav_block %}{% endblock nav_block %}
+                  <li><a href="/login" class="btn btn-lg btn-default btn-primary-outline">Log In/Out</a></li>  
+                  {% block nav_block %}{% endblock nav_block %}
                 </ul>
-              </nav>
             </div>
           </div>
 
           <div class="inner cover content">
-              {% block content_block %} {% endblock content_block %}
+            {% block content_block %} {% endblock content_block %}
           </div>
 
           <div class="mastfoot">

@@ -4,11 +4,11 @@ import logging
 
 class StudentHobbyModel(BasicModel):
 
-    def get_hobbies(self, k_number):
+    def get_hobbies(self, scheme_id, k_number):
         """ Given the k_number will return all the student's hobbies"""
 
         try:
-            return self._dao.execute(f"SELECT hobby_id, hobby_name FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number={to_str(k_number)};")
+            return self._dao.execute(f"SELECT hobby_id, hobby_name FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
             self._log.exception("Could not get hobbies")

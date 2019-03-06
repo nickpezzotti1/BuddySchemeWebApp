@@ -27,7 +27,7 @@ def mentee_mentor(k_number_mentor):
     return handler.mentor_view(k_number_mentor)
 
 @mentee_blueprint.route("/dashboard")
-@login_required
+##@login_required
 def dashboard():
     # if he is a mentor redirect to mentor
     # else if he is a mentee redirect to mentee

@@ -31,7 +31,7 @@ class Dao():
                     host=self._credentials['host'],
                     user = self._credentials['username'],
                     password = self._credentials['password'],
-                    db = self._credentials['dbname'],
+                    db = "clulow_test",   ##self._credentials['dbname'],
                     charset = "utf8mb4",
                     write_timeout = 5,
                     autocommit = True
@@ -72,6 +72,13 @@ class Dao():
             except:
                 self._log.exception("Could not commit changes")
                 raise
+        
+        def rowcount(self):
+            try:
+                return self.__cursor.rowcount
+            except:
+                self._log.exception("Could Not Get Affected Rows")
+                raise    
             
         def _get_credentials(self):
             """ Retreive credentials for database connection """

@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from emailer import send_email, send_email_confirmation_to_user
 import logging
 from models.studentmdl import StudentModel
-
+from models.schememdl import SchemeModel
 
 class LoginLogic():
 
@@ -19,8 +19,12 @@ class LoginLogic():
             return redirect("/dashboard")
 
         try:
+            schemes = self._scheme_handler.get_active_scheme_data()
+            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes] 
+            
             login_form = LoginForm(request.form)
-
+            login_form.scheme_id.choices = scheme_options
+                
         except Exception as e:
             self._log.exception("Invalid login form")
             return abort(404)
@@ -29,7 +33,7 @@ class LoginLogic():
 
             if login_form.login_submit.data:
                 if login_form.validate_on_submit():
-                    user = User(login_form.k_number.data)
+                    user = User(login_form.scheme_id.data, login_form.k_number.data)
 
                     # if user exists in db then a password hash was successfully retrieved
                     if(user.password):
@@ -47,6 +51,7 @@ class LoginLogic():
                     flash("Error logging in, please check the data that was entered")
                     return render_template("login.html", login_form=login_form)
 
+                    
             return render_template("login.html", login_form=login_form)
 
         except Exception as e:
@@ -57,8 +62,11 @@ class LoginLogic():
     def signup(self,request):
 
         try:
+            schemes = self._scheme_handler.get_active_scheme_data()
+            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes] 
             registration_form = RegistrationForm(request.form)
-
+            registration_form.scheme_id.choices = scheme_options
+            
         except Exception as e:
             self._log.exception("Invalid registration form")
             return abort(404)
@@ -67,23 +75,24 @@ class LoginLogic():
             if registration_form.registration_submit.data: # if the registation form was submitted
                 if registration_form.validate_on_submit(): # if the form was valid
                     # hash the user password
+                    scheme_id = registration_form.scheme_id.data
                     first_name = registration_form.first_name.data
                     last_name = registration_form.last_name.data
                     k_number = registration_form.k_number.data
                     is_mentor = registration_form.is_mentor.data
                     hashed_password = generate_password_hash(registration_form.password.data)
-                    # hashed_password = generate_password_hash("12345678", method="sha256")
+                    # hashed_password = generate_password_hash("12345678")
                     
-                    if self._student_handler.user_exist(k_number):
+                    if self._student_handler.user_exist(scheme_id, k_number):
                         flash("User already exists")
                         return render_template("signup.html", registration_form=registration_form)
-                    else:
-                        flash("User doesn't exist")
-                        return render_template("signup.html", registration_form=registration_form)
+                    ##else:
+                    ##    flash("User doesn't exist")
+                    ##    return render_template("signup.html", registration_form=registration_form)
 
-                    db_insert_success = self._student_handler.insert_student(k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
+                    db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)
-                    user = User(k_number)
+                    user = User(scheme_id, k_number)
 
                     #app.logger.warning("user's knumber: " + user.k_number)
                     send_email_confirmation_to_user(user=user, secret_key=current_app.config["SECRET_KEY"])
@@ -103,7 +112,7 @@ class LoginLogic():
             return abort(404)
 
 
-    def confirm_email(self,token):
+    def confirm_email(self,token): ### add scheme_id
 
         try:
             k_number = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
@@ -133,6 +142,7 @@ class LoginLogic():
         try:
             self._log = logging.getLogger(__name__)
             self._student_handler = StudentModel()
+            self._scheme_handler = SchemeModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
                 return abort(404)

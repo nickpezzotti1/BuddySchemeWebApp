@@ -14,7 +14,7 @@ class MenteeLogic():
 
         try:
             data_definitions = self.get_data_definitions()
-            user_data = self.get_all_user_data(current_user.k_number)
+            user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
 
             return render_template("user_screens/mentee/mentee_dashboard_page.html", title="Your Profile", user_data=user_data)
 
@@ -27,12 +27,12 @@ class MenteeLogic():
 
         try:
             if request.method == "POST":
-                self._student_hobby_handler.update_hobbies(current_user.k_number, request.form.getlist('hobby'))
-                self._student_interest_handler.update_interests(current_user.k_number, request.form.getlist('interest'))
+                self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
+                self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
                 return redirect(url_for("mentee.mentee"))
             else:
                 data_definitions = self.get_data_definitions()
-                user_data = self.get_all_user_data(current_user.k_number)
+                user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
                 return render_template("user_screens/mentee/mentee_preferences_page.html", title="Your Preferences", user_data=user_data, data_definitions=data_definitions)
 
         except Exception as e:
@@ -42,7 +42,7 @@ class MenteeLogic():
     def mentee_mentor_list(self, request):
 
         try:
-            mentor_list = self._allocation_handler.get_mentors(current_user.k_number)
+            mentor_list = self._allocation_handler.get_mentors(current_user.scheme_id, current_user.k_number)
             
             # Object to hold all the mentees. This takes the form of a nested dictionary indexed by k_numbers
             mentor_list_data = {}
@@ -50,7 +50,7 @@ class MenteeLogic():
             # Format results into nested dict for use on page
             for mentor in mentor_list:
                 mentor_k_number = mentor['mentor_k_number']
-                mentor_list_data[mentor_k_number] = self._student_handler.get_user_data(mentor_k_number)
+                mentor_list_data[mentor_k_number] = self._student_handler.get_user_data(current_user.scheme_id, mentor_k_number)
 
             return render_template("user_screens/mentee/mentee_mentor_list_page.html", title="Your Mentors", mentors=mentor_list_data)
 
@@ -58,9 +58,9 @@ class MenteeLogic():
                 self._log.exception("Could not execute mentee mentor list logic")
                 return abort(404)
 
-    def mentor_view(self, k_number):
+    def mentor_view(self, scheme_id, k_number):
         try:
-            mentor_data = self._student_handler.get_user_data(k_number)
+            mentor_data = self._student_handler.get_user_data(scheme_id, k_number)
             return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentor_data=mentor_data)
 
         except Exception as e:
@@ -83,21 +83,21 @@ class MenteeLogic():
                 self._log.exception("Could not execute mentor get preference list logic")
                 return abort(404)
 
-    def get_all_user_data(self, k_number):
+    def get_all_user_data(self, scheme_id, k_number):
         """ Get all user data from database and format into a single dict"""
         try:
-            user_data = self._student_handler.get_user_data(k_number)
+            user_data = self._student_handler.get_user_data(scheme_id, k_number)
 
             # retrieve interests from db and format into a list
             interests = {}
-            for interest in self._student_interest_handler.get_interests(k_number):
+            for interest in self._student_interest_handler.get_interests(scheme_id, k_number):
                 interests[interest["interest_id"]] = interest["interest_name"]
 
             user_data["interests"] = interests
 
             # retrieve hobbies from db and format into a list
             hobbies = {}
-            for hobby in self._student_hobby_handler.get_hobbies(k_number):
+            for hobby in self._student_hobby_handler.get_hobbies(scheme_id, k_number):
                 hobbies[hobby["hobby_id"]] = hobby["hobby_name"]
             
             user_data["hobbies"] = hobbies

@@ -2,6 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from permissions import permissioned_login_required
 from user import User
+import controllers.systemadminctrl as systemadminctrl
 import controllers.adminctrl as adminctrl
 import controllers.loginctrl as loginctrl
 import controllers.mentorctrl as mentorctrl
@@ -19,23 +20,28 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login.login"
 
+app.register_blueprint(systemadminctrl.system_admin_blueprint)
 app.register_blueprint(adminctrl.admin_blueprint)
 app.register_blueprint(loginctrl.login_blueprint)
-app.register_blueprint(mentorctrl.mentor_blueprint)
 app.register_blueprint(menteectrl.mentee_blueprint)
+app.register_blueprint(mentorctrl.mentor_blueprint)
 
 log = logging.getLogger(__name__)
 
 
 @login_manager.user_loader
 def load_user(id):
-    user = User(id)
+    print(id)
+    split_pos = id.find(":")
+    
+    user = User(id[:split_pos], id[(split_pos + 1):])
     return user
 
 @app.route("/")
 @app.route("/home")
 def home():
     return render_template("index.html")
+
 
 # We only need this for local dev
 if __name__ == '__main__':

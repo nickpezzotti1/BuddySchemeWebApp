@@ -12,7 +12,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-from forms import NewSchemeForm
+from forms import NewSchemeForm, SystemLoginForm
 import json
 import logging
 from models.schememdl import SchemeModel
@@ -23,12 +23,60 @@ from werkzeug.security import generate_password_hash
 
 class SystemAdminLogic():
     
+    def system_admin_login(self, request):
+        ##if current_user.is_authenticated: 
+        ##    return redirect("/dashboard")
+
+        try:
+            
+            system_login_form = SystemLoginForm(request.form)
+                
+        except Exception as e:
+            self._log.exception("Invalid login form")
+            return abort(500)
+
+        try:
+            if system_login_form.submit.data:
+                if system_login_form.validate_on_submit():
+                    ##user = User(login_form.scheme_id.data, login_form.k_number.data)
+                    pass_hash = self._scheme_handler.get_system_admin_pass(system_login_form.email.data)
+                    if(user.password):
+                        # check if he is authorised
+                        if check_password_hash(user.password, login_form.password.data):
+                            # redirect to profile page, where he must insert his preferences
+                            login_user(user, remember=False)
+                            return redirect("/system_admin/dashboard.html")
+                        else:
+                            flash('The password you entered is incorrect')
+                            return redirect("system_admin/login.html")
+                    else:
+                        return redirect("system_admin/login.html")
+                else:
+                    flash("Error logging in, please check the data that was entered")
+                    return render_template("system_admin/login.html", system_login_form=system_login_form)  
+
+                    
+            return render_template("system_admin/login.html", system_login_form=system_login_form)
+
+        except Exception as e:
+            self._log.exception("Could not parse login form")
+            return abort(404)
+        
+        
     
     def system_admin_dashboard(self):
+        ## try:
+        if(request.method == 'POST' and 'susScheme' in request.form):
+                scheme_id = request.form['scheme_id']
+                self._scheme_handler.suspend_scheme(scheme_id)
+        elif(request.method == 'POST' and 'delScheme' in request.form):
+                scheme_id = request.form['scheme_id']       
+                self._scheme_handler.delete_scheme(scheme_id)
+        
         schemes = self._scheme_handler.get_all_scheme_data()
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
-    def system_new_scheme(self):
+    def system_new_scheme(self, request):
         ##require system admin
         try:
             new_scheme_form = NewSchemeForm(request.form)
@@ -46,7 +94,8 @@ class SystemAdminLogic():
                         print(new_scheme_name)
                         if self._scheme_handler.create_new_scheme(new_scheme_name):
                             scheme_admin_k_number = new_scheme_form.k_number.data
-                            scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name) ## return from create_new_scheme isntead?
+                            scheme_id = self._scheme_handler.get_scheme_id("eeee") ## new_scheme_name) ## return from create_new_scheme isntead?
+                            print(scheme_id)
                             ##
                             ## ToDo - below
                             ## 

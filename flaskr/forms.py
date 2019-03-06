@@ -34,3 +34,8 @@ class NewSchemeForm(FlaskForm):
     year = IntegerField('Year Of Start', default=datetime.datetime.now().year, validators=[DataRequired()])
     k_number = StringField('Scheme Admin K Number', validators=[DataRequired(), Length(min=8, max=9)])
     submit = SubmitField('Create New Scheme')
+    
+class SystemLoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(min=8, max=9)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    submit = SubmitField("Login")

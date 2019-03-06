@@ -25,6 +25,7 @@ def send_email(sender, recipients, subject, content):
 def send_email_confirmation_to_user(user, secret_key):
     ## TODO: Possible feature to check if email
     #  was already confirmed and keep track of multiple requests
+    print(user.k_number)
     token = generate_token(secret_key, user.k_number)
     sender = "no-reply@sbs.kcl.ac.uk"
     recipients = [str(user.k_number) + "@kcl.ac.uk"]

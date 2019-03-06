@@ -4,9 +4,18 @@ from models.helpers import to_str
 
 class SchemeModel(BasicModel):
 
+    def get_system_admin_pass(self, email):
+        ## sanity but needs @ symbol
+        try:
+            return self._dao.execute(f"SELECT password_hash FROM Super_user WHERE email = {to_str(email)};")[0]['password_hash'] ## won't work needs @
+            
+        except Exception as e:
+            self._log.exception("Could Get System Admin Password")
+            raise e
+        
     def get_all_scheme_data(self):
         try:
-            return self._dao.execute("SELECT Scheme.scheme_id, scheme_name, is_active, COUNT(Student.scheme_id) as student_count FROM Scheme LEFT JOIN Student ON Scheme.scheme_id = Student.scheme_id GROUP BY Scheme.scheme_id ORDER BY Scheme.is_active, Scheme.scheme_name ASC;")
+            return self._dao.execute("SELECT Scheme.scheme_id, scheme_name, is_active, COUNT(Student.scheme_id) as student_count FROM Scheme LEFT JOIN Student ON Scheme.scheme_id = Student.scheme_id GROUP BY Scheme.scheme_id ORDER BY Scheme.is_active DESC, Scheme.scheme_name ASC;")
             
         except Exception as e:
             self._log.exception("Could Not Get Scheme Data")
@@ -47,10 +56,32 @@ class SchemeModel(BasicModel):
         """Returns true if new scheme name is available"""
         if sanity_check(scheme_name):
             try:
-                return self._dao.execute(f"SELECT scheme_id FROM Scheme WHERE scheme_name = {to_str(scheme_name)};")[0]['scheme_id']
+                res = self._dao.execute(f"SELECT scheme_id FROM Scheme WHERE scheme_name = {to_str(scheme_name)};")[0]['scheme_id'] ## errors if not exists
             
             except Exception as e:
                 self._log.exception("Could Not Get Scheme ID")
                 raise e
             
+    def suspend_scheme(self, scheme_id):        
+        """Suspends a given scheme"""
+        if sanity_check(scheme_id):
+            try:
+                self._dao.execute(f"UPDATE Scheme SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE scheme_id = {to_str(scheme_id)};")
+                self._dao.commit()
             
+            except Exception as e:
+                self._log.exception("Could Not Get Scheme ID")
+                raise e
+            
+    def delete_scheme(self, scheme_id):        
+        """Suspends a given scheme"""
+        if sanity_check(scheme_id):
+            try:
+                self._dao.execute(f"DELETE FROM Scheme WHERE scheme_id = {to_str(scheme_id)};") ## needs cascades
+                self._dao.commit()
+            
+            except Exception as e:
+                self._log.exception("Could Not Get Scheme ID")
+                raise e
+            
+   

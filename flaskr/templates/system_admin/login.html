@@ -1,16 +1,58 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+{% extends "template.html"%}	
+
+{% block content_block %}
+	<div>
+		<div>
+			<div>
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-warning">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+
+				<div id="first" style="inline">
+					<div class="myform form ">
+						<div class="logo mb-3">
+							<div class="col-md-12 text-center">
+								<h1>System Admin Login</h1>
+							</div>
+						</div>
+						<form action="" method="post" name="login">
+							{{ system_login_form.csrf_token }}
+                                                        
+                                                        <div class="form-group">
+								{{ system_login_form.email.label(class="form-control-label") }}
+								{{ system_login_form.email(class="form-control form-control-lg", placeholder="Please Enter Your Email") }}
+							</div>
+							<div class="form-group">
+								{{ system_login_form.password.label(class="form-control-label") }}
+								{{ system_login_form.password (class="form-control form-control-lg", placeholder="Please Enter Your password") }}
+							</div>
+
+							<div class="col-md-12 text-center ">
+								{{ system_login_form.submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+							</div>
+							<div class="col-md-12 ">
+								<div class="login-or">
+									<hr class="hr-or">
+									<span class="span-or"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<p class="text-center">Add System Admin Forgot Password</p>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content_block %}

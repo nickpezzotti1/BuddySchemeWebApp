@@ -34,13 +34,13 @@
             <td>{{scheme.student_count}}</td>
             <td>{% if scheme.is_active %}{{"Active"}}{% else %}{{"Suspended"}}{% endif %}</td>
     <form method="POST" action='{{url_for("admin.admin_dashboard")}}'>
-        <input type='hidden' name='knum' value='{{scheme.id}}'></input>
+        <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
         <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='viewAdmin' value="View Admin Dashboard"></input></td>
     </form>
     <form method="POST" action='{{url_for("systemadmin.system_admin_dashboard")}}'>
-        <input type='hidden' name='knum' value='{{scheme.id}}'></input>
-        <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confSus()"  name='suspendScheme' value="Suspend Scheme"></input></td>
-        <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confDel()" name='deleteScheme' value="Delete Scheme"></input></td>
+        <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
+        <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confSus()"  name='susScheme' value='{% if scheme.is_active %}{{"Suspend Scheme"}}{% else %}{{"Activate Scheme"}}{% endif %}'></input></td>
+        <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confDel()" name='delScheme' value="Delete Scheme"></input></td>
     </form>
 </tr>        
 {% endfor %}

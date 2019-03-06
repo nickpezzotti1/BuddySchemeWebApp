@@ -58,7 +58,7 @@ class AdminLogic():
 
         except Exception as e:
             self._log.exception("Could not execute student details")
-            return abort(404)
+            return abort(500)
 
 
     def delete_student_details(self):
@@ -73,7 +73,7 @@ class AdminLogic():
 
         except Exception as e:
             self._log.exception("Could not execute delete student details")
-            return abort(404)
+            return abort(500)
 
 
     def general_settings(self):
@@ -190,7 +190,7 @@ class AdminLogic():
 
         except Exception as e:
             self._log.exception("Could not execute manual assignment")
-            return abort(404)
+            return abort(500)
 
     def get_all_user_data(self, scheme_id, k_number):
         """ Get all user data from database and format into a single dict"""
@@ -215,7 +215,7 @@ class AdminLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
-                return abort(404)
+                return abort(500)
 
     def __init__(self):
         try:
@@ -229,4 +229,4 @@ class AdminLogic():
             self._interest_handler = InterestModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
-                return abort(404)
+                return abort(500)

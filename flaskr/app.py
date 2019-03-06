@@ -31,7 +31,6 @@ log = logging.getLogger(__name__)
 
 @login_manager.user_loader
 def load_user(id):
-    print(id)
     split_pos = id.find(":")
     
     user = User(id[:split_pos], id[(split_pos + 1):])

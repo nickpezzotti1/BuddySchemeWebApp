@@ -27,7 +27,7 @@ class LoginLogic():
                 
         except Exception as e:
             self._log.exception("Invalid login form")
-            return abort(404)
+            return abort(500)
 
         try:
 
@@ -56,7 +56,7 @@ class LoginLogic():
 
         except Exception as e:
             self._log.exception("Could not parse login form")
-            return abort(404)
+            return abort(500)
 
 
     def signup(self,request):
@@ -69,7 +69,7 @@ class LoginLogic():
             
         except Exception as e:
             self._log.exception("Invalid registration form")
-            return abort(404)
+            return abort(500)
 
         try:
             if registration_form.registration_submit.data: # if the registation form was submitted
@@ -93,7 +93,7 @@ class LoginLogic():
                     db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)
                     user = User(scheme_id, k_number)
-
+                    print(user.k_number)
                     #app.logger.warning("user's knumber: " + user.k_number)
                     send_email_confirmation_to_user(user=user, secret_key=current_app.config["SECRET_KEY"])
 
@@ -109,7 +109,7 @@ class LoginLogic():
 
         except Exception as e:
             self._log.exception("Could not parse registration form")
-            return abort(404)
+            return abort(500)
 
 
     def confirm_email(self,token): ### add scheme_id
@@ -136,7 +136,7 @@ class LoginLogic():
 
         except Exception as e:
             self._log.exception("Could not activate account")
-            return abort(404)
+            return abort(500)
 
     def __init__(self):
         try:
@@ -145,4 +145,4 @@ class LoginLogic():
             self._scheme_handler = SchemeModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
-                return abort(404)
+                return abort(500)

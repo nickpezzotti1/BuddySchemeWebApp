@@ -1,9 +1,20 @@
 import basic as db
 from flask_login import UserMixin
+from models.schememdl import SchemeModel
 from models.studentmdl import StudentModel
 from werkzeug.security import generate_password_hash
 
 class User(UserMixin):
+    
+    def get(cookie_string):
+        split_pos = cookie_string.find(":")
+        p1 = cookie_string[:split_pos]
+        p2 = cookie_string[(split_pos + 1):]
+        return SystemAdmin(p2) if p1 == 'sysadmin' else Student(p1, p2)
+        
+        
+        
+class Student(User):
     def __init__(self, scheme_id, k_number):
         self._student_handler = StudentModel()
         
@@ -12,11 +23,15 @@ class User(UserMixin):
         self.id = str(scheme_id) + ":" + k_number
         self.password = None
         self.email_confirmed = False
-        self.role = "ADMIN" ###
+        self.role = "mentee" ##
+        self.priv = "student" ###
 
         try:
             self.password = self._student_handler.get_user_hashed_password(scheme_id, k_number)
-            self.email_confirmed = bool(self._student_handler.get_user_data(scheme_id, k_number)["email_confirmed"])
+            user_data = self._student_handler.get_user_data(scheme_id, k_number)
+            self.email_confirmed = bool(user_data["email_confirmed"])
+            self.role = 'mentor' if user_data["is_mentor"] else "mentee"
+            self.priv = 'admin' if user_data["is_admin"] else "student"
 
         except Exception as e:
             print("Exeception occured:{}".format(e))
@@ -25,8 +40,6 @@ class User(UserMixin):
     def is_active(self):
         # user only able to login if email is confirmed
         return True  ##self.email_confirmed
-
-    
 
     def activate(self):
         # activates user account in database
@@ -37,5 +50,31 @@ class User(UserMixin):
         self.password = new_hashed_password
         print("after " + new_hashed_password)
         self._student_handler.update_hash_password(scheme_id=self.scheme_id, k_number=self.k_number, password_hash=new_hashed_password)
+        
+        
+class SystemAdmin(User):
+    def __init__(self, email):
+        User.__init__(self)
+        self._scheme_handler = SchemeModel() # change?
+        
+        self.scheme_id = 1 ## can be any -> set to first in DB to prevent errors
+        self.k_number = 1 ## needed?
+        self.id = "sysadmin:" + email
+        self.password = None
+        self.priv = "system_admin" 
 
-    
+        try:
+            self.password = self._scheme_handler.get_system_admin_pass(email)
+
+        except Exception as e:
+            print("Exeception occured:{}".format(e))
+
+    @property
+    def is_active(self):
+        return True
+
+    def reset_password(self, new_password):
+        new_hashed_password = generate_password_hash(new_password, method="") 
+        self.password = new_hashed_password
+        print("after " + new_hashed_password)
+        ##self._student_handler.update_hash_password(scheme_id=self.scheme_id, k_number=self.k_number, password_hash=new_hashed_password)## needs changing

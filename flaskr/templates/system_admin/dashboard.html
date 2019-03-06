@@ -7,48 +7,53 @@
 {% endblock nav_block %}
 
 {% block content_block %}
+<div class='container text-center'>
+    <h1 class="text-center">Schemes: {{ schemes|length }} </h1> <!-- change to active -->
+    <div>
 
-<h1 class="text-center">Schemes: {{ schemes|length }} </h1> <!-- change to active + change url_fors -->
-<form method="GET" action="{{url_for('systemadmin.system_new_scheme')}}">
-    <input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="New Scheme" name="newScheme"/> 
-</form>
-{% if schemes|length %}
-<table class="table table-hover" id='table'>
-    <thead>
-        <!--<tr colspan=5><h1 class='text-center'>Schemes</h1></tr>-->
-        <tr>
-            <th scope="col">Scheme ID</th> <!-- needed???-->
-            <th scope="col" class="text-center">Department</th>
-            <th scope="col">Registered Students</th>
-            <th scope="col">Status</th>
-            <th scope="col" class="text-center">View</th>
-            <th scope="col" class="text-center">Suspend</th>
-            <th scope="col" class="text-center">Delete</th>
-        </tr>
-    </thead>
-    <tbody id='tbody'>
-        {% for scheme in schemes %} 
-        <tr>
-            <td>{{scheme.scheme_id}}</td>
-            <td>{{scheme.scheme_name}}</td>
-            <td>{{scheme.student_count}}</td>
-            <td>{% if scheme.is_active %}{{"Active"}}{% else %}{{"Suspended"}}{% endif %}</td>
-    <form method="POST" action='{{url_for("admin.admin_dashboard")}}'>
-        <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
-        <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='viewAdmin' value="View Admin Dashboard"></input></td>
-    </form>
-    <form method="POST" action='{{url_for("systemadmin.system_admin_dashboard")}}'>
-        <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
-        <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confSus()"  name='susScheme' value='{% if scheme.is_active %}{{"Suspend Scheme"}}{% else %}{{"Activate Scheme"}}{% endif %}'></input></td>
-        <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confDel()" name='delScheme' value="Delete Scheme"></input></td>
-    </form>
-</tr>        
-{% endfor %}
-</tbody>
-</table>
-{% else %}
-<h1 class='text-center'> No Schemes </h1>
-{% endif %}
+        <form method="GET" action="{{url_for('systemadmin.system_new_scheme')}}">
+            <input type="submit" class="btn btn-lg btn-block btn-primary" value="New Scheme" name="newScheme"/> 
+        </form>
+    </div>
+    {% if schemes|length %}
+    <table class="table table-hover" id='table'>
+        <thead>
+            <!--<tr colspan=5><h1 class='text-center'>Schemes</h1></tr>-->
+            <tr>
+                <th scope="col">Scheme ID</th> <!-- needed???-->
+                <th scope="col" class="text-center">Department</th>
+                <th scope="col">Registered Students</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-center">View</th>
+                <th scope="col" class="text-center">Suspend</th>
+                <th scope="col" class="text-center">Delete</th>
+            </tr>
+        </thead>
+        <tbody id='tbody'>
+            {% for scheme in schemes %} 
+            <tr>
+                <td>{{scheme.scheme_id}}</td>
+                <td>{{scheme.scheme_name}}</td>
+                <td>{{scheme.student_count}}</td>
+                <td>{% if scheme.is_active %}{{"Active"}}{% else %}{{"Suspended"}}{% endif %}</td>
+        <form method="POST" action='{{url_for("admin.admin_dashboard")}}'>
+            <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
+            <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='viewAdmin' value="View Admin Dashboard"></input></td>
+        </form>
+        <form method="POST" action='{{url_for("systemadmin.system_admin_dashboard")}}'>
+            <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
+            <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confSus()"  name='susScheme' value='{% if scheme.is_active %}{{"Suspend Scheme"}}{% else %}{{"Activate Scheme"}}{% endif %}'></input></td>
+            <td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confDel()" name='delScheme' value="Delete Scheme"></input></td>
+        </form>
+        </tr>        
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h1 class='text-center'> No Schemes </h1>
+    {% endif %}
+</div>
+
 
 <script>
 

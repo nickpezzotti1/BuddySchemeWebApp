@@ -3,7 +3,7 @@ from flask_login import LoginManager, UserMixin, current_user, login_required, l
 from forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from auth_token import verify_token
-from user import User
+from user import Student
 from werkzeug.security import check_password_hash, generate_password_hash
 from emailer import send_email, send_email_confirmation_to_user
 import logging
@@ -33,7 +33,7 @@ class LoginLogic():
 
             if login_form.login_submit.data:
                 if login_form.validate_on_submit():
-                    user = User(login_form.scheme_id.data, login_form.k_number.data)
+                    user = Student(login_form.scheme_id.data, login_form.k_number.data)
 
                     # if user exists in db then a password hash was successfully retrieved
                     if(user.password):
@@ -92,7 +92,7 @@ class LoginLogic():
 
                     db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)
-                    user = User(scheme_id, k_number)
+                    user = Student(scheme_id, k_number)
                     print(user.k_number)
                     #app.logger.warning("user's knumber: " + user.k_number)
                     send_email_confirmation_to_user(user=user, secret_key=current_app.config["SECRET_KEY"])
@@ -124,7 +124,7 @@ class LoginLogic():
         try:
             if k_number:
                 # return "this is: " + str(k_number)
-                user = User(k_number)
+                user = Student(k_number)
                 if user.email_confirmed:
                     return "account already active"
                 else:

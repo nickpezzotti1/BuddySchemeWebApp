@@ -19,7 +19,9 @@ from models.schememdl import SchemeModel
 from models.studentmdl import StudentModel
 from os import urandom
 import requests
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
+from user import SystemAdmin
+from permissions import system_admin_login_required
 
 class SystemAdminLogic():
     
@@ -38,19 +40,18 @@ class SystemAdminLogic():
         try:
             if system_login_form.submit.data:
                 if system_login_form.validate_on_submit():
-                    ##user = User(login_form.scheme_id.data, login_form.k_number.data)
-                    pass_hash = self._scheme_handler.get_system_admin_pass(system_login_form.email.data)
-                    if(user.password):
+                    system_admin = SystemAdmin(system_login_form.email.data)
+                    if(system_admin.password):
                         # check if he is authorised
-                        if check_password_hash(user.password, login_form.password.data):
+                        if check_password_hash(system_admin.password, system_login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
-                            login_user(user, remember=False)
-                            return redirect("/system_admin/dashboard.html")
+                            login_user(system_admin, remember=False)
+                            return redirect("/dashboard")
                         else:
                             flash('The password you entered is incorrect')
-                            return redirect("system_admin/login.html")
+                            return redirect('/system')
                     else:
-                        return redirect("system_admin/login.html")
+                        return redirect('/system')
                 else:
                     flash("Error logging in, please check the data that was entered")
                     return render_template("system_admin/login.html", system_login_form=system_login_form)  
@@ -63,7 +64,7 @@ class SystemAdminLogic():
             return abort(404)
         
         
-    
+    @system_admin_login_required()
     def system_admin_dashboard(self):
         ## try:
         if(request.method == 'POST' and 'susScheme' in request.form):
@@ -76,6 +77,7 @@ class SystemAdminLogic():
         schemes = self._scheme_handler.get_all_scheme_data()
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
+    @system_admin_login_required()    
     def system_new_scheme(self, request):
         ##require system admin
         try:

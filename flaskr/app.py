@@ -31,16 +31,32 @@ log = logging.getLogger(__name__)
 
 @login_manager.user_loader
 def load_user(id):
-    split_pos = id.find(":")
-    
-    user = User(id[:split_pos], id[(split_pos + 1):])
-    return user
+    return User.get(id)
 
 @app.route("/")
 @app.route("/home")
 def home():
     return render_template("index.html")
 
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    # if he is a mentor redirect to mentor
+    # else if he is a mentee redirect to mentee
+    # else {admin} redirect to admin page
+    priv = current_user.priv
+    if priv == 'system_admin':
+        return redirect('/system/admin')
+    elif priv == 'admin':
+        return redirect('/admin')
+    else:
+        role = current_user.role
+        if role == 'mentee':
+            return redirect('/mentee')
+        elif role == 'mentor':
+            return redirect('/mentor')
+        
+    return redirect('/')
 
 # We only need this for local dev
 if __name__ == '__main__':

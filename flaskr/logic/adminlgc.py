@@ -11,7 +11,7 @@ from models.interestmdl import InterestModel
 from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
 
-scheme_id = 1 ## testing
+
 
 class AdminLogic():
 
@@ -23,7 +23,7 @@ class AdminLogic():
 
     def admin_view_students(self):
         try:
-            data = self._student_handler.get_all_students_data_basic(scheme_id)
+            data = self._student_handler.get_all_students_data_basic(current_user.scheme_id)
             return render_template('admin/view_students.html', title='View Students', data=data)
         except Exception as e:
             self._log.exception("Could not execute admin view")
@@ -35,23 +35,23 @@ class AdminLogic():
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
                 if('mkAdmin' in request.form):
-                    res = self._student_handler.alter_admin_status(scheme_id, k_number, True)
+                    res = self._student_handler.alter_admin_status(current_user.scheme_id, k_number, True)
                 elif('rmAdmin' in request.form):
-                    res = self._student_handler.alter_admin_status(scheme_id, k_number, False)
+                    res = self._student_handler.alter_admin_status(current_user.scheme_id, k_number, False)
                 elif('mkAlloc' in request.form):
                     torNum = request.form['torNum']
                     teeNum = request.form['teeNum']
-                    res = self._allocation_handler.make_manual_allocation(scheme_id, teeNum, torNum)
+                    res = self._allocation_handler.make_manual_allocation(current_user.scheme_id, teeNum, torNum)
                 elif("rmAlloc" in request.form):
                     torNum = request.form['torNum']
                     teeNum = request.form['teeNum']
-                    res = self._allocation_handler.remove_allocation(scheme_id, teeNum, torNum)
-                udata = self.get_all_user_data(scheme_id, k_number)
+                    res = self._allocation_handler.remove_allocation(current_user.scheme_id, teeNum, torNum)
+                udata = self.get_all_user_data(current_user.scheme_id, k_number)
                 isTor = udata['is_mentor']
                 if isTor:
-                    matches = self._allocation_handler.get_mentee_details(scheme_id, k_number)
+                    matches = self._allocation_handler.get_mentee_details(current_user.scheme_id, k_number)
                 else:
-                    matches = self._allocation_handler.get_mentor_details(scheme_id, k_number)
+                    matches = self._allocation_handler.get_mentor_details(current_user.scheme_id, k_number)
                 return render_template('admin/student_details.html', title='Details For ' + k_number, udata=udata, matches=matches) ## add scheme name to title?
             else:
                 return redirect(url_for('admin.admin_view_students'))
@@ -66,7 +66,7 @@ class AdminLogic():
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
-                res = self._student_handler.delete_students(scheme_id, k_number)
+                res = self._student_handler.delete_students(current_user.scheme_id, k_number)
                 return render_template('admin/delete_student.html', title='Delete Student Profile ' + k_number, res=res, k_number=k_number)
             else:
                 return redirect(url_for('admin.admin_view_students'))
@@ -91,7 +91,7 @@ class AdminLogic():
                 'interest_weight': request.form['interest_weight'],
             }
 
-            self._allocation_config_handler.update_allocation_config(scheme_id, config)
+            self._allocation_config_handler.update_allocation_config(current_user.scheme_id, config)
 
             # Text displayed after updating the config - as feedback for the user
             update_message = 'Configuration Updated'
@@ -99,7 +99,7 @@ class AdminLogic():
             update_message = ''
 
         # Always render the page
-        allocation_config = self._allocation_config_handler.get_allocation_config(scheme_id)
+        allocation_config = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
         return render_template('admin/allocation_config.html', title='Allocation Algorithm', allocation_config=allocation_config, update_message=update_message)
 
@@ -123,7 +123,7 @@ class AdminLogic():
 
             try:
                 for pair in pairs:
-                    self._allocation_handler.insert_mentor_mentee(scheme_id, pair["mentor_id"], pair["mentee_id"])
+                    self._allocation_handler.insert_mentor_mentee(current_user.scheme_id, pair["mentor_id"], pair["mentee_id"])
             except:
                 print("Error in inserting into db")
 
@@ -137,13 +137,13 @@ class AdminLogic():
     def generate_mentee_and_mentor_json(self):
         
         # Get allocation configuration from database
-        allocation_config = self._allocation_config_handler.get_allocation_config(scheme_id)
+        allocation_config = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
         # Get all mentors from database
-        mentors = self._allocation_handler.get_all_mentors(scheme_id)
+        mentors = self._allocation_handler.get_all_mentors(current_user.scheme_id)
 
         # Get all mentees from database
-        mentees = self._allocation_handler.get_all_mentees(scheme_id)
+        mentees = self._allocation_handler.get_all_mentees(current_user.scheme_id)
 
         input = {"configurations": {}, "mentors": [], "mentees": []}
 
@@ -182,8 +182,8 @@ class AdminLogic():
         try:
             if(request.method == 'POST'):
                 k_number = request.form['knum']
-                udata = self._student_handler.get_user_data(scheme_id, k_number)
-                potentials = self._allocation_handler.get_manual_allocation_matches(scheme_id, k_number, udata['is_mentor'])
+                udata = self._student_handler.get_user_data(current_user.scheme_id, k_number)
+                potentials = self._allocation_handler.get_manual_allocation_matches(current_user.scheme_id, k_number, udata['is_mentor'])
                 return render_template('admin/manually_assign.html', title='Manually Assign Match', udata=udata, potentials=potentials) # imprv title?
             else:
                 return redirect(url_for('admin.admin_view_students'))

@@ -7,7 +7,7 @@ class SchemeModel(BasicModel):
     def get_system_admin_pass(self, email):
         ## sanity but needs @ symbol
         try:
-            return self._dao.execute(f"SELECT password_hash FROM Super_user WHERE email = {to_str(email)};")[0]['password_hash'] ## won't work needs @
+            return self._dao.execute(f"SELECT password_hash FROM Super_user WHERE email = '{email}';")[0]['password_hash'] ## won't work needs @
             
         except Exception as e:
             self._log.exception("Could Get System Admin Password")

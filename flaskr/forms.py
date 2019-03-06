@@ -36,6 +36,6 @@ class NewSchemeForm(FlaskForm):
     submit = SubmitField('Create New Scheme')
     
 class SystemLoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Length(min=8, max=9)])
+    email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField("Login")

@@ -1,7 +1,7 @@
 from itsdangerous import URLSafeTimedSerializer
 
 # TODO: include password salt
-def generate_token(secret_key, k_number): 
+def generate_token(secret_key, k_number):
     serializer = URLSafeTimedSerializer(secret_key)
     token = serializer.dumps(k_number)
     return token

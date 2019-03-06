@@ -1,7 +1,7 @@
 from itsdangerous import URLSafeTimedSerializer
 
 # TODO: include password salt
-def generate_token(secret_key, scheme_id, k_number): ### add scheme id as cookie
+def generate_token(secret_key, k_number):
     serializer = URLSafeTimedSerializer(secret_key)
     token = serializer.dumps(k_number)
     return token

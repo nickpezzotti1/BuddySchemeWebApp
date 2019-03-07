@@ -56,7 +56,7 @@ class SchemeModel(BasicModel):
         """Inserts an entry for new scheme into allocation_config"""
         if sanity_check(scheme_id): ## combine check and add ?
             try:
-                self._dao.execute(f"INSERT INTO Allocation_Config VALUES({to_str(scheme_id)}, 50, 50, 50, 50, 0);") 
+                self._dao.execute(f"INSERT INTO Allocation_Config VALUES({to_str(scheme_id)}, 1, 10, 5, 5, 0);") 
                 succ = self._dao.rowcount()
                 self._dao.commit()
                 return succ

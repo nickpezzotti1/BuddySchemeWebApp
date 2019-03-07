@@ -99,9 +99,9 @@ INSERT INTO Scheme VALUES(0, "Computer Science 2018", 1);
 INSERT INTO Scheme VALUES(0, "Law 2018", 1);
 INSERT INTO Scheme VALUES(0, "Gender Studies 2018", 1);
 
-INSERT INTO Allocation_Config VALUES(1, 50, 50, 50, 50, 0);
-INSERT INTO Allocation_Config VALUES(2, 50, 50, 50, 50, 0);
-INSERT INTO Allocation_Config VALUES(3, 50, 50, 50, 50, 0);
+INSERT INTO Allocation_Config VALUES(1, 1, 10, 5, 5, 0);
+INSERT INTO Allocation_Config VALUES(2, 1, 10, 5, 5, 0);
+INSERT INTO Allocation_Config VALUES(3, 1, 10, 5, 5, 0);
 
 
 INSERT INTO Student VALUES(1, "k1234567", "John", "Doe", "Comp Sci Bsc", 1, "Male", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3);

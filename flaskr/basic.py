@@ -2,10 +2,10 @@ import os
 import pymysql
 
 # Will set up the credentials
-DATABASE_USER = os.environ.get("BUDDY_DB_USER", '')
-DATABASE_PASSWORD = os.environ.get("BUDDY_DB_PASSWORD", '')
-DB_NAME = "Buddy"
-DB_HOST = "buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com"
+DATABASE_USER = "root"  ## os.environ.get("BUDDY_DB_USER", '')
+DATABASE_PASSWORD = "testing" ## os.environ.get("BUDDY_DB_PASSWORD", '')
+DB_NAME = "test_buddy"   ##"Buddy"
+DB_HOST = "localhost"  ##   "buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com"
 
 HASH_COL = 'password_hash'
 
@@ -105,6 +105,10 @@ def _update_students( ** kwargs):
         "year_study":int, "gender":str, "k_number":str, "is_mentor":bool,
         "email_confirmed": bool, "is_admin": bool}
 
+        
+        
+    ##### check like below for schme_id #####    
+    
     # We need the k_number to update
     if "k_number" not in kwargs:
         raise NameError("K-number could not be found in the list of arguments")
@@ -119,20 +123,20 @@ def _update_students( ** kwargs):
 
     # Ie if there's k_number and another field to update
     if len(kwargs) > 1:
-        sql_query = "UPDATE Students set "
-        sql_query += ", ".join([f"{field} = {_to_str(value)}" for field, value in kwargs.items() if field != "k_number"])
-        sql_query += f" where k_number={_to_str(kwargs['k_number'])};"
+        sql_query = "UPDATE Student set "
+        sql_query += ", ".join([f"{field} = {_to_str(value)}" for field, value in kwargs.items() if field != "k_number"])  ## or field != "scheme_id" ???
+        sql_query += f" where k_number={_to_str(kwargs['k_number'])} AND scheme_id = {_to_str(kwargs['scheme_id'])};"
         return _insert(sql_query)
     else:
         raise Exception("Need at least one argument.")
 
 
 
-def update_students(k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[], email_confirmed=[]):
+def update_students(scheme_id, k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[], email_confirmed=[]):
     """ Front end interface of the private function,
         don't need to know the underlying interface """
 
-    accepted_fields = {"k_number": k_number, "first_name": first_name,
+    accepted_fields = {"scheme_id": scheme_id, "k_number": k_number, "first_name": first_name,
         "last_name": last_name, "degree_title": degree_title,
         "year_study": year_study, "gender": gender, "is_mentor": is_mentor,
         "is_admin": is_admin, "email_confirmed": email_confirmed}
@@ -142,80 +146,82 @@ def update_students(k_number, first_name=[], last_name=[], degree_title=[], year
 
     return _update_students( ** dict_fields)
 
+###############################################################################################################3
 
-def update_hobbies(k_number, hobbies):
+
+def update_hobbies(scheme_id, k_number, hobbies):
     """ Given the k_number and hobbies, will delete all the hobbies
         And reinsert them"""
 
     if type(hobbies) is not list:
         raise TypeError("Hobby/ies must be passed as a list.")
 
-    delete_hobbies(k_number)
+    delete_hobbies(scheme_id, k_number)
 
     for hobby in hobbies:
-        insert_hobbies(k_number, hobby)
+        insert_hobbies(scheme_id, k_number, hobby)
 
     return True
 
 
-def update_interests(k_number, interests):
+def update_interests(scheme_id, k_number, interests):
     """ Given the k-number of the students and new interests
         Will replace all the interests by the new one"""
 
     if type(interests) is not list:
         raise TypeError("Interest/s must be passed as a list")
 
-    delete_interests(k_number)
+    delete_interests(scheme_id, k_number)
 
     for interest in interests:
-        insert_interests(k_number, interest)
+        insert_interests(scheme_id, k_number, interest)
 
     return True
 
 
-def update_mentee(mentor_k_number, mentees_k_number):
+def update_mentee(scheme_id, mentor_k_number, mentees_k_number):
     """ Given the mentor_k_number will update all his mentees"""
 
     if type(mentees_k_number) is not list:
         raise TypeError("Mentee/s must be passed as a list.")
 
-    delete_mentees(mentor_k_number)
+    delete_mentees(scheme_id, mentor_k_number)
 
     for mentee_k_number in mentees_k_number:
-        insert_mentor_mentee(mentor_k_number, mentee_k_number)
+        insert_mentor_mentee(scheme_id, mentor_k_number, mentee_k_number)
 
     return True
 
 
-def update_mentor(mentee_k_number, mentors_k_number):
+def update_mentor(scheme_id, mentee_k_number, mentors_k_number):
     """ Given the mentee_k_number will update all his mentors"""
 
     if type(mentors_k_number) is not list:
         raise TypeError("Mentor/s must be passed as a list.")
 
-    delete_mentors(mentee_k_number)
+    delete_mentors(scheme_id, mentee_k_number)
 
     for mentor_k_number in mentors_k_number:
-        insert_mentor_mentee(mentor_k_number, mentee_k_number)
+        insert_mentor_mentee(scheme_id, mentor_k_number, mentee_k_number)
 
     return True
 
 
-def update_hash_password(k_number, password_hash):
+def update_hash_password(scheme_id, k_number, password_hash):
     """ Given the k_number, will update the password_hash"""
 
     if type(password_hash) is str:
         password_hash_sql = "\"" + password_hash + "\""
-        return _insert(f"UPDATE Students set password_hash={password_hash_sql};")
+        return _insert(f"UPDATE Student set password_hash={password_hash_sql} WHERE scheme_id = {_to_str(scheme_id)};")
     else:
         raise TypeError(f"{type(password_hash)} type isn't accepted")
 
 
-def get_user_data(k_number):
+def get_user_data(scheme_id, k_number):
     """ Returns all the data in the Students table except from password hash"""
 
     try:
-        result = _query(f"SELECT * FROM Students where k_number={_to_str(k_number)};")[0]
+        result = _query(f"SELECT * FROM Student where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")[0]
         result.pop(HASH_COL, None) # can check not none
         return result
 
@@ -227,11 +233,11 @@ def get_user_data(k_number):
 #TODO Should I return something here?
 
 
-def get_user_hashed_password(k_number):
+def get_user_hashed_password(scheme_id, k_number):
     """ Returns the hashed password for the user"""
 
     try:
-        result = _query(f"select password_hash from Students where k_number={_to_str(k_number)};")
+        result = _query(f"select password_hash from Student where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
         return result[0].pop(HASH_COL, None)
 
     except IndexError:
@@ -242,156 +248,177 @@ def get_user_hashed_password(k_number):
 # TODO Should I return something here as well?
 
 
-def get_mentors(mentee_k_number):
+def get_mentors(scheme_id, mentee_k_number):
     """ Given the mentee K-Number will return its mentor(s) k-number"""
 
-    return _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+    return _query(f"SELECT mentor_k_number from Allocation where mentee_k_number={_to_str(mentee_k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 
-def get_mentees(mentor_k_number):
+def get_mentees(scheme_id, mentor_k_number):
     """ Given the mentor K-Number will return its mentor(s) k-number"""
 
-    return _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+    return _query(f"SELECT mentee_k_number from Allocation where mentor_k_number={_to_str(mentor_k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 
-def get_hobbies(k_number):
+def get_hobbies(scheme_id, k_number):
     """ Given the k_number will return all the student's hobbies"""
 
-    return _query(f"SELECT * FROM Hobbies where k_number={_to_str(k_number)};")
+    return _query(f"SELECT * FROM Hobbies where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 
-def get_interests(k_number):
+def get_interests(scheme_id, k_number):
     """ Given the k_number will return all the student's interests"""
 
-    return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)}")
+    return _query(f"SELECT * FROM Interests where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)}")
 
 
-def insert_mentor_mentee(mentor_k_number, mentee_k_number):
+def insert_mentor_mentee(scheme_id, mentor_k_number, mentee_k_number):
     """ Insert the mentor, mentee pair k number """
 
-    return _insert(f"INSERT INTO Allocation VALUES({_to_str([mentor_k_number, mentee_k_number])});")
+    return _insert(f"INSERT INTO Allocation VALUES({_to_str([scheme_id, mentor_k_number, mentee_k_number])});")
 
 
-def insert_student(k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin, buddy_limit):
+def insert_student(scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin, buddy_limit):
     """ Will entirely populate an entry for Students table"""
 
-    return _insert(f"INSERT INTO Students VALUES({_to_str([k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, buddy_limit])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)}, 1);")
+    return _insert(f"INSERT INTO Student VALUES({_to_str([scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, buddy_limit])}, FALSE, {_to_str(password_hash, password_hash=True)}, {_to_str(is_admin)}, 1);")
 
 
-def insert_hobby(k_number, hobby):
+def insert_hobby(scheme_id, k_number, hobby):
     """ Will entirely populate an entry for the Hobbies database"""
 
-    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([hobby, k_number])});")
+    return _insert(f"INSERT INTO Hobbies VALUES({_to_str([scheme_id, hobby, k_number])});")
 
 
-def insert_interest(k_number, interest):
+def insert_interest(scheme_id, k_number, interest):
     """ Will entirely populate an entry for Interests table"""
 
-    return _insert(f"INSERT INTO Interests VALUES({_to_str([interest, k_number])});")
+    return _insert(f"INSERT INTO Interests VALUES({_to_str([scheme_id, interest, k_number])});")
 
 
 # TODO Need to check for hobbies type
-def delete_hobbies(k_number, hobbies=False):
+def delete_hobbies(scheme_id, k_number, hobbies=False):
     """ Will delete all the rows where K_number is
          Or only where hobbies and k-number are"""
 
     if hobbies:
-        return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} and hobby={_to_str(hobbies)};")
+        return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} and hobby = {_to_str(hobbies)} AND scheme_id = {_to_str(scheme_id)};")
     else:
-        return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)};")
+        return _insert(f"DELETE FROM Hobbies where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 
-def delete_interests(k_number, interests=False):
+def delete_interests(scheme_id, k_number, interests=False):
     """ Will delete all the rows where the k-number is
         Or only where interests and k-number are"""
 
     if interests:
-        return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)} and interest={_to_str(interests)};")
+        return _insert(f"DELETE FROM Interests where k_number = {_to_str(k_number)} AND interest = {_to_str(interests)} AND scheme_id = {_to_str(scheme_id)};")
     else:
-        return _insert(f"DELETE FROM Interests where k_number={_to_str(k_number)};")
+        return _insert(f"DELETE FROM Interests where k_number = {_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 
-def delete_mentors(mentee_k_number):
+def delete_mentors(scheme_id, mentee_k_number):
     """ Given the mentee k-number will delete all his mentors"""
 
-    return _insert(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)};")
+    return _insert(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
-def delete_mentees(mentor_k_number):
+def delete_mentees(scheme_id, mentor_k_number):
     """ Given the mentor k-number will delete all his mentees"""
 
-    return _insert(f"DELETE FROM Allocation where mentor_k_number={_to_str(mentor_k_number)};")
+    return _insert(f"DELETE FROM Allocation where mentor_k_number={_to_str(mentor_k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 
-def delete_students(k_number):
+def delete_students(scheme_id, k_number):
     """ Delete the students entry in the Tables"""
 
 
-    delete_hobbies(k_number)
-    delete_interests(k_number)
-    delete_mentors(k_number)
-    delete_mentees(k_number)
+    delete_hobbies(scheme_id, k_number)
+    delete_interests(scheme_id, k_number)
+    delete_mentors(scheme_id, k_number)
+    delete_mentees(scheme_id, k_number)
 
-    return _insert(f"DELETE FROM Students where k_number={_to_str(k_number)};")
+    return _insert(f"DELETE FROM Student where k_number = {_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
+#########################################################################################
 
-
-def get_all_students_data_basic():
+def get_all_students_data_basic(scheme_id):
     """ God knows what this function does"""
 
     # Add has matches
-    return _query("SELECT k_number, first_name, last_name, is_mentor FROM Students ORDER BY last_name ASC;")
+    if _sanity_check(scheme_id):
+        return _query("SELECT k_number, first_name, last_name, is_mentor FROM Student WHERE Student.scheme_id = {_to_str(scheme_id)} ORDER BY last_name ASC;")
 
 
-def get_all_mentors():
+def get_all_mentors(scheme_id):
     """ Returns all the k-number of mentors"""
+    if _sanity_check(scheme_id):
+        return _query("SELECT k_number FROM Student Where is_mentor=1 AND Student.scheme_id = {_to_str(scheme_id)};")
 
-    return _query("SELECT k_number FROM Students Where is_mentor=1;")
 
-
-def get_all_mentees():
+def get_all_mentees(scheme_id):
     """ Returns all the k-number of the mentees"""
+    if _sanity_check(scheme_id):
+        return _query("SELECT k_number FROM Student Where is_mentor=0 AND Student.scheme_id = {_to_str(scheme_id)};")
 
-    return _query("SELECT k_number FROM Students Where is_mentor=0;")
 
 
+def get_all_students_data_basic(scheme_id):
+    if _sanity_check(scheme_id):
+        return _query("SELECT k_number, first_name, last_name, gender, is_mentor FROM Student WHERE Student.scheme_id = {_to_str(scheme_id)} ORDER BY last_name ASC;")   ## add has matches
 
-def get_all_students_data_basic():
-    return _query("SELECT k_number, first_name, last_name, gender, is_mentor FROM Students ORDER BY last_name ASC;")   ## add has matches
-
-def get_mentee_details(k_number):
-    if _sanity_check(k_number):
-        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)};")
+def get_mentee_details(scheme_id, k_number):
+    if _sanity_check(scheme_id) and _sanity_check(k_number):
+        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 
-def get_mentor_details(k_number):
-    if _sanity_check(k_number):
-        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Students, Allocation WHERE Students.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {_to_str(k_number)};")
+def get_mentor_details(scheme_id, k_number):
+    if _sanity_check(scheme_id) and _sanity_check(k_number):
+        return _query(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 
-def get_manual_allocation_matches(k_number, is_tor):
-    if _sanity_check(k_number):    # and _sanity_check(is_tor):
+def get_manual_allocation_matches(scheme_id, k_number, is_tor):
+    if _sanity_check(scheme_id) and _sanity_check(k_number):    # and _sanity_check(is_tor):
         join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
-        return _query(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Students LEFT JOIN Allocation ON Students.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} GROUP BY Students.k_number ORDER BY matches, k_number ASC;")
+        return _query(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC;") ## on ... and scheme_id???
     else:
         return "Error: one of the field did not pass the sanity check"
 
-def make_manual_allocation(tee_number, tor_number):
-    if _sanity_check(tee_number) and _sanity_check(tor_number):
-        return _insert(f"INSERT INTO Allocation VALUES({_to_str(tor_number)}, {_to_str(tee_number)});")
+def make_manual_allocation(scheme_id, tee_number, tor_number):
+    if _sanity_check(scheme_id) and _sanity_check(tee_number) and _sanity_check(tor_number):
+        return _insert(f"INSERT INTO Allocation VALUES({_to_str(scheme_id)}, {_to_str(tor_number)}, {_to_str(tee_number)});")
     else:
         return "Error: one of the field did not pass the sanity check"
 
-def remove_allocation(tee_number, tor_number):
-    if _sanity_check(tee_number) and _sanity_check(tor_number):
-        return _insert(f"DELETE FROM Allocation WHERE mentor_k_number = {_to_str(tor_number)} AND mentee_k_number = {_to_str(tee_number)};")
+def remove_allocation(scheme_id, tee_number, tor_number):
+    if _sanity_check(scheme_id) and _sanity_check(tee_number) and _sanity_check(tor_number):
+        return _insert(f"DELETE FROM Allocation WHERE mentor_k_number = {_to_str(tor_number)} AND mentee_k_number = {_to_str(tee_number)} AND Allocation.scheme_id = {_to_str(scheme_id)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 
-def alter_admin_status(k_number, is_admin):
-    if _sanity_check(k_number) and _sanity_check(is_admin):
-        return _insert(f"UPDATE Students SET is_admin = {is_admin} WHERE k_number = {_to_str(k_number)};")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def alter_admin_status(scheme_id, k_number, is_admin):
+    if _sanity_check(scheme_id) and _sanity_check(k_number) and _sanity_check(is_admin):
+        return _insert(f"UPDATE Student SET is_admin = {is_admin} WHERE k_number = {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 

@@ -8,84 +8,89 @@
 
 
 {% block content_block %} 
+<div>
     <div>
         <div>
-            <div>
-              {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="alert alert-warning">
-                      {{ message }}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+            <div id="second" style="inline">
+                <div class="myform form ">
+                    <div class="logo mb-3">
+                        <div class="col-md-12 text-center">
+                            <h1>Signup</h1>
+                        </div>
                     </div>
-                  {% endfor %}
-                {% endif %}
-              {% endwith %}
-              {% block content %}{% endblock %}
-                <div id="second" style="inline">
-                    <div class="myform form ">
-                        <div class="logo mb-3">
-                            <div class="col-md-12 text-center">
-                                <h1>Signup</h1>
+                    <form action="#" name="registration" method="post">
+                        {{ registration_form.csrf_token }}
+
+                        <div class="form-group">
+                            {{ registration_form.scheme_id.label(class="form-control-label") }}
+                            {{ registration_form.scheme_id(class="form-control form-control-lg", placeholder="Please Select Your Scheme") }}
+                        </div>
+                        <div class="form-group">
+                            {{ registration_form.first_name.label(class="form-control-label") }}
+                            {{ registration_form.first_name(class="form-control form-control-lg", placeholder="Enter First Name") }}
+                        </div>
+                        <div class="form-group">
+                            {{ registration_form.last_name.label(class="form-control-label") }}
+                            {{ registration_form.last_name(class="form-control form-control-lg", placeholder="Enter Last Name") }}
+                        </div>
+                        <div class="form-group">
+                            {{ registration_form.k_number.label(class="form-control-label") }}
+                            {% if registration_form.k_number.errors %}
+                            {{ registration_form.k_number(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in registration_form.k_number.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ registration_form.k_number(class="form-control form-control-lg", placeholder="Enter k-number") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ registration_form.password.label(class="form-control-label") }}
+                            {{ registration_form.password(class="form-control form-control-lg", placeholder="Enter Password") }}
+
+                        </div>
+                        <div class="form-group">
+                            {{ registration_form.confirm_password.label(class="form-control-label") }}
+                            {% if registration_form.confirm_password.errors %}
+                            {{ registration_form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in registration_form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ registration_form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 text-center ">
+                            {{ registration_form.registration_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+                        </div>
+                        <div class="form-group">
+                            {{ registration_form.is_mentor.label(class="form-control-label") }}
+                            {{ registration_form.is_mentor() }}
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group">
+                                <p class="text-center"><a href="/login" id="signin">Already have an account?</a></p>
                             </div>
                         </div>
-                        <form action="#" name="registration" method="post">
-                            {{ registration_form.csrf_token }}
-                            <div class="form-group">
-                                {{ registration_form.first_name.label(class="form-control-label") }}
-                                {{ registration_form.first_name(class="form-control form-control-lg", placeholder="Enter First Name") }}
-                            </div>
-                            <div class="form-group">
-                                {{ registration_form.last_name.label(class="form-control-label") }}
-                                {{ registration_form.last_name(class="form-control form-control-lg", placeholder="Enter Last Name") }}
-                            </div>
-                            <div class="form-group">
-                                {{ registration_form.k_number.label(class="form-control-label") }}
-                                {% if registration_form.k_number.errors %}
-                                {{ registration_form.k_number(class="form-control form-control-lg is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in registration_form.k_number.errors %}
-                                    <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                                {% else %}
-                                {{ registration_form.k_number(class="form-control form-control-lg", placeholder="Enter k-number") }}
-                                {% endif %}
-                            </div>
-                            <div class="form-group">
-                                {{ registration_form.password.label(class="form-control-label") }}
-                                {{ registration_form.password(class="form-control form-control-lg", placeholder="Enter Password") }}
-
-                            </div>
-                            <div class="form-group">
-                                {{ registration_form.confirm_password.label(class="form-control-label") }}
-                                {% if registration_form.confirm_password.errors %}
-                                {{ registration_form.confirm_password(class="form-control form-control-lg is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in registration_form.confirm_password.errors %}
-                                    <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                                {% else %}
-                                {{ registration_form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
-                                {% endif %}
-                            </div>
-                            <div class="col-md-12 text-center ">
-                                {{ registration_form.registration_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
-                            </div>
-                            <div class="form-group">
-                                {{ registration_form.is_mentor.label(class="form-control-label") }}
-                                {{ registration_form.is_mentor() }}
-                            </div>
-                            <div class="col-md-12 ">
-                                <div class="form-group">
-                                    <p class="text-center"><a href="/login" id="signin">Already have an account?</a></p>
-                                </div>
-                            </div>
-                    </div>
-                    </form>
                 </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
 {% endblock content_block %}

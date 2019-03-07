@@ -4,7 +4,7 @@ import logging
 
 class AllocationModel(BasicModel):
 
-    def update_mentee(self,mentor_k_number, mentees_k_number):
+    def update_mentee(self, scheme_id, mentor_k_number, mentees_k_number):
         """ Given the mentor_k_number will update all his mentees"""
 
         if type(mentees_k_number) is not list:
@@ -29,14 +29,14 @@ class AllocationModel(BasicModel):
         return True
 
 
-    def update_mentor(self,mentee_k_number, mentors_k_number):
+    def update_mentor(self, scheme_id, mentee_k_number, mentors_k_number):
         """ Given the mentee_k_number will update all his mentors"""
 
         if type(mentors_k_number) is not list:
             self._log.exception("Mentors not passed as list")
             raise TypeError("Mentor/s must be passed as a list.")
         try:
-            delete_mentors(mentee_k_number)
+            delete_mentors(scheme_id, mentee_k_number)
         except Exception as e:
                 self._log.exception("Could not delete mentors while updating")
                 raise e
@@ -44,7 +44,7 @@ class AllocationModel(BasicModel):
 
         for mentor_k_number in mentors_k_number:
             try:
-                insert_mentor_mentee(mentor_k_number, mentee_k_number)
+                insert_mentor_mentee(scheme_id, mentor_k_number, mentee_k_number)
             except Exception as e:
                 self._log.exception("Could not insert pairs while updating mentor")
                 raise e
@@ -52,33 +52,33 @@ class AllocationModel(BasicModel):
 
         return True
 
-    def get_all_mentors(self):
+    def get_all_mentors(self, scheme_id):
         """ Returns all the k-number of mentors"""
 
         try:
-            return self._dao.execute("SELECT k_number FROM Student WHERE is_mentor=1;")
+            return self._dao.execute(f"SELECT k_number FROM Student WHERE is_mentor=1 AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
                 raise e
 
 
-    def get_all_mentees(self):
+    def get_all_mentees(self, scheme_id):
         """ Returns all the k-number of the mentees"""
 
         try:
-            return self._dao.execute("SELECT k_number FROM Student WHERE is_mentor=0;")
+            return self._dao.execute(f"SELECT k_number FROM Student WHERE is_mentor=0 AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")
                 raise e
 
 
-    def get_mentee_details(self,k_number):
+    def get_mentee_details(self, scheme_id, k_number):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)};")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};") ## conf
 
             except Exception as e:
                 self._log.exception("Could not get mentee details")
@@ -87,11 +87,11 @@ class AllocationModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def get_mentor_details(self,k_number):
+    def get_mentor_details(self, scheme_id, k_number):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)};")
+                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
 
             except Exception as e:
                 self._log.exception("Could not get mentor details")
@@ -100,11 +100,12 @@ class AllocationModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def get_manual_allocation_matches(self,k_number, is_tor):
+    def get_manual_allocation_matches(self, scheme_id, k_number, is_tor):
         if sanity_check(k_number):    # and _sanity_check(is_tor):
             join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
+            other_col = 'mentee_k_number' if not is_tor else 'mentor_k_number'
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} GROUP BY Student.k_number ORDER BY matches, k_number ASC;")
+                return self._dao.execute(f"SELECT * FROM (SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} AND Student.scheme_id = Allocation.scheme_id WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC) AS matches WHERE NOT EXISTS (SELECT NULL FROM Allocation WHERE {other_col} = {to_str(k_number)} AND {join_col} = matches.k_number AND scheme_id = {to_str(scheme_id)});")                                             
 
             except Exception as e:
                 self._log.exception("Could not get manual allocation matches")
@@ -113,11 +114,11 @@ class AllocationModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def make_manual_allocation(self,tee_number, tor_number):
+    def make_manual_allocation(self, scheme_id, tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
 
             try:
-                return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(tor_number)}, {to_str(tee_number)});")
+                return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(scheme_id)}, {to_str(tor_number)}, {to_str(tee_number)});")
                 self._dao.commit()
 
             except Exception as e:
@@ -127,11 +128,11 @@ class AllocationModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def remove_allocation(self,tee_number, tor_number):
+    def remove_allocation(self, scheme_id, tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
 
             try:
-                return self._dao.execute(f"DELETE FROM Allocation WHERE mentor_k_number = {to_str(tor_number)} AND mentee_k_number = {to_str(tee_number)};")
+                return self._dao.execute(f"DELETE FROM Allocation WHERE mentor_k_number = {to_str(tor_number)} AND mentee_k_number = {to_str(tee_number)} AND scheme_id = {to_str(scheme_id)};")
                 self._dao.commit()
 
             except Exception as e:
@@ -141,52 +142,52 @@ class AllocationModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def get_mentors(self,mentee_k_number):
+    def get_mentors(self, scheme_id, mentee_k_number):
         """ Given the mentee K-Number will return its mentor(s) k-number"""
 
         try:
-            return self._dao.execute(f"SELECT mentor_k_number from Allocation where mentee_k_number={to_str(mentee_k_number)};")
+            return self._dao.execute(f"SELECT mentor_k_number from Allocation where mentee_k_number={to_str(mentee_k_number)} AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
             self._log.exception("Could not get mentors")
             raise e
 
-    def get_mentees(self,mentor_k_number):
+    def get_mentees(self, scheme_id, mentor_k_number):
         """ Given the mentor K-Number will return its mentor(s) k-number"""
 
         try:
-            return self._dao.execute(f"SELECT mentee_k_number from Allocation where mentor_k_number={to_str(mentor_k_number)};")
+            return self._dao.execute(f"SELECT mentee_k_number from Allocation where mentor_k_number={to_str(mentor_k_number)} AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
             self._log.exception("Could not get mentees")
             raise e
 
 
-    def insert_mentor_mentee(self,mentor_k_number, mentee_k_number):
+    def insert_mentor_mentee(self, scheme_id, mentor_k_number, mentee_k_number):
         """ Insert the mentor, mentee pair k number """
 
         try:
-            self._dao.execute(f"INSERT INTO Allocation VALUES({to_str([mentor_k_number, mentee_k_number])});")
+            self._dao.execute(f"INSERT INTO Allocation VALUES({to_str([scheme_id, mentor_k_number, mentee_k_number])});")
             self._dao.commit()
 
         except Exception as e:
             self._log.exception("Could not inset mentor mentee pair")
             raise e
 
-    def delete_mentors(self,mentee_k_number):
+    def delete_mentors(self, scheme_id, mentee_k_number):
         """ Given the mentee k-number will delete all his mentors"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(mentee_k_number)};")
+            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(mentee_k_number)} AND scheme_id = {to_str(scheme_id)};")
             self._dao.commit()
 
         except Exception as e:
             self._log.exception("Could not get delete mentors")
             raise e
 
-    def delete_mentees(self,mentor_k_number):
+    def delete_mentees(self, scheme_id, mentor_k_number):
         """ Given the mentor k-number will delete all his mentees"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(mentor_k_number)};")
+            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(mentor_k_number)} AND scheme_id = {to_str(scheme_id)};")
             self._dao.commit()
 
         except Exception as e:

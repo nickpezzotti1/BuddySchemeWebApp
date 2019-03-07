@@ -72,6 +72,13 @@ class Dao():
             except:
                 self._log.exception("Could not commit changes")
                 raise
+        
+        def rowcount(self):
+            try:
+                return self.__cursor.rowcount
+            except:
+                self._log.exception("Could Not Get Affected Rows")
+                raise    
             
         def _get_credentials(self):
             """ Retreive credentials for database connection """

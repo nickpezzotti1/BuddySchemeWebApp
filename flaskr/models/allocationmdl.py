@@ -56,7 +56,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of mentors"""
 
         try:
-            return self._dao.execute(f"SELECT k_number FROM Student WHERE is_mentor=1 AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute(f"SELECT k_number, gender, buddy_limit FROM Student WHERE is_mentor=1 AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
@@ -67,7 +67,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of the mentees"""
 
         try:
-            return self._dao.execute(f"SELECT k_number FROM Student WHERE is_mentor=0 AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute(f"SELECT k_number, gender, buddy_limit FROM Student WHERE is_mentor=0 AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")
@@ -105,7 +105,7 @@ class AllocationModel(BasicModel):
             join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
             other_col = 'mentee_k_number' if not is_tor else 'mentor_k_number'
             try:
-                return self._dao.execute(f"SELECT * FROM (SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} AND Student.scheme_id = Allocation.scheme_id WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC) AS matches WHERE NOT EXISTS (SELECT NULL FROM Allocation WHERE {other_col} = {to_str(k_number)} AND {join_col} = matches.k_number AND scheme_id = {to_str(scheme_id)});")                                             
+                return self._dao.execute(f"SELECT * FROM (SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} AND Student.scheme_id = Allocation.scheme_id WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC) AS matches WHERE NOT EXISTS (SELECT NULL FROM Allocation WHERE {other_col} = {to_str(k_number)} AND {join_col} = matches.k_number AND scheme_id = {to_str(scheme_id)});")
 
             except Exception as e:
                 self._log.exception("Could not get manual allocation matches")

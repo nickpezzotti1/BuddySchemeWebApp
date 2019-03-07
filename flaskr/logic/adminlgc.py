@@ -135,7 +135,7 @@ class AdminLogic():
 
     #TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
-        
+
         # Get allocation configuration from database
         allocation_config = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
@@ -149,7 +149,7 @@ class AdminLogic():
 
         input["configurations"] = {
             "age_importance": allocation_config["age_weight"],
-            "sex_importance": allocation_config["gender_weight"],
+            "gender_importance": allocation_config["gender_weight"],
             "hobby_importance": allocation_config["hobby_weight"],
             "interest_importance": allocation_config["interest_weight"]
         }
@@ -159,8 +159,8 @@ class AdminLogic():
                                     {
                                         "ID": mentor["k_number"],
                                         "age": 20,
-                                        "isMale": True,
-                                        "menteeLimit": 1
+                                        "gender": mentor["gender"],
+                                        "partnerLimit": mentor["buddy_limit"]
                                     }
                                 )
 
@@ -169,7 +169,8 @@ class AdminLogic():
                                     {
                                         "ID": mentee["k_number"],
                                         "age": 20,
-                                        "isMale": True
+                                        "gender": mentee["gender"],
+                                        "partnerLimit": mentee["buddy_limit"]
                                     }
                                 )
 
@@ -208,7 +209,7 @@ class AdminLogic():
             hobbies = {}
             for hobby in self._student_hobby_handler.get_hobbies(scheme_id, k_number):
                 hobbies[hobby["hobby_id"]] = hobby["hobby_name"]
-            
+
             user_data["hobbies"] = hobbies
 
             return user_data

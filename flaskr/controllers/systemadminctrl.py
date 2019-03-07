@@ -8,7 +8,6 @@ system_admin_blueprint = Blueprint('systemadmin', __name__)
 handler = SystemAdminLogic()
 
 @system_admin_blueprint.route('/system/', methods=['get', 'post'])
-@system_admin_login_required()
 def system_admin_login():
     return handler.system_admin_login(request)
 

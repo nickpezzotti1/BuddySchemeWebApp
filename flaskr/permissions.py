@@ -28,7 +28,7 @@ def admin_login_required(redirect_on_fail = '/'):
         return decorated_view
     return wrapper
 
-def system_admin_login_required(redirect_on_fail = '/'):
+def system_admin_login_required(redirect_on_fail = '/system'):
     def wrapper(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):

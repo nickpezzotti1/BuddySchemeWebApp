@@ -93,11 +93,9 @@ class SystemAdminLogic():
                 if new_scheme_form.validate_on_submit():
                     new_scheme_name = new_scheme_form.scheme_name.data + " " + str(new_scheme_form.year.data)
                     if self._scheme_handler.check_scheme_avail(new_scheme_name):                        
-                        print(new_scheme_name)
                         if self._scheme_handler.create_new_scheme(new_scheme_name):
                             scheme_admin_k_number = new_scheme_form.k_number.data
-                            scheme_id = self._scheme_handler.get_scheme_id("eeee") ## new_scheme_name) ## return from create_new_scheme isntead?
-                            print(scheme_id)
+                            scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name) ## new_scheme_name) ## return from create_new_scheme isntead?
                             ##
                             ## ToDo - below
                             ## 

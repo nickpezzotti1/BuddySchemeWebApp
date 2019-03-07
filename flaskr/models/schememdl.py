@@ -56,7 +56,7 @@ class SchemeModel(BasicModel):
         """Returns true if new scheme name is available"""
         if sanity_check(scheme_name):
             try:
-                res = self._dao.execute(f"SELECT scheme_id FROM Scheme WHERE scheme_name = {to_str(scheme_name)};")[0]['scheme_id'] ## errors if not exists
+                return self._dao.execute(f"SELECT scheme_id FROM Scheme WHERE scheme_name = {to_str(scheme_name)};")[0]['scheme_id'] ## errors if not exists
             
             except Exception as e:
                 self._log.exception("Could Not Get Scheme ID")

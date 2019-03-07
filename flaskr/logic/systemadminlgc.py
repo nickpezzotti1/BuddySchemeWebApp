@@ -99,10 +99,14 @@ class SystemAdminLogic():
                             ##
                             ## ToDo - below
                             ## 
-                            password = urandom(16) ## send in email + force to change
+                            password = "password"  ##urandom(16) ## send in email + force to change
                             hashed_password = generate_password_hash(password)
                             if self._student_handler.insert_student(scheme_id, scheme_admin_k_number, 'admin change', 'admin change', 'admin change', 2, 'admin change', 1, hashed_password, 1, 1): ## check res?
-                                flash("Scheme And Admin Account Succesfully Created")
+                                if self._scheme_handler.create_allocation_config_entry(scheme_id):
+                                    flash("Scheme And Admin Account Succesfully Created")
+                                else:
+                                    flash("Scheme And Admin Account Created But Failed To Create Allocation Config")
+                                    
                             else:
                                 flash("Scheme Created But Admin Account Failed To Create, Please Manually Assign")
                             

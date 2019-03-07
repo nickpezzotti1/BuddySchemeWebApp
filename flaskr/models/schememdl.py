@@ -51,6 +51,21 @@ class SchemeModel(BasicModel):
             except Exception as e:
                 self._log.exception("Could Not Create New Scheme")
                 raise e
+                    
+    def create_allocation_config_entry(self, scheme_id):
+        """Inserts an entry for new scheme into allocation_config"""
+        if sanity_check(scheme_id): ## combine check and add ?
+            try:
+                self._dao.execute(f"INSERT INTO Allocation_Config VALUES({to_str(scheme_id)}, 50, 50, 50, 50, 0);") 
+                succ = self._dao.rowcount()
+                self._dao.commit()
+                return succ
+                
+            except Exception as e:
+                self._log.exception("Could Not Create New Scheme")
+                raise e
+        
+        
     
     def get_scheme_id(self, scheme_name):
         """Returns true if new scheme name is available"""

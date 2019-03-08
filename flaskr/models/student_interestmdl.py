@@ -13,16 +13,16 @@ class StudentInterestModel(BasicModel):
             self._log.exception("Could not get interests")
             raise e
 
-    def insert_interest(self, k_number, interest_id):
+    def insert_interest(self, scheme_id, k_number, interest_id):
         """ Will entirely populate an entry for Student_Interest table"""
         try:
-            self._dao.execute(f"INSERT INTO Student_Interest VALUES({to_str([interest_id, k_number])});")
+            self._dao.execute(f"INSERT INTO Student_Interest VALUES({to_str([scheme_id, interest_id, k_number])});")
             self._dao.commit()
 
         except Exception as e:
             raise e
 
-    def update_interests(self, k_number, interest_ids):
+    def update_interests(self, scheme_id, k_number, interest_ids):
         """ Given the k-number of the students and new interests
             Will replace all the interests by the new one"""
 
@@ -30,27 +30,27 @@ class StudentInterestModel(BasicModel):
             raise TypeError("Interest/s must be passed as a list")
 
         try:
-            self.delete_interests(k_number)
+            self.delete_interests(scheme_id, k_number)
 
         except Exception as e:
             raise e
 
         for interest_id in interest_ids:
             try:
-                self.insert_interest(k_number, interest_id)
+                self.insert_interest(scheme_id, k_number, interest_id)
 
             except Exception as e:
                 raise e
 
         return True
 
-    def delete_interests(self, k_number, interest=False):
+    def delete_interests(self, scheme_id, k_number, interest=False):
         """ Will delete all the rows where the k-number is """
 
         if interest:
             try:
                 # TODO Allow for single interest
-                self._dao.execute(f"DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number={to_str(k_number)};")
+                self._dao.execute(f"DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};")
                 self._dao.commit()
 
             except Exception as e:
@@ -58,7 +58,7 @@ class StudentInterestModel(BasicModel):
                 raise e
         else:
             try:
-                self._dao.execute(f"DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number={to_str(k_number)};")
+                self._dao.execute(f"DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};")
                 self._dao.commit()
 
             except Exception as e:

@@ -3,11 +3,11 @@ from models.basicmdl import BasicModel
 
 class StudentInterestModel(BasicModel):
 
-    def get_interests(self, k_number):
+    def get_interests(self, scheme_id, k_number):
         """ Given the k_number will return all the student's interests"""
 
         try:
-            return self._dao.execute(f"SELECT interest_id, interest_name FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number={to_str(k_number)}")
+            return self._dao.execute(f"SELECT interest_id, interest_name FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)}")
 
         except Exception as e:
             self._log.exception("Could not get interests")

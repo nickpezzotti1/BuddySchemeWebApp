@@ -1,0 +1,71 @@
+{% extends "template.html" %}
+
+{% block nav_block %}
+<li><a href="#">Home</a></li>
+<li><a href="#">Features</a></li>
+<li><a href="#">Contact</a></li>                                                             
+{% endblock nav_block %}
+
+{% block content_block %}
+
+
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-warning">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+    <div id="second" style="inline">
+        <div class="myform form ">
+            <div class="logo mb-3">
+                <div class="col-md-12 text-center">
+                    <h1>New Scheme</h1>
+                </div>
+            </div>
+            <form method="POST" name="new_scheme" action="{{url_for('systemadmin.system_new_scheme')}}">
+                {{ new_scheme_form.csrf_token }}
+
+                <div class="form-group">
+                    {{ new_scheme_form.scheme_name.label(class="form-control-label") }}
+                    {{ new_scheme_form.scheme_name(class="form-control form-control-lg", placeholder="Please Enter Scheme Name") }}
+                </div>
+                <div class="form-group">
+                    {{ new_scheme_form.year.label(class="form-control-label") }}
+                    {{ new_scheme_form.year(class="form-control form-control-lg", type='number', placeholder="Please Enter Start Year") }}
+                </div>
+                <div class="form-group">
+                    {{ new_scheme_form.k_number.label(class="form-control-label") }}
+                    {{ new_scheme_form.k_number(class="form-control form-control-lg", placeholder="Please Enter K Number") }}
+
+                </div>
+                <div class="col-md-12 text-center ">
+                    {{ new_scheme_form.submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+                </div>
+        </div>
+        </form>
+        <div class="col-md-12 text-center ">
+            <br />
+            <form method="GET" action="{{url_for('systemadmin.system_admin_dashboard')}}">
+                <input type="submit" class="btn btn-block mybtn btn-primary tx-tfm" value="Back"/> 
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content_block %}
+
+
+
+
+
+
+
+
+
+

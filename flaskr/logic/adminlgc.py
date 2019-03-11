@@ -10,7 +10,7 @@ from models.student_hobbymdl import StudentHobbyModel
 from models.interestmdl import InterestModel
 from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
-
+from forms import NewHobbyForm, NewInterestForm
 
 
 class AdminLogic():
@@ -62,7 +62,6 @@ class AdminLogic():
 
 
     def delete_student_details(self):
-
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
@@ -77,8 +76,36 @@ class AdminLogic():
 
 
     def general_settings(self):
+        try:
+            new_hobby_form = NewHobbyForm(request.form)
+            new_interest_form = NewInterestForm(request.form)
+            # try:
+            if new_hobby_form.hobby_name.data:
+                if new_hobby_form.validate_on_submit():
+                    if True:
+                        flash("Hobby successfully created")
+                    else:
+                        flash("Hobby already created")
+                else:
+                    flash("Error creating hobby")
+            
+            if new_interest_form.interest_name.data:
+                if new_interest_form.validate_on_submit():
+                    if True:
+                        flash("Interest successfully created")
+                    else:
+                        flash("Interest already created")
+                else:
+                    flash("Error creating interest")
 
-        return render_template('admin/general_settings.html', title='General Settings')
+            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form)
+            # except Exception as e:
+            #     self._log.exception("Could not parse login form")
+            #     return abort(500)
+        except Exception as e:
+            self._log.exception("Invalid new hobby form")
+            return abort(500)
+
 
 
     def allocation_config(self):

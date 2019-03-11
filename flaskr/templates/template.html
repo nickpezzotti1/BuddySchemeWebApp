@@ -10,7 +10,7 @@
 
     <link rel="shortcut icon" href="https://s3-eu-west-1.amazonaws.com/website-buddy-kcl/pictures/kcl_logo.jpg">
 
-    {% if title %}  
+    {% if title %}
       <title> {{title}} </title>
     {% else %}
         <title> KCL Buddy </title>
@@ -48,9 +48,12 @@
             <div class="inner">
               <h3 class="masthead-brand"><a href="{{ url_for('home') }}">KCL Buddy</a></h3>
                 <ul class="nav masthead-nav">
-                  <li><a href="https://keats.kcl.ac.uk/my/">Keats</a></li>
-                  <li><a href="https://www.facebook.com/kisscollegelondon/">KissCollege</a></li>               
-                  <li><a href="/login" class="btn btn-lg btn-default btn-primary-outline">Log In/Out</a></li>  
+                  {% if current_user.is_authenticated %}
+                  <li><a href="/logout">Log Out</a></li>
+                  {% else %}
+                  <li><a href="/signup">Sign Up</a></li>
+                  <li><a href="/login">Log In</a></li>
+                  {% endif %}
                   {% block nav_block %}{% endblock nav_block %}
                 </ul>
             </div>

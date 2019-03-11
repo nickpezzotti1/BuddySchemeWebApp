@@ -118,7 +118,7 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Student table"""
 
         try:
-            self._dao.execute(f"INSERT INTO Student VALUES({to_str([scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, buddy_limit);")
+            self._dao.execute(f"INSERT INTO Student VALUES({to_str([scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, {buddy_limit}, NULL);")
             succ = self._dao.rowcount()
             self._dao.commit()
             return succ
@@ -164,6 +164,20 @@ class StudentModel(BasicModel):
 
             except Exception as e:
                 self._log.exception("Could not alter admin status")
+                raise e
+
+        else:
+            return "Error: one of the field did not pass the sanity check"
+
+    def activateAccount(self, scheme_id, k_number):
+        if sanity_check(scheme_id) and sanity_check(k_number):
+
+            try:
+                self._dao.execute(f"UPDATE Student SET email_confirmed = True WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.commit()
+
+            except Exception as e:
+                self._log.exception("Could not activate account")
                 raise e
 
         else:

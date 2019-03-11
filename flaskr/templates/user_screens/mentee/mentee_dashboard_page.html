@@ -1,12 +1,15 @@
 {% extends "template.html" %}
 
 {% block content_block %}
+
 <h1> Your Profile </h1>
-<h2> K-Number: {{user_data["k_number"]}}<h2>
-<h2> First Name: {{user_data["first_name"]}}<h2>
-<h2> Last Name: {{user_data["last_name"]}}<h2>
-<h2> Age: {{user_data["age"]}}<h2>
-<h2> Hobbies:</h2>
+<h4> K-Number: {{user_data["k_number"]}}<h4>
+<h4> First Name: {{user_data["first_name"]}}<h4>
+<h4> Last Name: {{user_data["last_name"]}}<h4>
+<h4> Gender: {{user_data["gender"]}}<h4>
+<h4> Date of Birth: {{user_data["date_of_birth"]}}<h4>
+
+<h4> Hobbies:</h4>
 <ul>
     {% for hobby_id, hobby_name in user_data["hobbies"].items() %}
     <li>{{ hobby_name }}</li>
@@ -14,7 +17,7 @@
 </ul>
 
 
-<h2> Academic Interests: </h2>
+<h4> Academic Interests: </h4>
 <ul>
     {% for interest_id, interest_name in user_data["interests"].items() %}
     <li>{{ interest_name }}</li>

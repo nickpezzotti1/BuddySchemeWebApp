@@ -29,7 +29,8 @@ CREATE TABLE Student
  buddy_limit INT NOT NULL DEFAULT 1,
  date_of_birth DATE,
  CONSTRAINT student_pk PRIMARY KEY(scheme_id, k_number),
- CONSTRAINT scheme_fk FOREIGN KEY (scheme_id) REFERENCES Scheme(scheme_id)
+ CONSTRAINT scheme_fk FOREIGN KEY (scheme_id) REFERENCES Scheme(scheme_id),
+ CONSTRAINT chk_gender CHECK (gender IN ('Male', 'Female', 'Other', 'Prefer not to say'))
 );
 
 CREATE TABLE Hobby

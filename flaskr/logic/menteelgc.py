@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
+from datetime import date
 import logging
 from models.allocationmdl import AllocationModel
 from models.student_interestmdl import StudentInterestModel
@@ -29,6 +30,8 @@ class MenteeLogic():
             if request.method == "POST":
                 self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
                 self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
+                self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, request.form['date_of_birth'])
+                self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, request.form['gender'])
                 return redirect(url_for("mentee.mentee"))
             else:
                 data_definitions = self.get_data_definitions()

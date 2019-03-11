@@ -39,3 +39,11 @@ class SystemLoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField("Login")
+
+class NewHobbyForm(FlaskForm):
+    hobby_name = StringField('Hobby Name', validators=[DataRequired()])
+    hobby_submit = SubmitField("Add new hobby")
+
+class NewInterestForm(FlaskForm):
+    interest_name = StringField('Interest Name', validators=[DataRequired()])
+    interest_submit = SubmitField("Add new interest")

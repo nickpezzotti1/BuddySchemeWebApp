@@ -79,29 +79,41 @@ class AdminLogic():
         try:
             new_hobby_form = NewHobbyForm(request.form)
             new_interest_form = NewInterestForm(request.form)
-            # try:
+
             if new_hobby_form.hobby_name.data:
                 if new_hobby_form.validate_on_submit():
-                    if True:
-                        flash("Hobby successfully created")
-                    else:
+                    response = self._hobby_handler.get_hobby_list()
+                    exists = False
+
+                    for hobby in response:
+                        if new_hobby_form.hobby_name.data == hobby["hobby_name"]:
+                            exists = True
+                    
+                    if exists:
                         flash("Hobby already created")
+                    else:
+                        flash("Hobby successfully created")
+                        self._hobby_handler.insert_hobby(new_hobby_form.hobby_name.data)
                 else:
                     flash("Error creating hobby")
             
             if new_interest_form.interest_name.data:
                 if new_interest_form.validate_on_submit():
-                    if True:
-                        flash("Interest successfully created")
-                    else:
+                    response = self._interest_handler.get_interest_list()
+                    exists = False
+
+                    for interest in response:
+                        if new_interest_form.interest_name.data == interest["interest_name"]:
+                            exists = True
+                    
+                    if exists:
                         flash("Interest already created")
-                else:
-                    flash("Error creating interest")
+                    else:
+                        flash("Interest successfully created")
+                        self._interest_handler.insert_interest(new_interest_form.interest_name.data)
 
             return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form)
-            # except Exception as e:
-            #     self._log.exception("Could not parse login form")
-            #     return abort(500)
+            
         except Exception as e:
             self._log.exception("Invalid new hobby form")
             return abort(500)

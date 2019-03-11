@@ -123,6 +123,10 @@ class AdminLogic():
             pairs = json_response["assignments"]
 
             try:
+                # Clear the current allocations in the database
+                self._allocation_handler.clear_allocations_table(current_user.scheme_id)
+
+                # Insert the new allocations
                 for pair in pairs:
                     self._allocation_handler.insert_mentor_mentee(current_user.scheme_id, pair["mentor_id"], pair["mentee_id"])
             except:

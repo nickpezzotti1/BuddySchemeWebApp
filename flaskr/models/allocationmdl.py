@@ -193,3 +193,13 @@ class AllocationModel(BasicModel):
         except Exception as e:
             self._log.exception("Could not delete mentees")
             raise e
+
+    def clear_allocations_table(self, scheme_id):
+        """ Clear all the allocations in the current scheme """
+        try:
+            self._dao.execute(f"DELETE FROM Allocation where scheme_id = {to_str(scheme_id)};")
+            self._dao.commit()
+
+        except Exception as e:
+            self._log.exception("Could not delete all the entries in the allocation table")
+            raise e

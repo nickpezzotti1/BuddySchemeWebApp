@@ -11,7 +11,7 @@ from models.interestmdl import InterestModel
 from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
 from datetime import date, datetime
-
+from forms import NewHobbyForm, NewInterestForm
 
 
 class AdminLogic():
@@ -63,7 +63,6 @@ class AdminLogic():
 
 
     def delete_student_details(self):
-
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
@@ -78,8 +77,48 @@ class AdminLogic():
 
 
     def general_settings(self):
+        try:
+            new_hobby_form = NewHobbyForm(request.form)
+            new_interest_form = NewInterestForm(request.form)
 
-        return render_template('admin/general_settings.html', title='General Settings')
+            if new_hobby_form.hobby_name.data:
+                if new_hobby_form.validate_on_submit():
+                    response = self._hobby_handler.get_hobby_list()
+                    exists = False
+
+                    for hobby in response:
+                        if new_hobby_form.hobby_name.data == hobby["hobby_name"]:
+                            exists = True
+
+                    if exists:
+                        flash("Hobby already created")
+                    else:
+                        flash("Hobby successfully created")
+                        self._hobby_handler.insert_hobby(new_hobby_form.hobby_name.data)
+                else:
+                    flash("Error creating hobby")
+
+            if new_interest_form.interest_name.data:
+                if new_interest_form.validate_on_submit():
+                    response = self._interest_handler.get_interest_list()
+                    exists = False
+
+                    for interest in response:
+                        if new_interest_form.interest_name.data == interest["interest_name"]:
+                            exists = True
+
+                    if exists:
+                        flash("Interest already created")
+                    else:
+                        flash("Interest successfully created")
+                        self._interest_handler.insert_interest(new_interest_form.interest_name.data)
+
+            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form)
+
+        except Exception as e:
+            self._log.exception("Invalid new hobby form")
+            return abort(500)
+
 
 
     def allocation_config(self):

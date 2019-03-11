@@ -45,14 +45,14 @@ class StudentModel(BasicModel):
 
 
 
-    def update_students(self, scheme_id, k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[], email_confirmed=[]):
+    def update_students(self, scheme_id, k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[], email_confirmed=[], date_of_birth=[]):
         """ Front end interface of the private function,
             don't need to know the underlying interface """
 
         accepted_fields = {"scheme_id": scheme_id, "k_number": k_number, "first_name": first_name,
             "last_name": last_name, "degree_title": degree_title,
             "year_study": year_study, "gender": gender, "is_mentor": is_mentor,
-            "is_admin": is_admin, "email_confirmed": email_confirmed}
+            "is_admin": is_admin, "date_of_birth": date_of_birth, "email_confirmed": email_confirmed}
 
         # Set the dictionarry like it's needed
         dict_fields = {field:value for field, value in  accepted_fields.items() if type(value) is not list}
@@ -118,7 +118,7 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Student table"""
 
         try:
-            self._dao.execute(f"INSERT INTO Student VALUES({to_str([scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, buddy_limit);")
+            self._dao.execute(f"INSERT INTO Student VALUES({to_str([scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, {buddy_limit}, NULL);")
             succ = self._dao.rowcount()
             self._dao.commit()
             return succ
@@ -169,6 +169,20 @@ class StudentModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
+    def activateAccount(self, scheme_id, k_number):
+        if sanity_check(scheme_id) and sanity_check(k_number):
+
+            try:
+                self._dao.execute(f"UPDATE Student SET email_confirmed = True WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.commit()
+
+            except Exception as e:
+                self._log.exception("Could not activate account")
+                raise e
+
+        else:
+            return "Error: one of the field did not pass the sanity check"
+
     def delete_mentees(self, scheme_id, mentor_k_number):
         """ Given the mentor k-number will delete all his mentees"""
         if sanity_check(scheme_id) and sanity_check(mentor_k_number):
@@ -179,3 +193,45 @@ class StudentModel(BasicModel):
             except Exception as e:
                 self._log.exception("Could not delete mentees")
                 raise e
+
+    def update_date_of_birth(self, scheme_id, k_number, date_of_birth):
+        if sanity_check(scheme_id) and sanity_check(k_number):
+            ## sanity check dob
+            try:
+                self._dao.execute(f"UPDATE Student SET date_of_birth = '{date_of_birth}' WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.commit()
+
+            except Exception as e:
+                self._log.exception("Could not alter date_of_birth")
+                raise e
+
+        else:
+            return "Error: one of the field did not pass the sanity check"
+        
+    def update_gender(self, scheme_id, k_number, gender):
+        if sanity_check(scheme_id) and sanity_check(k_number):
+            ## sanity check dob
+            try:
+                self._dao.execute(f"UPDATE Student SET gender = {to_str(gender)} WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.commit()
+
+            except Exception as e:
+                self._log.exception("Could not alter gender")
+                raise e
+
+        else:
+            return "Error: one of the field did not pass the sanity check"
+
+    def update_buddy_limit(self, scheme_id, k_number, buddy_limit):
+        if sanity_check(scheme_id) and sanity_check(k_number):
+            ## sanity check dob
+            try:
+                self._dao.execute(f"UPDATE Student SET buddy_limit = {to_str(buddy_limit)} WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.commit()
+
+            except Exception as e:
+                self._log.exception("Could not alter buddy_limit")
+                raise e
+
+        else:
+            return "Error: one of the field did not pass the sanity check"

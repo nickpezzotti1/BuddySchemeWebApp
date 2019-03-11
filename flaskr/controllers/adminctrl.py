@@ -9,7 +9,7 @@ handler = AdminLogic()
 
 
 @admin_blueprint.route('/admin')
-@admin_login_required()
+# @admin_login_required()
 def admin_dashboard():
     return handler.admin_dashboard()
 
@@ -28,11 +28,10 @@ def view_student_details():
 def delete_student_details():
     return handler.delete_student_details()
 
-@admin_blueprint.route('/admin/general_settings')
-@admin_login_required()
+@admin_blueprint.route('/admin/general_settings', methods=['GET', 'POST'])
+# @admin_login_required()
 def general_settings():
-
-    return render_template('admin/general_settings.html', title='General Settings')
+    return handler.general_settings()
 
 @admin_blueprint.route('/admin/allocation_config', methods=['GET', 'POST'])
 @admin_login_required()

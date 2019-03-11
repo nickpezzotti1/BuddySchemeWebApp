@@ -27,8 +27,10 @@ CREATE TABLE Student
  password_hash VARCHAR(255) NOT NULL,
  is_admin TINYINT(1) NOT NULL DEFAULT 0,
  buddy_limit INT NOT NULL DEFAULT 1,
+ date_of_birth DATE,
  CONSTRAINT student_pk PRIMARY KEY(scheme_id, k_number),
- CONSTRAINT scheme_fk FOREIGN KEY (scheme_id) REFERENCES Scheme(scheme_id)
+ CONSTRAINT scheme_fk FOREIGN KEY (scheme_id) REFERENCES Scheme(scheme_id),
+ CONSTRAINT chk_gender CHECK (gender IN ('Male', 'Female', 'Other', 'Prefer not to say'))
 );
 
 CREATE TABLE Hobby

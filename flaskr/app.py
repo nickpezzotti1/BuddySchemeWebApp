@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from permissions import permissioned_login_required
+from hashlib import sha3_256
 from user import User
 import controllers.systemadminctrl as systemadminctrl
 import controllers.adminctrl as adminctrl
@@ -17,6 +18,8 @@ app.config["SECRET_KEY"] = "powerful secretkey"
 # app.config["SECURITY_PASSWORD_SALT"]=53
 app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
 app.config["PASSWORD_RESET_EXPIRATION"] = 86400
+# Hash of secret key as token to make collision probability neglibible
+app.config["MESSAGE_SEPARATION_TOKEN"] = "[" + sha3_256(bytes(app.config["SECRET_KEY"], "utf-8")).hexdigest() + "]"
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login.login"

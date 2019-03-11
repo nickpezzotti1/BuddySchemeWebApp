@@ -10,6 +10,7 @@ from models.student_hobbymdl import StudentHobbyModel
 from models.interestmdl import InterestModel
 from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
+from datetime import date, datetime
 
 
 
@@ -158,7 +159,7 @@ class AdminLogic():
             input["mentors"].append(
                                     {
                                         "ID": mentor["k_number"],
-                                        "age": 20,
+                                        "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - mentor["date_of_birth"].year)),
                                         "gender": mentor["gender"],
                                         "partnerLimit": mentor["buddy_limit"]
                                     }
@@ -168,7 +169,7 @@ class AdminLogic():
             input["mentees"].append(
                                     {
                                         "ID": mentee["k_number"],
-                                        "age": 20,
+                                        "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - mentee["date_of_birth"].year)),
                                         "gender": mentee["gender"],
                                         "partnerLimit": mentee["buddy_limit"]
                                     }

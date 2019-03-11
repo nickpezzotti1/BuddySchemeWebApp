@@ -56,7 +56,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of mentors"""
 
         try:
-            return self._dao.execute(f"SELECT k_number, gender, buddy_limit FROM Student WHERE is_mentor=1 AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute(f"SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=1 AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
@@ -67,7 +67,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of the mentees"""
 
         try:
-            return self._dao.execute(f"SELECT k_number, gender, buddy_limit FROM Student WHERE is_mentor=0 AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute(f"SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=0 AND scheme_id = {to_str(scheme_id)};")
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")

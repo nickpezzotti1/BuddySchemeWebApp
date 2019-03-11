@@ -115,16 +115,19 @@ class LoginLogic():
     def confirm_email(self,token): ### add scheme_id
 
         try:
-            k_number = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
+            message = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
 
         except Exception as e:
             self._log.exception("Could not verify token")
             return abort(404)
 
         try:
-            if k_number:
+            if message:
+                print(message)
+                print(current_app.config["MESSAGE_SEPARATION_TOKEN"])
+                (k_number, scheme_id) = message.split(current_app.config["MESSAGE_SEPARATION_TOKEN"])
                 # return "this is: " + str(k_number)
-                user = Student(k_number)
+                user = Student(k_number=k_number, scheme_id=scheme_id)
                 if user.email_confirmed:
                     return "account already active"
                 else:

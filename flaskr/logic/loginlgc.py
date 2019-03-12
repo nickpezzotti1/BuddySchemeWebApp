@@ -55,6 +55,7 @@ class LoginLogic():
         except Exception as e:
             self._log.exception("Could not parse login form")
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
+
     def signup(self,request):
 
         try:
@@ -69,6 +70,10 @@ class LoginLogic():
 
         try:
             if registration_form.registration_submit.data: # if the registation form was submitted
+                if (registration_form.password.data != registration_form.confirm_password):
+                    flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
+                    return render_template("signup.html", registration_form=registration_form)
+
                 if registration_form.validate_on_submit(): # if the form was valid
                     # hash the user password
                     scheme_id = registration_form.scheme_id.data
@@ -77,14 +82,10 @@ class LoginLogic():
                     k_number = registration_form.k_number.data
                     is_mentor = registration_form.is_mentor.data
                     hashed_password = generate_password_hash(registration_form.password.data)
-                    # hashed_password = generate_password_hash("12345678")
 
                     if self._student_handler.user_exist(scheme_id, k_number):
                         flash("User already exists")
                         return render_template("signup.html", registration_form=registration_form)
-                    ##else:
-                    ##    flash("User doesn't exist")
-                    ##    return render_template("signup.html", registration_form=registration_form)
 
                     db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)

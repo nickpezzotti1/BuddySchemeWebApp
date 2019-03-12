@@ -7,7 +7,6 @@ from logic.adminlgc import AdminLogic
 admin_blueprint = Blueprint('admin', __name__)
 handler = AdminLogic()
 
-
 @admin_blueprint.route('/admin')
 # @admin_login_required()
 def admin_dashboard():

@@ -24,19 +24,18 @@ from user import SystemAdmin
 from permissions import system_admin_login_required
 
 class SystemAdminLogic():
-    
+
     def system_admin_login(self, request):
-        ##if current_user.is_authenticated: 
+        ##if current_user.is_authenticated:
         ##    return redirect("/dashboard")
 
         try:
-            
+
             system_login_form = SystemLoginForm(request.form)
-                
+
         except Exception as e:
             self._log.exception("Invalid login form")
             return abort(500)
-
         try:
             if system_login_form.submit.data:
                 if system_login_form.validate_on_submit():
@@ -54,16 +53,15 @@ class SystemAdminLogic():
                         return redirect('/system')
                 else:
                     flash("Error logging in, please check the data that was entered")
-                    return render_template("system_admin/login.html", system_login_form=system_login_form)  
+                    return render_template("system_admin/login.html", system_login_form=system_login_form)
 
-                    
+
             return render_template("system_admin/login.html", system_login_form=system_login_form)
 
         except Exception as e:
             self._log.exception("Could not parse login form")
-            return abort(404)
-        
-        
+            flash("Error logging in, please check the data that was entered")
+
     @system_admin_login_required()
     def system_admin_dashboard(self):
         ## try:
@@ -71,34 +69,34 @@ class SystemAdminLogic():
                 scheme_id = request.form['scheme_id']
                 self._scheme_handler.suspend_scheme(scheme_id)
         elif(request.method == 'POST' and 'delScheme' in request.form):
-                scheme_id = request.form['scheme_id']       
+                scheme_id = request.form['scheme_id']
                 self._scheme_handler.delete_scheme(scheme_id)
-        
+
         schemes = self._scheme_handler.get_all_scheme_data()
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
-    @system_admin_login_required()    
+    @system_admin_login_required()
     def system_new_scheme(self, request):
         ##require system admin
         try:
             new_scheme_form = NewSchemeForm(request.form)
-            
+
         except Exception as e:
             self._log.exception("Invalid New Scheme Form")
             return abort(500)
-        
+
         try:
-        
+
             if new_scheme_form.submit.data:
                 if new_scheme_form.validate_on_submit():
                     new_scheme_name = new_scheme_form.scheme_name.data + " " + str(new_scheme_form.year.data)
-                    if self._scheme_handler.check_scheme_avail(new_scheme_name):                        
+                    if self._scheme_handler.check_scheme_avail(new_scheme_name):
                         if self._scheme_handler.create_new_scheme(new_scheme_name):
                             scheme_admin_k_number = new_scheme_form.k_number.data
                             scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name) ## new_scheme_name) ## return from create_new_scheme isntead?
                             ##
                             ## ToDo - below
-                            ## 
+                            ##
                             password = "password"  ##urandom(16) ## send in email + force to change
                             hashed_password = generate_password_hash(password)
                             if self._student_handler.insert_student(scheme_id, scheme_admin_k_number, 'admin change', 'admin change', 'admin change', 2, 'admin change', 1, hashed_password, 1, 1): ## check res?
@@ -106,15 +104,15 @@ class SystemAdminLogic():
                                     flash("Scheme And Admin Account Succesfully Created")
                                 else:
                                     flash("Scheme And Admin Account Created But Failed To Create Allocation Config")
-                                    
+
                             else:
                                 flash("Scheme Created But Admin Account Failed To Create, Please Manually Assign")
-                            
+
                         else:
                             flash("Database Error Creating New Scheme")
                     else:
                         flash("Scheme Already Exists")
-                        
+
             return render_template('system_admin/new_scheme.html', title='New Scheme', new_scheme_form=new_scheme_form)
 
         except Exception as e:
@@ -128,5 +126,4 @@ class SystemAdminLogic():
             self._student_handler = StudentModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
-                return abort(404)
-        
+                return abort(500)

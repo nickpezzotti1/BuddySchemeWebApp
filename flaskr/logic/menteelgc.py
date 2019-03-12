@@ -21,7 +21,7 @@ class MenteeLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute get mentee logic")
-                return abort(404)
+                return abort(500)
 
 
     def mentee_preferences(self, request):
@@ -40,13 +40,13 @@ class MenteeLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentee preferences logic")
-                return abort(404)
+                return abort(500)
 
     def mentee_mentor_list(self, request):
 
         try:
             mentor_list = self._allocation_handler.get_mentors(current_user.scheme_id, current_user.k_number)
-            
+
             # Object to hold all the mentees. This takes the form of a nested dictionary indexed by k_numbers
             mentor_list_data = {}
 
@@ -59,7 +59,7 @@ class MenteeLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentee mentor list logic")
-                return abort(404)
+                return abort(500)
 
     def mentor_view(self, scheme_id, k_number):
         try:
@@ -68,7 +68,7 @@ class MenteeLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentor view logic")
-                return abort(404)
+                return abort(500)
 
     #### HELPER FUNCTIONS
 
@@ -84,7 +84,7 @@ class MenteeLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentor get preference list logic")
-                return abort(404)
+                return abort(500)
 
     def get_all_user_data(self, scheme_id, k_number):
         """ Get all user data from database and format into a single dict"""
@@ -102,14 +102,14 @@ class MenteeLogic():
             hobbies = {}
             for hobby in self._student_hobby_handler.get_hobbies(scheme_id, k_number):
                 hobbies[hobby["hobby_id"]] = hobby["hobby_name"]
-            
+
             user_data["hobbies"] = hobbies
 
             return user_data
 
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
-                return abort(404)
+                return abort(500)
 
     def __init__(self):
         try:
@@ -122,4 +122,4 @@ class MenteeLogic():
             self._interest_handler = InterestModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
-                return abort(404)
+                return abort(500)

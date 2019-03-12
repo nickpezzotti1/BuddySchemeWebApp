@@ -12,7 +12,7 @@ class AllocationConfigModel(BasicModel):
 
             except Exception as e:
                 self._log.exception("Could not get allocation config")
-                raise e
+                return abort(500)
 
     def update_allocation_config(self, scheme_id, config):
         """ Update the allocation configuration table with the new """
@@ -28,4 +28,4 @@ class AllocationConfigModel(BasicModel):
 
         except Exception as e:
             self._log.exception("Could not update allocation config")
-            raise e
+            return abort(500)

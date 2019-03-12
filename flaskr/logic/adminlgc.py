@@ -13,14 +13,9 @@ from models.studentmdl import StudentModel
 from datetime import date, datetime
 from forms import NewHobbyForm, NewInterestForm
 
-
 class AdminLogic():
-
-
-
     def admin_dashboard(self):
         return render_template('admin/dashboard.html', title='Admin Dashboard')
-
 
     def admin_view_students(self):
         try:
@@ -28,7 +23,7 @@ class AdminLogic():
             return render_template('admin/view_students.html', title='View Students', data=data)
         except Exception as e:
             self._log.exception("Could not execute admin view")
-            return abort(404)
+            return abort(500)
 
 
     def view_student_details(self):
@@ -61,7 +56,6 @@ class AdminLogic():
             self._log.exception("Could not execute student details")
             return abort(500)
 
-
     def delete_student_details(self):
         try:
             if(request.method == 'POST' and 'knum' in request.form):
@@ -74,7 +68,6 @@ class AdminLogic():
         except Exception as e:
             self._log.exception("Could not execute delete student details")
             return abort(500)
-
 
     def general_settings(self):
         try:
@@ -119,7 +112,7 @@ class AdminLogic():
             self._log.exception("Invalid new hobby form")
             return abort(500)
 
-
+        return render_template('admin/general_settings.html', title='General Settings')
 
     def allocation_config(self):
         if(request.method == 'POST'):
@@ -149,9 +142,7 @@ class AdminLogic():
     def sign_up_settings(self):
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
 
-
     def allocate(self):
-
         try:
             input_string = self.generate_mentee_and_mentor_json()
 
@@ -175,7 +166,7 @@ class AdminLogic():
 
         except Exception as e:
             self._log.exception(e)
-            return e
+            return abort(500)
 
     #TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
@@ -235,7 +226,7 @@ class AdminLogic():
 
         except Exception as e:
             self._log.exception("Could not execute manual assignment")
-            return abort(500)
+            flash("Something went wrong during manual assignment")
 
     def get_all_user_data(self, scheme_id, k_number):
         """ Get all user data from database and format into a single dict"""

@@ -9,22 +9,20 @@ class AllocationModel(BasicModel):
 
         if type(mentees_k_number) is not list:
             self._log.exception("Mentees not passed as list")
-            raise TypeError("Mentee/s must be passed as a list.")
+            return abort(500)
 
         try:
             delete_mentees(mentor_k_number)
         except Exception as e:
                 self._log.exception("Could not delete mentees while updating")
-                raise e
-                return False
+                return abort(500)
 
         for mentee_k_number in mentees_k_number:
             try:
                 insert_mentor_mentee(mentor_k_number, mentee_k_number)
             except Exception as e:
                 self._log.exception("Could not insert pair while updating mentee")
-                raise e
-                return False
+                return abort(500)
 
         return True
 
@@ -34,21 +32,19 @@ class AllocationModel(BasicModel):
 
         if type(mentors_k_number) is not list:
             self._log.exception("Mentors not passed as list")
-            raise TypeError("Mentor/s must be passed as a list.")
+            return abort(500)
         try:
             delete_mentors(scheme_id, mentee_k_number)
         except Exception as e:
                 self._log.exception("Could not delete mentors while updating")
-                raise e
-                return False
+                return abort(500)
 
         for mentor_k_number in mentors_k_number:
             try:
                 insert_mentor_mentee(scheme_id, mentor_k_number, mentee_k_number)
             except Exception as e:
                 self._log.exception("Could not insert pairs while updating mentor")
-                raise e
-                return False
+                return abort(500)
 
         return True
 
@@ -60,7 +56,7 @@ class AllocationModel(BasicModel):
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
-                raise e
+                return abort(500)
 
 
     def get_all_mentees(self, scheme_id):
@@ -71,7 +67,7 @@ class AllocationModel(BasicModel):
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")
-                raise e
+                return abort(500)
 
 
     def get_mentee_details(self, scheme_id, k_number):
@@ -85,7 +81,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-            return "Error: one of the field did not pass the sanity check"
+            return abort(500)
 
     def get_mentor_details(self, scheme_id, k_number):
         if sanity_check(k_number):
@@ -98,7 +94,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-            return "Error: one of the field did not pass the sanity check"
+                return abort(500)
 
     def get_manual_allocation_matches(self, scheme_id, k_number, is_tor):
         if sanity_check(k_number):    # and _sanity_check(is_tor):
@@ -112,7 +108,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-            return "Error: one of the field did not pass the sanity check"
+                return abort(500)
 
     def make_manual_allocation(self, scheme_id, tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
@@ -126,7 +122,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-            return "Error: one of the field did not pass the sanity check"
+                return abort(500)
 
     def remove_allocation(self, scheme_id, tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):

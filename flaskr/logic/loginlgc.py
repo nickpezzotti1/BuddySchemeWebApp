@@ -20,17 +20,15 @@ class LoginLogic():
 
         try:
             schemes = self._scheme_handler.get_active_scheme_data()
-            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes] 
-            
+            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
+
             login_form = LoginForm(request.form)
             login_form.scheme_id.choices = scheme_options
-                
+
         except Exception as e:
             self._log.exception("Invalid login form")
-            return abort(500)
-
+            flash("Error logging in, please check the data that was entered")
         try:
-
             if login_form.login_submit.data:
                 if login_form.validate_on_submit():
                     user = Student(login_form.scheme_id.data, login_form.k_number.data)
@@ -51,22 +49,20 @@ class LoginLogic():
                     flash("Error logging in, please check the data that was entered")
                     return render_template("login.html", login_form=login_form)
 
-                    
+
             return render_template("login.html", login_form=login_form)
 
         except Exception as e:
             self._log.exception("Could not parse login form")
-            return abort(500)
-
-
+            flash("Oops... Something went wrong. The data entered could not be valid, try again.")
     def signup(self,request):
 
         try:
             schemes = self._scheme_handler.get_active_scheme_data()
-            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes] 
+            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
             registration_form = RegistrationForm(request.form)
             registration_form.scheme_id.choices = scheme_options
-            
+
         except Exception as e:
             self._log.exception("Invalid registration form")
             return abort(500)
@@ -82,7 +78,7 @@ class LoginLogic():
                     is_mentor = registration_form.is_mentor.data
                     hashed_password = generate_password_hash(registration_form.password.data)
                     # hashed_password = generate_password_hash("12345678")
-                    
+
                     if self._student_handler.user_exist(scheme_id, k_number):
                         flash("User already exists")
                         return render_template("signup.html", registration_form=registration_form)
@@ -119,7 +115,7 @@ class LoginLogic():
 
         except Exception as e:
             self._log.exception("Could not verify token")
-            return abort(404)
+            return abort(403)
 
         try:
             if message:

@@ -21,7 +21,7 @@ class MentorLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute get mentor logic")
-                return abort(404)
+                return abort(500)
 
     def mentor_preferences(self,request):
 
@@ -40,7 +40,7 @@ class MentorLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentor preferences logic")
-                return abort(404)
+                return abort(500)
 
 
     def mentor_mentee_list(self,request):
@@ -60,7 +60,7 @@ class MentorLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentor mentee list logic")
-                return abort(404)
+                return abort(500)
 
     def mentee_view(self, k_number):
         try:
@@ -69,7 +69,7 @@ class MentorLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentee view logic")
-                return abort(404)
+                return abort(500)
 
     #### HELPER FUNCTIONS
 
@@ -85,7 +85,7 @@ class MentorLogic():
 
         except Exception as e:
                 self._log.exception("Could not execute mentor get preference list logic")
-                return abort(404)
+                return abort(500)
 
     def get_all_user_data(self, scheme_id, k_number):
         """ Get all user data from database and format into a single dict"""
@@ -103,14 +103,14 @@ class MentorLogic():
             hobbies = {}
             for hobby in self._student_hobby_handler.get_hobbies(scheme_id, k_number):
                 hobbies[hobby["hobby_id"]] = hobby["hobby_name"]
-            
+
             user_data["hobbies"] = hobbies
 
             return user_data
 
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
-                return abort(404)
+                return abort(500)
 
     def mentor_mentee(self, scheme_id, k_number_mentee):
 
@@ -119,8 +119,8 @@ class MentorLogic():
 
         except Exception as e:
             self._log.exception("Could not execute mentor mentee logic")
-            return abort(404)
-    
+            return abort(500)
+
     def mentee_mentor(self, scheme_id, k_number_mentor):
 
         try:
@@ -128,7 +128,7 @@ class MentorLogic():
 
         except Exception as e:
             self._log.exception("Could not execute mentee mentor logic")
-            return abort(404)
+            return abort(500)
 
 
     def __init__(self):
@@ -142,7 +142,4 @@ class MentorLogic():
             self._interest_handler = InterestModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
-                return abort(404)
-
-
-
+                return abort(500)

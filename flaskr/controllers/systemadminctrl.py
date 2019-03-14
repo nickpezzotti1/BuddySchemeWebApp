@@ -20,3 +20,9 @@ def system_admin_dashboard():
 @system_admin_login_required()
 def system_new_scheme():
     return handler.system_new_scheme(request)
+
+@system_admin_blueprint.route('/system/admin/view_scheme', methods=['post'])
+@system_admin_login_required()
+def system_view_scheme_dashboard():
+    return handler.system_view_scheme_dashboard(request)
+

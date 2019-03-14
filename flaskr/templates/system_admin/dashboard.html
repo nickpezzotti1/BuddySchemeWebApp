@@ -1,9 +1,6 @@
 {% extends "template.html" %}
 
-{% block nav_block %}
-<li><a href="#">Home</a></li>
-<li><a href="#">Features</a></li>
-<li><a href="#">Contact</a></li>                                                             
+{% block nav_block %}                                                          
 {% endblock nav_block %}
 
 {% block content_block %}
@@ -36,7 +33,7 @@
                 <td>{{scheme.scheme_name}}</td>
                 <td>{{scheme.student_count}}</td>
                 <td>{% if scheme.is_active %}{{"Active"}}{% else %}{{"Suspended"}}{% endif %}</td>
-        <form method="POST" action='{{url_for("admin.admin_dashboard")}}'>
+        <form method="POST" action='{{url_for("systemadmin.system_view_scheme_dashboard")}}'>
             <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
             <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='viewAdmin' value="View Admin Dashboard"></input></td>
         </form>

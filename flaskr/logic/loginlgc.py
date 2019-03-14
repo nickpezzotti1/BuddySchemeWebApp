@@ -70,7 +70,7 @@ class LoginLogic():
 
         try:
             if registration_form.registration_submit.data: # if the registation form was submitted
-                if (registration_form.password.data != registration_form.confirm_password):
+                if (registration_form.password.data != registration_form.confirm_password.data):
                     flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
                     return render_template("signup.html", registration_form=registration_form)
 

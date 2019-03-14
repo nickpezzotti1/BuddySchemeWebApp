@@ -1,9 +1,11 @@
 {% extends "template.html" %}
 
 {% block nav_block %}
-<li><a href="#">Home</a></li>
-<li><a href="#">Features</a></li>
-<li><a href="#">Contact</a></li>
+  {% if current_user.is_authenticated %}
+    <li><a href="/dashboard">Back</a></li>
+  {% else %}
+    <li><a href="/home">Home</a></li>
+  {% endif %}
 {% endblock nav_block %}
 
 {% block content_block %}

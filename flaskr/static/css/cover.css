@@ -65,6 +65,7 @@ body {
  */
 .masthead {
   background-color: #333;
+  z-index: 99999;
   padding-bottom: 2%;
 }
 

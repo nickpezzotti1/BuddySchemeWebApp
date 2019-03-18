@@ -31,7 +31,11 @@ class LoginLogic():
         try:
             if login_form.login_submit.data:
                 if login_form.validate_on_submit():
-                    user = Student(login_form.scheme_id.data, login_form.k_number.data)
+                    try:
+                        user = Student(login_form.scheme_id.data, login_form.k_number.data)
+                    except:
+                        flash('You must first confirm your email address')
+                        return redirect("/login")
 
                     # if user exists in db then a password hash was successfully retrieved
                     if(user.password):

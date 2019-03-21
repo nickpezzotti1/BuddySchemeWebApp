@@ -228,3 +228,11 @@ body {
   background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
+
+#title {
+  padding-bottom: 7%;
+}
+
+#navigate {
+  padding-top: 15%;
+}

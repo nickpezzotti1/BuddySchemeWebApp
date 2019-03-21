@@ -67,12 +67,15 @@
                             {{ registration_form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
                             {% endif %}
                         </div>
-                        <div class="col-md-12 text-center ">
-                            {{ registration_form.registration_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
-                        </div>
                         <div class="form-group">
                             {{ registration_form.is_mentor.label(class="form-control-label") }}
                             {{ registration_form.is_mentor() }}
+                        </div>
+                        <div class="form-group">
+                          <p class="text-center">By signing up you accept our <a href="/terms-conditions">Terms Of Use</a></p>                                                      
+                        </div>
+                       <div class="col-md-12 text-center ">
+                            {{ registration_form.registration_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group">

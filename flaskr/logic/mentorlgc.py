@@ -42,6 +42,10 @@ class MentorLogic():
                 self._log.exception("Could not execute mentor preferences logic")
                 return abort(500)
 
+    def mentor_delete(self, request):
+        """ Will delete all the mentors informations from the database"""
+
+        
 
     def mentor_mentee_list(self,request):
 

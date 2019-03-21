@@ -33,28 +33,28 @@
       <div class="col-sm-10">
 
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="Male" {% if user_data["gender"] == "Male" %} checked {% endif %}>
+          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Male" {% if user_data["gender"] == "Male" %} checked {% endif %}>
           <label class="form-check-label" for="gridRadios1">
             Male 
           </label>
         </div>
 
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="Female" {% if user_data["gender"] == "Female" %} checked {% endif %}>
+          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Female" {% if user_data["gender"] == "Female" %} checked {% endif %}>
           <label class="form-check-label" for="gridRadios1">
             Female 
           </label>
         </div>
 
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="Other" {% if user_data["gender"] == "Other" %} checked {% endif %}>
+          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Other" {% if user_data["gender"] == "Other" %} checked {% endif %}>
           <label class="form-check-label" for="gridRadios1">
             Other
           </label>
         </div>
 
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="Prefer not to say" {% if user_data["gender"] == "Prefer not to say" %} checked {% endif %}>
+          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Prefer not to say" {% if user_data["gender"] == "Prefer not to say" %} checked {% endif %}>
           <label class="form-check-label" for="gridRadios1">
             Prefer not to say 
           </label>

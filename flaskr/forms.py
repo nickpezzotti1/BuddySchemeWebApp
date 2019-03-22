@@ -53,3 +53,10 @@ class UserPreferencesForm(FlaskForm):
     date_of_birth = DateField('date_of_birth')
     hobby = BooleanField('hobby')
     interest = BooleanField('interest')
+
+class AllocationConfigForm(FlaskForm):
+    age_weight = IntegerField('Age Weight')
+    gender_weight = IntegerField('Gender Weight')
+    hobby_weight = IntegerField('Hobby Weight')
+    interest_weight = IntegerField('Interest Weight')
+    allocation_config_submit = SubmitField("Update")

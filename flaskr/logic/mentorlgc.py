@@ -48,13 +48,12 @@ class MentorLogic():
 
         try:
             if request.method == "POST":
-                self._student_handler.delete_students(current_user.scheme_id, current_user.k_number)
                 flash("Be careful you are about to delete all of your data")
+                self._student_handler.delete_students(current_user.scheme_id, current_user.k_number)
                 return redirect(url_for("mentor.mentor"))
             else:
-                # Return error page
-                pass
-            
+                return render_template("user_screens/mentor/mentor_delete_page.html")
+ 
         except Exception as e:
             self._log.exception("Could not delete student")
             return abort(500) 

@@ -1,0 +1,11 @@
+{% extends "template.html" %}
+
+{% block content_block %}
+
+<form action = "{{url_for('mentor.mentor_delete')}}" method = "post">
+    <div id="browse_app navigate">
+      <input class="btn btn-large btn-info" type = "submit" value = "Delete" />
+    </div>
+</form>
+
+{% endblock content_block %}

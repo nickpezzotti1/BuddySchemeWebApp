@@ -113,10 +113,9 @@
 <div id="browse_app navigate">
     <input class="btn btn-large btn-info" type = "submit" value = "Submit" />
     <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard </a>
+    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_delete')}}">Delete Account</a>
 </div>                   
 
 </form>
 
-<form action = "{{url_for('mentor.mentor_delete')}}" method = "post">
-</form>
 {% endblock content_block %}

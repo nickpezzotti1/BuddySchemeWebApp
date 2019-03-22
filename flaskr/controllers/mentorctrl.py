@@ -24,6 +24,11 @@ def mentor_mentee_list():
     
     return handler.mentor_mentee_list(request)
 
+@mentor_blueprint.route("/mentor/delete", methods=['POST', 'GET'])
+def mentor_delete():
+    
+    return handler.mentor_delete(request)
+
 @mentor_blueprint.route('/mentor/mentee/<k_number_mentee>')
 def mentor_mentee(k_number_mentee):
     return handler.mentor_mentee(k_number_mentee)

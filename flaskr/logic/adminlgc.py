@@ -193,7 +193,7 @@ class AdminLogic():
             input["mentors"].append(
                                     {
                                         "ID": mentor["k_number"],
-                                        "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - mentor["date_of_birth"].year)),
+                                        "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentor["date_of_birth"]), "%Y-%m-%d").year)),
                                         "gender": mentor["gender"],
                                         "partnerLimit": mentor["buddy_limit"]
                                     }
@@ -203,7 +203,7 @@ class AdminLogic():
             input["mentees"].append(
                                     {
                                         "ID": mentee["k_number"],
-                                        "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - mentee["date_of_birth"].year)),
+                                        "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentee["date_of_birth"]), "%Y-%m-%d").year)),
                                         "gender": mentee["gender"],
                                         "partnerLimit": mentee["buddy_limit"]
                                     }

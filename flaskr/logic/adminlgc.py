@@ -137,7 +137,8 @@ class AdminLogic():
         return render_template('admin/allocation_config.html', title='Allocation Algorithm', allocation_config=allocation_config, update_message=update_message)
 
     def allocation_algorithm(self):
-        return render_template('admin/allocation_algorithm.html', title='Allocation Algorithm', assignments=self.allocate())
+        flash("The allocations have been made, please look at the student table for more information")
+        return render_template('admin/dashboard.html', assignments=self.allocate())
 
     def sign_up_settings(self):
         return render_template('admin/dashboard.html', title='Sign-Up Settings')

@@ -56,4 +56,9 @@ class MentorPreferencesForm(FlaskForm):
     interests = SelectMultipleField('Academic Interests', choices=[], coerce=int)
     user_preferences_submit = SubmitField('Submit')
 
-    
+class AllocationConfigForm(FlaskForm):
+    age_weight = IntegerField('Age Weight')
+    gender_weight = IntegerField('Gender Weight')
+    hobby_weight = IntegerField('Hobby Weight')
+    interest_weight = IntegerField('Interest Weight')
+    allocation_config_submit = SubmitField("Update")

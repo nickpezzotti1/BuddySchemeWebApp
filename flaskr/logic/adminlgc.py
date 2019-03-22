@@ -11,7 +11,7 @@ from models.interestmdl import InterestModel
 from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
 from datetime import date, datetime
-from forms import NewHobbyForm, NewInterestForm
+from forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
 
 class AdminLogic():
     def admin_dashboard(self):
@@ -115,15 +115,21 @@ class AdminLogic():
         return render_template('admin/general_settings.html', title='General Settings')
 
     def allocation_config(self):
+        
+        # Retrieve current allocation config data
+        config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
+        
+        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data['gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
+
         if(request.method == 'POST'):
             # Format the results in a dict and call the update query
             config = {
-                'age_weight': request.form['age_weight'],
-                'gender_weight': request.form['gender_weight'],
-                'hobby_weight': request.form['hobby_weight'],
-                'interest_weight': request.form['interest_weight'],
+                'age_weight': form.age_weight.data,
+                'gender_weight': form.gender_weight.data,
+                'hobby_weight': form.hobby_weight.data,
+                'interest_weight': form.interest_weight.data,
             }
-
+            
             self._allocation_config_handler.update_allocation_config(current_user.scheme_id, config)
 
             # Text displayed after updating the config - as feedback for the user
@@ -132,9 +138,8 @@ class AdminLogic():
             update_message = ''
 
         # Always render the page
-        allocation_config = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
-
-        return render_template('admin/allocation_config.html', title='Allocation Algorithm', allocation_config=allocation_config, update_message=update_message)
+        
+        return render_template('admin/allocation_config.html', title='Allocation Algorithm', form=form, allocation_config=config_data, update_message=update_message)
 
     def allocation_algorithm(self):
         return render_template('admin/allocation_algorithm.html', title='Allocation Algorithm', assignments=self.allocate())

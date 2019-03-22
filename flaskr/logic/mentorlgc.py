@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from datetime import date
+from forms import MentorPreferencesForm
 import logging
 from models.allocationmdl import AllocationModel
 from models.student_interestmdl import StudentInterestModel
@@ -24,19 +25,52 @@ class MentorLogic():
                 return abort(500)
 
     def mentor_preferences(self,request):
+ 
+        # try:
+        #     schemes = self._scheme_handler.get_active_scheme_data()
+        #     scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
+        #     registration_form = RegistrationForm(request.form)
+        #     registration_form.scheme_id.choices = scheme_options
 
+        # except Exception as e:
+        #     self._log.exception("Invalid user preferences form")
+        #     return abort(500)
+
+        # user_preferences
+
+
+
+        #         if registration_form.registration_submit.data: # if the registation form was submitted
+        #             if (registration_form.password.data != registration_form.confirm_password.data):
+        #                 flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
+        #                 return render_template("signup.html", registration_form=registration_form)
+
+
+        #         UserPreferencesForm
+                
+                
         try:
-            if request.method == "POST":
-                self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
-                self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
-                self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, request.form['date_of_birth'])
-                self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, request.form['gender'])
-                self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, request.form['buddy_limit'])
+            
+            user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
+            print(user_data["gender"])
+            form = MentorPreferencesForm(request.form, date_of_birth=user_data["date_of_birth"], gender=user_data["gender"], buddy_limit=user_data["buddy_limit"], hobbies=user_data["hobbies"], interests=user_data["interests"])
+            
+            if request.method == "POST" and form.validate():              
+                self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, form.hobbies)
+                self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, form.interests)
+                self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, form.date_of_birth)
+                self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, form.gender)
+                self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, form.buddy_limit)
+                
+                # self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
+                # self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
+                # self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, request.form['date_of_birth'])
+                # self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, request.form['gender'])
+                # self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, request.form['buddy_limit'])
                 return redirect(url_for("mentor.mentor"))
             else:
                 data_definitions = self.get_data_definitions()
-                user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
-                return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, data_definitions=data_definitions)
+                return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, data_definitions=data_definitions, form=form)
 
         except Exception as e:
                 self._log.exception("Could not execute mentor preferences logic")

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField, DateField, RadioField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField, DateField, RadioField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, EqualTo
 import datetime
 
@@ -49,11 +49,11 @@ class NewInterestForm(FlaskForm):
     interest_submit = SubmitField("Add new interest")
 
 class MentorPreferencesForm(FlaskForm):
-    gender = RadioField('Gender')
+    gender = RadioField('Gender', choices=[])
     date_of_birth = DateField('Date Of Birth')
     buddy_limit = IntegerField('Buddy Limit')
-    hobbies = FieldList(BooleanField('Hobbies'))
-    interests = FieldList(BooleanField('Interests'))
-    user_preferences_submit = SubmitField('Change Preferences')
+    hobbies = SelectMultipleField('Hobbies', choices=[], coerce=int)
+    interests = SelectMultipleField('Academic Interests', choices=[], coerce=int)
+    user_preferences_submit = SubmitField('Submit')
 
     

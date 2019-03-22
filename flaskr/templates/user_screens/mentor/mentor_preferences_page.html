@@ -31,35 +31,12 @@
     <div class="row">
       <label for="inputEmail3" class="col-sm-2 col-form-label">Gender</label>
       <div class="col-sm-10">
-
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Male" {% if user_data["gender"] == "Male" %} checked {% endif %}>
-          <label class="form-check-label" for="gridRadios1">
-            Male 
-          </label>
-        </div>
-
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Female" {% if user_data["gender"] == "Female" %} checked {% endif %}>
-          <label class="form-check-label" for="gridRadios1">
-            Female 
-          </label>
-        </div>
-
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Other" {% if user_data["gender"] == "Other" %} checked {% endif %}>
-          <label class="form-check-label" for="gridRadios1">
-            Other
-          </label>
-        </div>
-
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="Prefer not to say" {% if user_data["gender"] == "Prefer not to say" %} checked {% endif %}>
-          <label class="form-check-label" for="gridRadios1">
-            Prefer not to say 
-          </label>
-        </div>
-
+        {% for gender_type in form.gender %}
+          <div class="form-check">
+            {{ gender_type(class="form-check-input", id="gridRadios1") }}
+            {{ gender_type.label }}
+          </div>
+        {% endfor %}
       </div>
     </div>
   </fieldset>
@@ -77,41 +54,29 @@
         {{ form.date_of_birth(class="form-control") }}
       </div>
   </div>
-
+  
+  <p>Note: Hold ctrl/cmd to select multiple hobbies/interests</p>
+  
   <div class="form-group row">
-    <label for="inputEmail3" class="col-sm-2 col-form-label">Academic Interests</label>
-    <div class="col-sm-10">
-
-      {% for interest in data_definitions["interests"] %}
+      {{ form.interests.label(class="col-sm-2 col-form-label") }}
+      <div class="col-sm-10">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="{{interest["id"]}}" {% if interest["id"] in user_data["interests"] %} checked {% endif %}>
-          <label class="form-check-label" for="gridCheck1">
-            {{interest["interest_name"]}}
-          </label>
-        </div>  
-      {% endfor %}  
-
+          {{ form.interests(class="col-sm-2 col-form-label text-primary") }}
+        </div>
+      </div>
     </div>
-  </div>
 
   <div class="form-group row">
-    <label for="inputEmail3" class="col-sm-2 col-form-label">Hobbies</label>
+    {{ form.hobbies.label(class="col-sm-2 col-form-label") }}
     <div class="col-sm-10">
-
-      {% for hobby in data_definitions["hobbies"] %}
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck1" name="hobby" value="{{hobby["id"]}}" {% if hobby["id"] in user_data["hobbies"] %} checked {% endif %}>
-          <label class="form-check-label" for="gridCheck1">
-            {{hobby["hobby_name"]}}
-          </label>
-        </div>  
-      {% endfor %}  
-
+      <div class="form-check">
+        {{ form.hobbies(class="col-sm-2 col-form-label text-primary") }}
+      </div>
     </div>
   </div>
 
 <div id="browse_app navigate">
-    <input class="btn btn-large btn-info" type = "submit" value = "Submit" />
+    {{ form.user_preferences_submit(class="btn btn-large btn-info") }}
     <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard </a>
 </div>                   
 

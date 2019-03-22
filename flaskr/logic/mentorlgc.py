@@ -24,53 +24,36 @@ class MentorLogic():
                 self._log.exception("Could not execute get mentor logic")
                 return abort(500)
 
-    def mentor_preferences(self,request):
- 
-        # try:
-        #     schemes = self._scheme_handler.get_active_scheme_data()
-        #     scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
-        #     registration_form = RegistrationForm(request.form)
-        #     registration_form.scheme_id.choices = scheme_options
-
-        # except Exception as e:
-        #     self._log.exception("Invalid user preferences form")
-        #     return abort(500)
-
-        # user_preferences
-
-
-
-        #         if registration_form.registration_submit.data: # if the registation form was submitted
-        #             if (registration_form.password.data != registration_form.confirm_password.data):
-        #                 flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
-        #                 return render_template("signup.html", registration_form=registration_form)
-
-
-        #         UserPreferencesForm
-                
-                
+    def mentor_preferences(self,request):                
         try:
-            
             user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
-            print(user_data["gender"])
-            form = MentorPreferencesForm(request.form, date_of_birth=user_data["date_of_birth"], gender=user_data["gender"], buddy_limit=user_data["buddy_limit"], hobbies=user_data["hobbies"], interests=user_data["interests"])
             
-            if request.method == "POST" and form.validate():              
-                self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, form.hobbies)
-                self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, form.interests)
-                self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, form.date_of_birth)
-                self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, form.gender)
-                self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, form.buddy_limit)
-                
-                # self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
-                # self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
-                # self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, request.form['date_of_birth'])
-                # self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, request.form['gender'])
-                # self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, request.form['buddy_limit'])
+            # Create new form and pre-populate with existing values
+            form = MentorPreferencesForm(request.form, date_of_birth=user_data["date_of_birth"], gender=user_data["gender"], buddy_limit=user_data["buddy_limit"], interests=user_data["interests"], hobbies=user_data["hobbies"])
+            
+            # Update data on form submission
+            if request.method == "POST" :
+                self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, form.interests.data)
+                self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, form.hobbies.data)
+                self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, form.date_of_birth.data)
+                self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, form.gender.data)
+                self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, form.buddy_limit.data)
+
                 return redirect(url_for("mentor.mentor"))
             else:
+                # Pre-populate interest and hobbies with existing values
+                form.interests.data=[interest_id for interest_id, interest_name in user_data["interests"].items()]
+                form.hobbies.data=[hobby_id for hobby_id, hobby_name in user_data["hobbies"].items()]
+                
+                # Populate possible choices using data from data_definitions   
                 data_definitions = self.get_data_definitions()
-                return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, data_definitions=data_definitions, form=form)
+                gender_definitions = self.get_gender_definitions()
+
+                form.gender.choices = [(gender_type, gender_type) for gender_type in gender_definitions]
+                form.interests.choices = [(interest["id"], interest["interest_name"]) for interest in data_definitions["interests"]]
+                form.hobbies.choices = [(hobby["id"], hobby["hobby_name"]) for hobby in data_definitions["hobbies"]]
+                
+                return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, form=form)
 
         except Exception as e:
                 self._log.exception("Could not execute mentor preferences logic")
@@ -107,6 +90,15 @@ class MentorLogic():
 
     #### HELPER FUNCTIONS
 
+    def get_gender_definitions(self):
+        """Get a list of all possible gender types"""
+        try:
+            return ["Male", "Female", "Other", "Prefer not to say"]
+
+        except Exception as e:
+                self._log.exception("Could not execute mentor get gender definitions logic")
+                return abort(500)
+
     def get_data_definitions(self):
         """ Get a list of all possible hobbies and interests """
         try:
@@ -118,7 +110,7 @@ class MentorLogic():
             return data_definitions
 
         except Exception as e:
-                self._log.exception("Could not execute mentor get preference list logic")
+                self._log.exception("Could not execute mentor get data definitions logic")
                 return abort(500)
 
     def get_all_user_data(self, scheme_id, k_number):

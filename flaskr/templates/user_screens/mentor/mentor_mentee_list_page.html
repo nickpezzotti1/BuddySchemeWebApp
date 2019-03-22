@@ -1,24 +1,36 @@
 {% extends "template.html" %}
 
 {% block content_block %}
-<h1> Mentees </h1>
+<h1 id="title"> Mentees </h1>
 
-{% for k_number, mentee in mentees.items() %}
-<div>
-    <h2>{{mentee["first_name"] + "  " + mentee["last_name"]}} &nbsp; K-Number: {{k_number}}<h2>
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">K-Number</th>
+      <th scope="col">More</th>
+    </tr>
+  </thead>
+  <tbody>
 
-    </h2>
-    <div id="browse_app">
-        <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_mentee', k_number_mentee=k_number)}}">More Info </a>
-    </div>
-</div>
-{% endfor %}
-    
+  {% for k_number, mentee in mentees.items() %}
+    <tr>
+      <td>{{mentee["first_name"]}}</td>
+      <td>{{mentee["last_name"]}}</td>
+      <td>{{k_number}}</td>
+      <td>
+          <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_mentee', k_number_mentee=k_number)}}">More Info </a>
+      </td>
+    </tr>
+  {% endfor %}
 
-<div id="browse_app">
+  </tbody>
+</table>
+
+
+<div id="browse_app navigate">
     <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard </a>
 </div>
-
-
 
 {% endblock content_block %}

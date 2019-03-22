@@ -6,19 +6,19 @@ from werkzeug.security import generate_password_hash
 from flask import request
 
 class User(UserMixin):
-    
+
     def get(cookie_string):
         split_pos = cookie_string.find(":")
         p1 = cookie_string[:split_pos]
         p2 = cookie_string[(split_pos + 1):]
         return SystemAdmin(p2) if p1 == 'sysadmin' else Student(p1, p2)
-        
-        
-        
+
+
+
 class Student(User):
     def __init__(self, scheme_id, k_number):
         self._student_handler = StudentModel()
-        
+
         self.scheme_id = scheme_id
         self.k_number = k_number
         self.id = str(scheme_id) + ":" + k_number
@@ -30,12 +30,16 @@ class Student(User):
         try:
             self.password = self._student_handler.get_user_hashed_password(scheme_id, k_number)
             user_data = self._student_handler.get_user_data(scheme_id, k_number)
-            self.email_confirmed = bool(user_data["email_confirmed"])
-            self.role = 'mentor' if user_data["is_mentor"] else "mentee"
-            self.priv = 'admin' if user_data["is_admin"] else "student"
 
         except Exception as e:
             print("Exeception occured:{}".format(e))
+
+        if (not bool(user_data["email_confirmed"])):
+            raise Exception("User needs to confirm his email")
+
+        self.email_confirmed = bool(user_data["email_confirmed"])
+        self.role = 'mentor' if user_data["is_mentor"] else "mentee"
+        self.priv = 'admin' if user_data["is_admin"] else "student"
 
     @property
     def is_active(self):
@@ -51,18 +55,17 @@ class Student(User):
         self.password = new_hashed_password
         print("after " + new_hashed_password)
         self._student_handler.update_hash_password(scheme_id=self.scheme_id, k_number=self.k_number, password_hash=new_hashed_password)
-        
-        
+
+
 class SystemAdmin(User):
     def __init__(self, email):
         User.__init__(self)
         self._scheme_handler = SchemeModel() # change?
-        
         self.scheme_id = request.cookies.get('scheme') if 'scheme' in request.cookies else 1 ## can be any -> set to first in DB to prevent errors
         self.k_number = 69 ## needed?
         self.id = "sysadmin:" + email
         self.password = None
-        self.priv = "system_admin" 
+        self.priv = "system_admin"
 
         try:
             self.password = self._scheme_handler.get_system_admin_pass(email)
@@ -78,7 +81,7 @@ class SystemAdmin(User):
         self.scheme_id = scheme_id
 
     def reset_password(self, new_password):
-        new_hashed_password = generate_password_hash(new_password, method="") 
+        new_hashed_password = generate_password_hash(new_password, method="")
         self.password = new_hashed_password
         print("after " + new_hashed_password)
         ##self._student_handler.update_hash_password(scheme_id=self.scheme_id, k_number=self.k_number, password_hash=new_hashed_password)## needs changing

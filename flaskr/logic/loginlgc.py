@@ -31,7 +31,11 @@ class LoginLogic():
         try:
             if login_form.login_submit.data:
                 if login_form.validate_on_submit():
-                    user = Student(login_form.scheme_id.data, login_form.k_number.data)
+                    try:
+                        user = Student(login_form.scheme_id.data, login_form.k_number.data)
+                    except:
+                        flash('You must first confirm your email address')
+                        return redirect("/login")
 
                     # if user exists in db then a password hash was successfully retrieved
                     if(user.password):
@@ -87,7 +91,7 @@ class LoginLogic():
                         flash("User already exists")
                         return render_template("signup.html", registration_form=registration_form)
 
-                    db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "na", (1 if is_mentor else 0), hashed_password, False, 1)
+                    db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)
                     user = Student(scheme_id, k_number)
                     print(user.k_number)

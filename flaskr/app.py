@@ -44,6 +44,10 @@ def load_user(id):
 def home():
     return render_template("index.html")
 
+@app.route("/terms-conditions")
+def terms_condititons():
+    return render_template("terms_conditions.html")
+
 @app.route("/dashboard")
 @login_required
 def dashboard():

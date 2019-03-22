@@ -61,15 +61,15 @@ class MentorLogic():
         except Exception as e:
                 self._log.exception("Could not execute mentor mentee list logic")
                 return abort(500)
+                
+    def mentee_view(self, k_number_mentee):
 
-    def mentee_view(self, k_number):
         try:
-            mentee_data = self._student_handler.get_user_data(current_user.scheme_id, k_number)
-            return render_template("user_screens/mentee/mentee_mentor_page.html", title="Your Mentor", mentee_data=mentee_data)
+            return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_data=self._student_handler.get_user_data(current_user.scheme_id, k_number_mentee), k_number_mentee=k_number_mentee)
 
         except Exception as e:
-                self._log.exception("Could not execute mentee view logic")
-                return abort(500)
+            self._log.exception("Could not execute mentee view logic")
+            return abort(500)
 
     #### HELPER FUNCTIONS
 
@@ -111,25 +111,6 @@ class MentorLogic():
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
                 return abort(500)
-
-    def mentor_mentee(self, scheme_id, k_number_mentee):
-
-        try:
-            return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_data=self._student_handler.get_user_data(scheme_id, k_number_mentee), k_number_mentee=k_number_mentee)
-
-        except Exception as e:
-            self._log.exception("Could not execute mentor mentee logic")
-            return abort(500)
-
-    def mentee_mentor(self, scheme_id, k_number_mentor):
-
-        try:
-            return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_data=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
-
-        except Exception as e:
-            self._log.exception("Could not execute mentee mentor logic")
-            return abort(500)
-
 
     def __init__(self):
         try:

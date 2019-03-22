@@ -70,6 +70,14 @@ class MenteeLogic():
                 self._log.exception("Could not execute mentor view logic")
                 return abort(500)
 
+    # def mentee_mentor(self, scheme_id, k_number_mentor):
+
+    #     try:
+    #         return render_template('user_screens/mentee_mentor_page.html', title='Your Mentor', mentor_data=mentors[k_number_mentor], k_number_mentor=k_number_mentor)
+
+    #     except Exception as e:
+    #         self._log.exception("Could not execute mentee mentor logic")
+    #         return abort(500)
     #### HELPER FUNCTIONS
 
     def get_data_definitions(self):

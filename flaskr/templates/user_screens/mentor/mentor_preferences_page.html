@@ -55,13 +55,14 @@
       </div>
   </div>
   
+  <div class="col-sm-2"></div>
   <p>Note: Hold ctrl/cmd to select multiple hobbies/interests</p>
   
   <div class="form-group row">
       {{ form.interests.label(class="col-sm-2 col-form-label") }}
       <div class="col-sm-10">
         <div class="form-check">
-          {{ form.interests(class="col-sm-2 col-form-label text-primary") }}
+          {{ form.interests(class="col-sm-12 col-form-label text-primary") }}
         </div>
       </div>
     </div>
@@ -70,7 +71,7 @@
     {{ form.hobbies.label(class="col-sm-2 col-form-label") }}
     <div class="col-sm-10">
       <div class="form-check">
-        {{ form.hobbies(class="col-sm-2 col-form-label text-primary") }}
+        {{ form.hobbies(class="col-sm-12 row-sm-12 col-form-label text-primary") }}
       </div>
     </div>
   </div>

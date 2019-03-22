@@ -5,6 +5,7 @@ from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import make_response
 from flask import url_for
 from flask_login import LoginManager
 from flask_login import UserMixin
@@ -12,16 +13,18 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-from forms import NewSchemeForm, SystemLoginForm
+from forms import NewSchemeForm
+from forms import SystemLoginForm
 import json
 import logging
 from models.schememdl import SchemeModel
 from models.studentmdl import StudentModel
 from os import urandom
-import requests
-from werkzeug.security import check_password_hash, generate_password_hash
-from user import SystemAdmin
 from permissions import system_admin_login_required
+import requests
+from user import SystemAdmin
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 
 class SystemAdminLogic():
 
@@ -44,6 +47,7 @@ class SystemAdminLogic():
                         # check if he is authorised
                         if check_password_hash(system_admin.password, system_login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
+                            
                             login_user(system_admin, remember=False)
                             return redirect("/dashboard")
                         else:
@@ -66,11 +70,11 @@ class SystemAdminLogic():
     def system_admin_dashboard(self):
         ## try:
         if(request.method == 'POST' and 'susScheme' in request.form):
-                scheme_id = request.form['scheme_id']
-                self._scheme_handler.suspend_scheme(scheme_id)
+            scheme_id = request.form['scheme_id']
+            self._scheme_handler.suspend_scheme(scheme_id)
         elif(request.method == 'POST' and 'delScheme' in request.form):
-                scheme_id = request.form['scheme_id']
-                self._scheme_handler.delete_scheme(scheme_id)
+            scheme_id = request.form['scheme_id']
+            self._scheme_handler.delete_scheme(scheme_id)
 
         schemes = self._scheme_handler.get_all_scheme_data()
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
@@ -119,11 +123,26 @@ class SystemAdminLogic():
             self._log.exception("Error Creating New Scheme")
             return abort(500)
 
+    @system_admin_login_required()
+    def system_view_scheme_dashboard(self, request):
+        if(request.method == 'POST' and 'scheme_id' in request.form):
+            scheme_id = request.form['scheme_id']
+            ##conf exists in db
+            current_user.set_scheme_id(scheme_id)            
+            resp = make_response(redirect('/admin'))
+            resp.set_cookie('scheme', scheme_id)
+            return resp
+            
+        else:
+            return redirect('/system')
+        
+
+
     def __init__(self):
         try:
             self._log = logging.getLogger(__name__)
             self._scheme_handler = SchemeModel()
             self._student_handler = StudentModel()
         except Exception as e:
-                self._log.exception("Could not create model instance")
-                return abort(500)
+            self._log.exception("Could not create model instance")
+            return abort(500)

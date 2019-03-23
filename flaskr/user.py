@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from models.schememdl import SchemeModel
 from models.studentmdl import StudentModel
 from werkzeug.security import generate_password_hash
+from flask import request
 
 class User(UserMixin):
 
@@ -61,8 +62,8 @@ class SystemAdmin(User):
         User.__init__(self)
         self._scheme_handler = SchemeModel() # change?
 
-        self.scheme_id = 1 ## can be any -> set to first in DB to prevent errors
-        self.k_number = 1 ## needed?
+        self.scheme_id = request.cookies.get('scheme') if 'scheme' in request.cookies else 1 ## can be any -> set to first in DB to prevent errors
+        self.k_number = 69 ## needed?
         self.id = "sysadmin:" + email
         self.password = None
         self.priv = "system_admin"
@@ -76,6 +77,9 @@ class SystemAdmin(User):
     @property
     def is_active(self):
         return True
+
+    def set_scheme_id(self, scheme_id):
+        self.scheme_id = scheme_id
 
     def reset_password(self, new_password):
         new_hashed_password = generate_password_hash(new_password, method="")

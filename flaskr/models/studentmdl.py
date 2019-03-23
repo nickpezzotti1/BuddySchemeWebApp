@@ -64,9 +64,8 @@ class StudentModel(BasicModel):
         """ Given the k_number, will update the password_hash"""
 
         if type(password_hash) is str:
-            password_hash_sql = "\"" + password_hash + "\""
             try:
-                self._dao.execute(f"UPDATE Student set password_hash={password_hash_sql} WHERE scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Student set password_hash = %s WHERE k_number = %s AND scheme_id = %s;", (password_hash, k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -80,7 +79,7 @@ class StudentModel(BasicModel):
         """ Returns all the data in the Student table except from password hash"""
         ##sanity
         try:
-            result = self._dao.execute(f"SELECT * FROM Student where k_number={to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")[0]
+            result = self._dao.execute("SELECT * FROM Student WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))[0]
             result.pop(self.HASH_COL, None) # can check not none
             return result
 
@@ -105,7 +104,7 @@ class StudentModel(BasicModel):
         """ Returns the hashed password for the user"""
         ##sanity
         try:
-            result = self._dao.execute(f"select password_hash from Student where k_number={to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+            result = self._dao.execute("select password_hash from Student WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
             return result[0].pop(self.HASH_COL, None)
 
         except IndexError:
@@ -118,7 +117,7 @@ class StudentModel(BasicModel):
         """ Will entirely populate an entry for Student table"""
 
         try:
-            self._dao.execute(f"INSERT INTO Student VALUES({to_str([scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor])}, FALSE, {to_str(password_hash, password_hash=True)}, {to_str(is_admin)}, {buddy_limit}, NULL);")
+            self._dao.execute("INSERT INTO Student VALUES(%s, %s, %s, %s, %s, %s, %s, %s, FALSE, %s, %s, %s, NULL);", (scheme_id, k_number, first_name, last_name, degree_title, year_study, gender, is_mentor, password_hash, is_admin, buddy_limit))
             succ = self._dao.rowcount()
             self._dao.commit()
             return succ
@@ -131,11 +130,11 @@ class StudentModel(BasicModel):
         """ Delete the student entry in the Tables"""
         ## sanity?
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};")
-            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};") 
-            self._dao.execute(f"DELETE FROM Hobby where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};") 
-            self._dao.execute(f"DELETE FROM Interest where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};")
-            self._dao.execute(f"DELETE FROM Student where k_number={to_str(k_number)} AND scheme_id = {to_str(scheme_id)};")
+            self._dao.execute("DELETE FROM Allocation WHERE mentor_k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            self._dao.execute("DELETE FROM Allocation WHERE mentee_k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            self._dao.execute("DELETE FROM Hobby WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            self._dao.execute("DELETE FROM Interest WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            self._dao.execute("DELETE FROM Student WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
             self._dao.commit()
 
         except Exception as e:
@@ -147,7 +146,7 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id):
     
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, gender, is_mentor FROM Student WHERE Student.scheme_id = {to_str(scheme_id)} ORDER BY last_name ASC;")   ## add has matches
+                return self._dao.execute("SELECT k_number, first_name, last_name, gender, is_mentor FROM Student WHERE Student.scheme_id = %s ORDER BY last_name ASC;", (scheme_id,))   ## add has matches
 
             except Exception as e:
                 self._log.exception("Could not get all data for a student")
@@ -159,7 +158,7 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number) and sanity_check(is_admin):
 
             try:
-                self._dao.execute(f"UPDATE Student SET is_admin = {is_admin} WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Student SET is_admin = {is_admin} WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -173,7 +172,7 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number):
 
             try:
-                self._dao.execute(f"UPDATE Student SET email_confirmed = True WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Student SET email_confirmed = True WHERE WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -187,7 +186,7 @@ class StudentModel(BasicModel):
         """ Given the mentor k-number will delete all his mentees"""
         if sanity_check(scheme_id) and sanity_check(mentor_k_number):
             try:
-                self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(mentor_k_number)} AND scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("DELETE FROM Allocation WHERE mentor_k_number = %s AND scheme_id = %s;", (mentor_k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -198,7 +197,7 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number):
             ## sanity check dob
             try:
-                self._dao.execute(f"UPDATE Student SET date_of_birth = '{date_of_birth}' WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Student SET date_of_birth = %s WHERE k_number = %s AND scheme_id = %s;", (date_of_birth, k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -212,7 +211,7 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number):
             ## sanity check dob
             try:
-                self._dao.execute(f"UPDATE Student SET gender = {to_str(gender)} WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Student SET gender = %s WHERE k_number = %s AND scheme_id = %s;", (gender, k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -226,7 +225,7 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number):
             ## sanity check dob
             try:
-                self._dao.execute(f"UPDATE Student SET buddy_limit = {to_str(buddy_limit)} WHERE k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Student SET buddy_limit = %s WHERE k_number = %s AND scheme_id = %s;", (buddy_limit, k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:

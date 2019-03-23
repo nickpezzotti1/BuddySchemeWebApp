@@ -7,7 +7,7 @@ class SchemeModel(BasicModel):
     def get_system_admin_pass(self, email):
         ## sanity but needs @ symbol
         try:
-            return self._dao.execute(f"SELECT password_hash FROM Super_user WHERE email = '{email}';")[0]['password_hash'] ## won't work needs @
+            return self._dao.execute("SELECT password_hash FROM Super_user WHERE email = %s;", (email, ))[0]['password_hash'] 
             
         except Exception as e:
             self._log.exception("Could Get System Admin Password")
@@ -31,9 +31,9 @@ class SchemeModel(BasicModel):
     
     def check_scheme_avail(self, scheme_name):
         """Returns true if new scheme name is available"""
-        if sanity_check(scheme_name):
+        if True: ##sanity_check(scheme_name):
             try:
-                return self._dao.execute(f"SELECT IF (COUNT(scheme_name) > 0, false, true) AS avail FROM Scheme WHERE scheme_name = {to_str(scheme_name)};")[0]['avail']
+                return self._dao.execute("SELECT IF (COUNT(scheme_name) > 0, false, true) AS avail FROM Scheme WHERE scheme_name = %s;", (scheme_name, ))[0]['avail']
             
             except Exception as e:
                 self._log.exception("Could Not Confirm Scheme Name Is Available")
@@ -41,9 +41,9 @@ class SchemeModel(BasicModel):
         
     def create_new_scheme(self, scheme_name, is_active=1):
         """Inserts a new scheme"""
-        if sanity_check(scheme_name) and sanity_check(is_active):  ## combine check and add ?
+        if True: ##sanity_check(scheme_name) and sanity_check(is_active):  ## combine check and add ?
             try:
-                self._dao.execute(f"INSERT INTO Scheme VALUES(0, {to_str(scheme_name)}, {to_str(is_active)});") 
+                self._dao.execute("INSERT INTO Scheme VALUES(0, %s, %s);", (scheme_name, is_active)) 
                 succ = self._dao.rowcount()
                 self._dao.commit()
                 return succ
@@ -69,9 +69,9 @@ class SchemeModel(BasicModel):
     
     def get_scheme_id(self, scheme_name):
         """Returns true if new scheme name is available"""
-        if sanity_check(scheme_name):
+        if True: ##sanity_check(scheme_name):
             try:
-                return self._dao.execute(f"SELECT scheme_id FROM Scheme WHERE scheme_name = {to_str(scheme_name)};")[0]['scheme_id'] ## errors if not exists
+                return self._dao.execute("SELECT scheme_id FROM Scheme WHERE scheme_name = %;", (scheme_name, ))[0]['scheme_id'] ## errors if not exists
             
             except Exception as e:
                 self._log.exception("Could Not Get Scheme ID")
@@ -81,7 +81,7 @@ class SchemeModel(BasicModel):
         """Suspends a given scheme"""
         if sanity_check(scheme_id):
             try:
-                self._dao.execute(f"UPDATE Scheme SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE scheme_id = {to_str(scheme_id)};")
+                self._dao.execute("UPDATE Scheme SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE scheme_id = %s;", (scheme_id, ))
                 self._dao.commit()
             
             except Exception as e:
@@ -92,7 +92,7 @@ class SchemeModel(BasicModel):
         """Suspends a given scheme"""
         if sanity_check(scheme_id):
             try:
-                self._dao.execute(f"DELETE FROM Scheme WHERE scheme_id = {to_str(scheme_id)};") ## needs cascades
+                self._dao.execute("DELETE FROM Scheme WHERE scheme_id = %s;", (scheme_id, )) ## needs cascades
                 self._dao.commit()
             
             except Exception as e:

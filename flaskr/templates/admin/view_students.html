@@ -1,9 +1,6 @@
 {% extends "template.html" %}
 
-{% block nav_block %}
-<li><a href="#">Home</a></li>
-<li><a href="#">Features</a></li>
-<li><a href="#">Contact</a></li>                                                             
+{% block nav_block %}                                                          
 {% endblock nav_block %}
 
 {% block content_block %}
@@ -41,7 +38,7 @@
             <td>{{student.last_name}}</td>
             <td>{{student.gender}}</td>
             <td>{% if student.is_mentor %}{{"Yes"}}{% else %}{{"No"}}{% endif %}</td>
-    <form method="POST" action={{url_for("admin.view_student_details")}}>
+    <form method="POST" action='{{url_for("admin.view_student_details")}}'>
         <input type="hidden" name="knum" value="{{student.k_number}}"></input>
         <td><input type="submit" class="btn btn-lg btn-block btn-primary" value="More Details"></input></td>
     </form>

@@ -41,12 +41,14 @@ class Dao():
             except Exception as e:
                 self._log.exception("Could not create DB connection")
                 raise
-
-        def execute(self, query):
+                
+        def execute(self, query, escapes=None):
             """ Execute a provided query and return result"""
-
             try:
-                self.__cursor.execute(query)
+                if type(escapes) is tuple:
+                    self.__cursor.execute(query, escapes)
+                else:
+                    self.__cursor.execute(query)
                 data = self.__cursor.fetchall()
                 return data
             except:
@@ -54,6 +56,7 @@ class Dao():
                 self.close()
                 self._create_connection()
                 raise
+                
 
         def close(self):
             """ Close database connetion """

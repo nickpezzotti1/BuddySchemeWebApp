@@ -52,7 +52,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of mentors"""
 
         try:
-            return self._dao.execute(f"SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=1 AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=1 AND scheme_id = %s;", (scheme_id, ))
 
         except Exception as e:
                 self._log.exception("Could not get all mentors")
@@ -63,7 +63,7 @@ class AllocationModel(BasicModel):
         """ Returns all the k-number of the mentees"""
 
         try:
-            return self._dao.execute(f"SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=0 AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor = 0 AND scheme_id = %s;", (scheme_id, ))
 
         except Exception as e:
                 self._log.exception("Could not get all mentees")
@@ -74,7 +74,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};") ## conf
+                return self._dao.execute("SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentee_k_number AND Allocation.mentor_k_number = %s AND Student.scheme_id = %s;", (k_number, scheme_id))
 
             except Exception as e:
                 self._log.exception("Could not get mentee details")
@@ -87,7 +87,7 @@ class AllocationModel(BasicModel):
         if sanity_check(k_number):
 
             try:
-                return self._dao.execute(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)};")
+                return self._dao.execute("SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = %s AND Student.scheme_id = %s;", (k_number, scheme_id))
 
             except Exception as e:
                 self._log.exception("Could not get mentor details")
@@ -101,7 +101,7 @@ class AllocationModel(BasicModel):
             join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
             other_col = 'mentee_k_number' if not is_tor else 'mentor_k_number'
             try:
-                return self._dao.execute(f"SELECT * FROM (SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} AND Student.scheme_id = Allocation.scheme_id WHERE is_mentor != {is_tor} AND k_number != {to_str(k_number)} AND Student.scheme_id = {to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC) AS matches WHERE NOT EXISTS (SELECT NULL FROM Allocation WHERE {other_col} = {to_str(k_number)} AND {join_col} = matches.k_number AND scheme_id = {to_str(scheme_id)});")
+                return self._dao.execute(f"SELECT * FROM (SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} AND Student.scheme_id = Allocation.scheme_id WHERE is_mentor != %s AND k_number != %s AND Student.scheme_id = %s GROUP BY Student.k_number ORDER BY matches, k_number ASC) AS matches WHERE NOT EXISTS (SELECT NULL FROM Allocation WHERE {other_col} = %s AND {join_col} = matches.k_number AND scheme_id = %s);", (is_tor, k_number, scheme_id, k_number, scheme_id))
 
             except Exception as e:
                 self._log.exception("Could not get manual allocation matches")
@@ -114,7 +114,7 @@ class AllocationModel(BasicModel):
         if sanity_check(tee_number) and sanity_check(tor_number):
 
             try:
-                return self._dao.execute(f"INSERT INTO Allocation VALUES({to_str(scheme_id)}, {to_str(tor_number)}, {to_str(tee_number)});")
+                return self._dao.execute("INSERT INTO Allocation VALUES(%s, %s, %s);", (scheme_id, tor_number, tee_number))
                 self._dao.commit()
 
             except Exception as e:
@@ -128,7 +128,7 @@ class AllocationModel(BasicModel):
         if sanity_check(tee_number) and sanity_check(tor_number):
 
             try:
-                return self._dao.execute(f"DELETE FROM Allocation WHERE mentor_k_number = {to_str(tor_number)} AND mentee_k_number = {to_str(tee_number)} AND scheme_id = {to_str(scheme_id)};")
+                return self._dao.execute("DELETE FROM Allocation WHERE mentor_k_number = %s AND mentee_k_number = %s AND scheme_id = %s;", (tor_number, tee_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -142,7 +142,7 @@ class AllocationModel(BasicModel):
         """ Given the mentee K-Number will return its mentor(s) k-number"""
 
         try:
-            return self._dao.execute(f"SELECT mentor_k_number from Allocation where mentee_k_number={to_str(mentee_k_number)} AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute("SELECT mentor_k_number from Allocation where mentee_k_number= %s AND scheme_id = %s;", (mentee_k_number, scheme_id))
 
         except Exception as e:
             self._log.exception("Could not get mentors")
@@ -152,7 +152,7 @@ class AllocationModel(BasicModel):
         """ Given the mentor K-Number will return its mentor(s) k-number"""
 
         try:
-            return self._dao.execute(f"SELECT mentee_k_number from Allocation where mentor_k_number={to_str(mentor_k_number)} AND scheme_id = {to_str(scheme_id)};")
+            return self._dao.execute(f"SELECT mentee_k_number from Allocation where mentor_k_number = %s AND scheme_id = %s;", (mentor_k_number, scheme_id))
 
         except Exception as e:
             self._log.exception("Could not get mentees")
@@ -163,7 +163,7 @@ class AllocationModel(BasicModel):
         """ Insert the mentor, mentee pair k number """
 
         try:
-            self._dao.execute(f"INSERT INTO Allocation VALUES({to_str([scheme_id, mentor_k_number, mentee_k_number])});")
+            self._dao.execute("INSERT INTO Allocation VALUES(%s, %s, %s);", (scheme_id, mentor_k_number, mentee_k_number))
             self._dao.commit()
 
         except Exception as e:
@@ -173,7 +173,7 @@ class AllocationModel(BasicModel):
     def delete_mentors(self, scheme_id, mentee_k_number):
         """ Given the mentee k-number will delete all his mentors"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentee_k_number={to_str(mentee_k_number)} AND scheme_id = {to_str(scheme_id)};")
+            self._dao.execute("DELETE FROM Allocation where mentee_k_number = %s AND scheme_id = %s;", (mentee_k_number, scheme_id))
             self._dao.commit()
 
         except Exception as e:
@@ -183,7 +183,7 @@ class AllocationModel(BasicModel):
     def delete_mentees(self, scheme_id, mentor_k_number):
         """ Given the mentor k-number will delete all his mentees"""
         try:
-            self._dao.execute(f"DELETE FROM Allocation where mentor_k_number={to_str(mentor_k_number)} AND scheme_id = {to_str(scheme_id)};")
+            self._dao.execute("DELETE FROM Allocation where mentor_k_number = %s AND scheme_id = %s;", (mentor_k_number, scheme_id))
             self._dao.commit()
 
         except Exception as e:
@@ -193,7 +193,7 @@ class AllocationModel(BasicModel):
     def clear_allocations_table(self, scheme_id):
         """ Clear all the allocations in the current scheme """
         try:
-            self._dao.execute(f"DELETE FROM Allocation where scheme_id = {to_str(scheme_id)};")
+            self._dao.execute("DELETE FROM Allocation where scheme_id = %s;", (scheme_id, ))
             self._dao.commit()
 
         except Exception as e:

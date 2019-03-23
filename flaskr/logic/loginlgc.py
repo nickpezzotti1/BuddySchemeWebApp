@@ -60,6 +60,11 @@ class LoginLogic():
             self._log.exception("Could not parse login form")
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
 
+    def signupToken(self, request, token):
+        schemeId = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
+        return schemeId
+
+
     def signup(self,request):
 
         try:

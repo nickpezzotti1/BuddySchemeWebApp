@@ -37,7 +37,7 @@ def general_settings():
 def allocation_config():
     return handler.allocation_config()
 
-@admin_blueprint.route('/admin/allocation_algorithm')
+@admin_blueprint.route('/admin/dashboard.html')
 @admin_login_required()
 def allocation_algorithm():
     return handler.allocation_algorithm()

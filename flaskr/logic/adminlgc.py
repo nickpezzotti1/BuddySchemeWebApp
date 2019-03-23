@@ -266,7 +266,7 @@ class AdminLogic():
         schemeId = current_user.scheme_id
 
         result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=schemeId)
-
+        result = "/signup/" + result
         return result
 
     def __init__(self):

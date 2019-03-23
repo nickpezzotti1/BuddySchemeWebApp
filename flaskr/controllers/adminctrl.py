@@ -8,7 +8,7 @@ admin_blueprint = Blueprint('admin', __name__)
 handler = AdminLogic()
 
 @admin_blueprint.route('/admin')
-# @admin_login_required()
+@admin_login_required()
 def admin_dashboard():
     return handler.admin_dashboard()
 
@@ -28,7 +28,7 @@ def delete_student_details():
     return handler.delete_student_details()
 
 @admin_blueprint.route('/admin/general_settings', methods=['GET', 'POST'])
-# @admin_login_required()
+@admin_login_required()
 def general_settings():
     return handler.general_settings()
 
@@ -37,7 +37,7 @@ def general_settings():
 def allocation_config():
     return handler.allocation_config()
 
-@admin_blueprint.route('/admin/allocation_algorithm')
+@admin_blueprint.route('/admin/dashboard.html')
 @admin_login_required()
 def allocation_algorithm():
     return handler.allocation_algorithm()
@@ -56,3 +56,8 @@ def allocate():
 @admin_login_required()
 def manually_assign():
     return handler.manually_assign()
+
+@admin_blueprint.route('/admin/invite')
+@admin_login_required()
+def invite_to_scheme():
+    return handler.invite_to_scheme()

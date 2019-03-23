@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField, DateField, RadioField
-from wtforms.validators import DataRequired, Length, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField, DateField, RadioField, SelectMultipleField
+from wtforms.validators import DataRequired, Length, EqualTo, NumberRange
 import datetime
 
 class LoginForm(FlaskForm):
@@ -48,8 +48,17 @@ class NewInterestForm(FlaskForm):
     interest_name = StringField('Interest Name', validators=[DataRequired()])
     interest_submit = SubmitField("Add new interest")
 
-class UserPreferencesForm(FlaskForm):
-    gender = RadioField('gender')
-    date_of_birth = DateField('date_of_birth')
-    hobby = BooleanField('hobby')
-    interest = BooleanField('interest')
+class MentorPreferencesForm(FlaskForm):
+    gender = RadioField('Gender', choices=[], validators=[DataRequired()])
+    date_of_birth = DateField('Date Of Birth')
+    buddy_limit = IntegerField('Buddy Limit', validators=[DataRequired()])
+    hobbies = SelectMultipleField('Hobbies', choices=[], coerce=int)
+    interests = SelectMultipleField('Academic Interests', choices=[], coerce=int)
+    user_preferences_submit = SubmitField('Submit')
+
+class AllocationConfigForm(FlaskForm):
+    age_weight = IntegerField('Age Weight')
+    gender_weight = IntegerField('Gender Weight')
+    hobby_weight = IntegerField('Hobby Weight')
+    interest_weight = IntegerField('Interest Weight')
+    allocation_config_submit = SubmitField("Update")

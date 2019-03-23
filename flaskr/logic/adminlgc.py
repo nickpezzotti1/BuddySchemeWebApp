@@ -1,8 +1,9 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
+from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 import logging
 import json
 import requests
+from auth_token import generate_token, verify_token
 from models.allocationconfigmdl import AllocationConfigModel
 from models.allocationmdl import AllocationModel
 from models.student_interestmdl import StudentInterestModel
@@ -260,6 +261,13 @@ class AdminLogic():
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
                 return abort(500)
+    
+    def invite_to_scheme(self):
+        schemeId = current_user.scheme_id
+
+        result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=schemeId)
+        result = "/signup/" + result
+        return result
 
     def __init__(self):
         try:

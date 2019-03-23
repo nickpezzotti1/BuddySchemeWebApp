@@ -56,3 +56,8 @@ def allocate():
 @admin_login_required()
 def manually_assign():
     return handler.manually_assign()
+
+@admin_blueprint.route('/admin/invite')
+@admin_login_required()
+def invite_to_scheme():
+    return handler.invite_to_scheme()

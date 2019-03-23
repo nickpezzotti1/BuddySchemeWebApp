@@ -20,12 +20,22 @@
 	{% block content %}{% endblock %}
 
 <div id="first" style="inline">
+
+
 	<div class="myform form ">
 		<div class="logo mb-3">
 			<div class="col-md-12 text-center">
 				<h1>Add hobby</h1>
 			</div>
 		</div>
+		<div>
+			Current hobbies:	
+			{% for hobby in currentHobbies %}
+			</br>
+			{{ hobby['hobby_name'] }}
+			{% endfor %}
+		</div>
+		</br>
 		<form action="" method="post" name="settings">
 			{{ hobby_form.csrf_token }}
 
@@ -49,9 +59,16 @@
 				<h1>Add Interest</h1>
 			</div>
 		</div>
+	<div>
+		Current interests:	
+		{% for interest in currentInterests %}
+		</br>
+		{{ interest['interest_name'] }}
+		{% endfor %}
+	</div>
+	</br>
 		<form action="" method="post" name="settings">
 			{{ interest_form.csrf_token }}
-
 										<div class="form-group">
 				{{ interest_form.interest_name.label(class="form-control-label") }}
 				{{ interest_form.interest_name(class="form-control form-control-lg", placeholder="Interest Name") }}

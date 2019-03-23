@@ -1,8 +1,9 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
+from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 import logging
 import json
 import requests
+from auth_token import generate_token, verify_token
 from models.allocationconfigmdl import AllocationConfigModel
 from models.allocationmdl import AllocationModel
 from models.student_interestmdl import StudentInterestModel
@@ -11,7 +12,7 @@ from models.interestmdl import InterestModel
 from models.hobbymdl import HobbyModel
 from models.studentmdl import StudentModel
 from datetime import date, datetime
-from forms import NewHobbyForm, NewInterestForm
+from forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
 
 class AdminLogic():
     def admin_dashboard(self):
@@ -106,7 +107,9 @@ class AdminLogic():
                         flash("Interest successfully created")
                         self._interest_handler.insert_interest(new_interest_form.interest_name.data)
 
-            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form)
+            currentInterests = self._interest_handler.get_interest_list()
+            currentHobbies = self._hobby_handler.get_hobby_list()
+            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
         except Exception as e:
             self._log.exception("Invalid new hobby form")
@@ -115,15 +118,21 @@ class AdminLogic():
         return render_template('admin/general_settings.html', title='General Settings')
 
     def allocation_config(self):
+        
+        # Retrieve current allocation config data
+        config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
+        
+        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data['gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
+
         if(request.method == 'POST'):
             # Format the results in a dict and call the update query
             config = {
-                'age_weight': request.form['age_weight'],
-                'gender_weight': request.form['gender_weight'],
-                'hobby_weight': request.form['hobby_weight'],
-                'interest_weight': request.form['interest_weight'],
+                'age_weight': form.age_weight.data,
+                'gender_weight': form.gender_weight.data,
+                'hobby_weight': form.hobby_weight.data,
+                'interest_weight': form.interest_weight.data,
             }
-
+            
             self._allocation_config_handler.update_allocation_config(current_user.scheme_id, config)
 
             # Text displayed after updating the config - as feedback for the user
@@ -132,12 +141,12 @@ class AdminLogic():
             update_message = ''
 
         # Always render the page
-        allocation_config = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
-
-        return render_template('admin/allocation_config.html', title='Allocation Algorithm', allocation_config=allocation_config, update_message=update_message)
+        
+        return render_template('admin/allocation_config.html', title='Allocation Algorithm', form=form, allocation_config=config_data, update_message=update_message)
 
     def allocation_algorithm(self):
-        return render_template('admin/allocation_algorithm.html', title='Allocation Algorithm', assignments=self.allocate())
+        flash("The allocations have been made, please look at the student table for more information")
+        return render_template('admin/dashboard.html', assignments=self.allocate())
 
     def sign_up_settings(self):
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
@@ -193,7 +202,7 @@ class AdminLogic():
             input["mentors"].append(
                                     {
                                         "ID": mentor["k_number"],
-                                        "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - mentor["date_of_birth"].year)),
+                                        "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentor["date_of_birth"]), "%Y-%m-%d").year)),
                                         "gender": mentor["gender"],
                                         "partnerLimit": mentor["buddy_limit"]
                                     }
@@ -203,7 +212,7 @@ class AdminLogic():
             input["mentees"].append(
                                     {
                                         "ID": mentee["k_number"],
-                                        "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - mentee["date_of_birth"].year)),
+                                        "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentee["date_of_birth"]), "%Y-%m-%d").year)),
                                         "gender": mentee["gender"],
                                         "partnerLimit": mentee["buddy_limit"]
                                     }
@@ -252,6 +261,13 @@ class AdminLogic():
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
                 return abort(500)
+    
+    def invite_to_scheme(self):
+        schemeId = current_user.scheme_id
+
+        result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=schemeId)
+        result = "/signup/" + result
+        return result
 
     def __init__(self):
         try:

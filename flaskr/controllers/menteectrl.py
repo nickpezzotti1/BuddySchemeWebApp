@@ -8,7 +8,6 @@ mentee_blueprint = Blueprint('mentee', __name__)
 
 handler = MenteeLogic()
 
-
 @mentee_blueprint.route("/mentee")
 #@permissioned_login_required(role="MENTEE", redirect_on_fail="/dashboard")
 def mentee():

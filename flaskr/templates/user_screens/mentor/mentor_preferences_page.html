@@ -2,63 +2,86 @@
 
 {% block content_block %}
 
-<h1> Preferences </h1>
-<h4> K-Number: {{user_data["k_number"]}}<h4>
-<h4> First Name: {{user_data["first_name"]}}<h4>
-<h4> Last Name: {{user_data["last_name"]}}<h4>
+<form action = "{{url_for('mentor.mentor_preferences')}}" method = "POST">
 
-<form action = "{{url_for('mentor.mentor_preferences')}}" method = "post">
+    <h1 id="title"> Preferences </h1>
 
-    <h4>Gender:</h4>
-    <label class="custom-control custom-radio">
-    <input id="radio1" name="gender" type="radio" class="custom-control-input" value="Male" {% if user_data["gender"] == "Male" %} checked {% endif %}>
-    <span class="custom-control-indicator"></span>
-    <span class="custom-control-description">Male</span>
-    </label>
-    <label class="custom-control custom-radio">
-    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Female" {% if user_data["gender"] == "Female" %} checked {% endif %}>
-    <span class="custom-control-indicator"></span>
-    <span class="custom-control-description">Female</span>
-    </label>
-    <label class="custom-control custom-radio">
-    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Other" {% if user_data["gender"] == "Other" %} checked {% endif %}>
-    <span class="custom-control-indicator"></span>
-    <span class="custom-control-description">Other</span>
-    </label>
-    <label class="custom-control custom-radio">
-    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Prefer not to say" {% if user_data["gender"] == "Prefer not to say" %} checked {% endif %}>
-    <span class="custom-control-indicator"></span>
-    <span class="custom-control-description">Prefer not to say</span>
-    </label>
-
-    <div>
-        <label class="form-inline">Date of Birth
-        <input class="help-block" type="date" name="date_of_birth" value="{{user_data["date_of_birth"]}}"></label>
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">K-Number</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["k_number"]}}" readonly>
     </div>
-    <div>
-        <label class="form-inline">Mentee Limit
-        <input class="help-block" type="number" name="buddy_limit" value="{{user_data["buddy_limit"]}}"></label>
-    
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">First Name</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["first_name"]}}" readonly>
     </div>
-    
-    <div class="form-check">
-        <h4> Hobbies:</h4>
-        {% for hobby in data_definitions["hobbies"] %}
-            <label class="checkbox"><input type="checkbox" name="hobby" value="{{hobby["id"]}}" {% if hobby["id"] in user_data["hobbies"] %} checked {% endif %}>{{hobby["hobby_name"]}}</label>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["last_name"]}}" readonly>                                                                                            
+    </div>
+  </div>
+
+  <fieldset class="form-group">
+    <div class="row">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">Gender</label>
+      <div class="col-sm-10">
+        {% for gender_type in form.gender %}
+          <div class="form-check">
+            {{ gender_type(class="form-check-input", id="gridRadios1") }}
+            {{ gender_type.label }}
+          </div>
         {% endfor %}
+      </div>
     </div>
-    <div class="form-check">
-        <h4> Academic Interests:</h4>
-        {% for interest in data_definitions["interests"] %}
-            <label class="checkbox"><input type="checkbox" name="interest" value="{{interest["id"]}}" {% if interest["id"] in user_data["interests"] %} checked {% endif %}>{{interest["interest_name"]}}</label>
-        {% endfor %}
+  </fieldset>
+
+  <div class="form-group row">
+      {{ form.buddy_limit.label(class="col-sm-2 col-form-label") }}
+      <div class="col-sm-10">
+        {{ form.buddy_limit(class="form-control") }}
+      </div>
+  </div>
+
+  <div class="form-group row">
+      {{ form.date_of_birth.label(class="col-sm-2 col-form-label") }}
+      <div class="col-sm-10">
+        {{ form.date_of_birth(class="form-control") }}
+      </div>
+  </div>
+  
+  <div class="col-sm-2"></div>
+  <p>Note: Hold ctrl/cmd to select multiple hobbies/interests</p>
+  
+  <div class="form-group row">
+      {{ form.interests.label(class="col-sm-2 col-form-label") }}
+      <div class="col-sm-10">
+        <div class="form-check">
+          {{ form.interests(class="col-sm-12 col-form-label text-primary") }}
+        </div>
+      </div>
     </div>
-    <div id="submit">
-        <p><input class="btn btn-large btn-info" type = "submit" value = "Submit" /></p>
+
+  <div class="form-group row">
+    {{ form.hobbies.label(class="col-sm-2 col-form-label") }}
+    <div class="col-sm-10">
+      <div class="form-check">
+        {{ form.hobbies(class="col-sm-12 row-sm-12 col-form-label text-primary") }}
+      </div>
     </div>
-</div>
+  </div>
+
+<div id="browse_app navigate">
+    {{ form.user_preferences_submit(class="btn btn-large btn-info") }}
+    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard </a>
+    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_delete')}}">Delete Account</a>
+</div>                   
+
 </form>
-<div id="browse_app">
-    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard</a>
-</div>
+
 {% endblock content_block %}

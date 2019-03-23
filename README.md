@@ -15,6 +15,10 @@ We are using pythons virtual enviorements to make sure we are all using the same
 7. Run the application
 
 
+## Test the application
+
+1. `$ source env/bin/activate`
+2. `(env) $ pytest`
 
 ## Run the application
 

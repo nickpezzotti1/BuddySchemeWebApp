@@ -1,5 +1,10 @@
 {% extends "index.html" %}
 
+{% block nav_block %}
+<li><a href="/dashboard">Back</a></li>
+{% endblock nav_block %}
+
+
 {% block content_block %}
 <h2>Allocation Configuration</h2>
 <p>Edit the values below to change the weighting used for the algorithm.</p>
@@ -7,31 +12,31 @@
 <div class="form-group">
     <form action = "{{url_for('admin.allocation_config')}}" method="post">
 
-        <label class="form-text">Age</label>
+        {{ form.age_weight.label(class="form-text") }}
         <div class="slidecontainer">
-            <input name="age_weight" type="range" min="0" max="100" value="{{allocation_config['age_weight']}}" class="slider" id="ageSlider">
+            {{ form.age_weight(class="slider", id="ageSlider", type="range", min="0", max="100") }}
             <p id="ageTextBox"> </p>
         </div>
 
-        <label class="form-text">Gender</label>
+        {{ form.gender_weight.label(class="form-text") }}
         <div class="slidecontainer">
-            <input name="gender_weight" type="range" min="0" max="100" value="{{allocation_config['gender_weight']}}" class="slider" id="genderSlider">
+            {{ form.gender_weight(class="slider", id="genderSlider", type="range", min="0", max="100") }}
             <p id="genderTextBox"> </p>
         </div>
 
-        <label class="form-text">Hobbies</label>
+        {{ form.hobby_weight.label(class="form-text") }}
         <div class="slidecontainer">
-            <input name="hobby_weight" type="range" min="0" max="100" value="{{allocation_config['hobby_weight']}}" class="slider" id="hobbySlider">
+            {{ form.hobby_weight(class="slider", id="hobbySlider", type="range", min="0", max="100") }}
             <p id="hobbyTextBox"> </p>
         </div>
 
-        <label class="form-text">Interests</label>
+        {{ form.interest_weight.label(class="form-text") }}
         <div class="slidecontainer">
-            <input name="interest_weight" type="range" min="0" max="100" value="{{allocation_config['interest_weight']}}" class="slider" id="interestSlider">
+            {{ form.interest_weight(class="slider", id="interestSlider", type="range", min="0", max="100") }}
             <p id="interestTextBox"> </p>
         </div>
 
-        <input class="btn btn-block btn-lg help-block btn-primary my-3" type ="submit" value="Update" />
+        {{ form.allocation_config_submit(class="btn btn-block btn-lg help-block btn-primary my-3") }}
 
     </form>
     <script src="{{ url_for('static',filename='js/admin_allocation_config_sliders.js') }}"> </script>
@@ -41,9 +46,6 @@
     <a class="btn btn-block btn-lg help-block btn-primary my-3" href="{{url_for('admin.allocation_algorithm')}}">Allocate</a>
 </div>
 
-<div class="help-block" id="back_to_dashboard">
-    <a class="btn btn-block btn-lg help-block btn-primary my-3" href="{{url_for('admin.admin_dashboard')}}">Back to Dashboard </a>
-</div>
 
 {{update_message}}
 

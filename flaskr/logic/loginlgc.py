@@ -64,7 +64,6 @@ class LoginLogic():
         schemeId = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
         return self.signup(request, schemeId=schemeId)
 
-
     def signup(self, request, schemeId = False):
 
         try:

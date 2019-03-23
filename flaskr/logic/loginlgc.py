@@ -43,7 +43,15 @@ class LoginLogic():
                         if check_password_hash(user.password, login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
-                            return redirect("/dashboard")
+
+                            is_mentor = self._student_handler.get_user_data(login_form.k_number.data).is_mentor
+
+                            if(is_mentor):
+                                target = "/mentor"
+                            else:
+                                target = "/mentee"
+                                
+                            return redirect(target)
                         else:
                             flash('The password you entered is incorrect')
                             return redirect("/login")

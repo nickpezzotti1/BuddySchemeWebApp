@@ -8,7 +8,6 @@ mentee_blueprint = Blueprint('mentee', __name__)
 
 handler = MenteeLogic()
 
-
 @mentee_blueprint.route("/mentee")
 #@permissioned_login_required(role="MENTEE", redirect_on_fail="/dashboard")
 def mentee():
@@ -26,10 +25,3 @@ def mentee_mentor_list():
 def mentee_mentor(k_number_mentor):
     return handler.mentor_view(k_number_mentor)
 
-@mentee_blueprint.route("/dashboard")
-@login_required
-def dashboard():
-    # if he is a mentor redirect to mentor
-    # else if he is a mentee redirect to mentee
-    # else {admin} redirect to admin page
-    return redirect("/mentee")

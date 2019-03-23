@@ -1,29 +1,82 @@
 {% extends "template.html" %}
 
 {% block content_block %}
-<h1> Your Profile </h1>
-<h2> K-Number: {{user_info["k_number"]}}<h2>
-<h2> First Name: {{user_info["first_name"]}}<h2>
-<h2> Last Name: {{user_info["last_name"]}}<h2>
-<h2> Age: {{user_info["age"]}}<h2>
-<h2> Hobbies:</h2>
-<ul>
-    {% for hobby in user_info["hobbies"] %}
-    <li>{{ hobby }}</li>
-    {% endfor %}
-</ul>
+
+<h1 id="title"> Your Profile </h1>
+
+<form>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">K-Number</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["k_number"]}}" readonly>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">First Name</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["first_name"]}}" readonly>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["last_name"]}}" readonly>                                                                                           
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Gender</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["gender"]}}" readonly>                                                                                           
+    </div>                                                                                   
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Date of Birth</label>
+    <div class="col-sm-10">
+        <input class="form-control" type="date" name="date_of_birth" value="{{user_data["date_of_birth"]}}" readonly>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Buddy Limit</label>
+    <div class="col-sm-10">
+        <input class="form-control" type="text" name="date_of_birth" value="{{user_data["buddy_limit"]}}" readonly>
+    </div>
+  </div>
 
 
-<h2> Academic Interests: </h2>
-<ul>
-    {% for interest in user_info["interests"] %}
-    <li>{{ interest }}</li>
-    {% endfor %}
-</ul>
+   <div class="form-check"> 
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Interests</label>
+         <div class="col-sm-10">   
+          {% for interest_id, interest_name in user_data["interests"].items() %}
+            <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
+            <label class="form-check-label" for="gridCheck1">
+              {{interest_name}}
+            </label>
+        {% endfor %}  
+      </div>
+    </div>
 
+   <div class="form-check">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Hobbies</label>
+         <div class="col-sm-10">   
+          {% for hobby_id, hobby_name in user_data["hobbies"].items() %}
+            <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
+            <label class="form-check-label" for="gridCheck1">
+              {{hobby_name}}
+            </label>
+        {% endfor %}  
+      </div>
+    </div>
+
+</form>
 
 <div style="text-align: center">
-<div id="browse_app">
+<div id="browse_app navigate">
 
     <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_preferences')}}">Preferences</a>
     <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_mentee_list')}}">My Mentees</a>

@@ -1,7 +1,73 @@
-{% extends "template.html" %}
+{% extends "template.html"%}
+
+{% block nav_block %}
+<li><a href="/dashboard">Back</a></li>
+{% endblock nav_block %}
+
 
 {% block content_block %}
 
-TODO
+
+	{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			{% for category, message in messages %}
+				<div class="alert alert-warning">
+					{{ message }}
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+	{% block content %}{% endblock %}
+
+<div id="first" style="inline">
+	<div class="myform form ">
+		<div class="logo mb-3">
+			<div class="col-md-12 text-center">
+				<h1>Add hobby</h1>
+			</div>
+		</div>
+		<form action="" method="post" name="settings">
+			{{ hobby_form.csrf_token }}
+
+										<div class="form-group">
+				{{ hobby_form.hobby_name.label(class="form-control-label") }}
+				{{ hobby_form.hobby_name(class="form-control form-control-lg", placeholder="Hobby Name") }}
+			</div>
+			<div class="col-md-12 text-center ">
+				{{ hobby_form.hobby_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+			</div>
+			<div class="col-md-12 ">
+				<div class="login-or">
+					<hr class="hr-or">
+					<span class="span-or"></span>
+				</div>
+			</div>
+		</form>
+
+		<div class="logo mb-3">
+			<div class="col-md-12 text-center">
+				<h1>Add Interest</h1>
+			</div>
+		</div>
+		<form action="" method="post" name="settings">
+			{{ interest_form.csrf_token }}
+
+										<div class="form-group">
+				{{ interest_form.interest_name.label(class="form-control-label") }}
+				{{ interest_form.interest_name(class="form-control form-control-lg", placeholder="Interest Name") }}
+			</div>
+			<div class="col-md-12 text-center ">
+				{{ interest_form.interest_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+			</div>
+			<div class="col-md-12 ">
+				<div class="login-or">
+					<hr class="hr-or">
+					<span class="span-or"></span>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
 
 {% endblock content_block %}

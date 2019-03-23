@@ -17,3 +17,4 @@ Werkzeug==0.14.1
 WTForms==2.2.1
 boto3==1.9.101
 botocore==1.12.101
+pytest==4.3.0

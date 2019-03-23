@@ -1,9 +1,7 @@
 {% extends "template.html" %}
 
 {% block nav_block %}
-<li><a href="#">Home</a></li>
-<li><a href="#">Features</a></li>
-<li><a href="#">Contact</a></li>                                                             
+<li><a href="/dashboard">Back</a></li>
 {% endblock nav_block %}
 
 {% block content_block %}
@@ -15,7 +13,7 @@
     Search By Name:
     <input type='text' id='nameFilt' onkeyup='return filter()'/>
     <br />
-    Filter:     
+    Filter:
     <input type='radio' id='all' name='menFilter' onclick='return filter()' checked ='checked' value='All'/>All
     <input type='radio' id='over' name='menFilter' onclick='return filter()' value='tor'/>Mentors
     <input type='radio' id='out' name='menFilter' onclick='return filter()' value='tee'/>Mentees
@@ -29,12 +27,12 @@
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
             <th scope="col">Gender</th>
-            <th scope="col">Mentor?</th> 
+            <th scope="col">Mentor?</th>
             <th scope="col" class="text-center">Action</th>
         </tr>
     </thead>
     <tbody id='tbody'>
-        {% for student in data %}   
+        {% for student in data %}
         <tr>
             <td>{{student.k_number}}</td>
             <td>{{student.first_name}}</td>
@@ -45,7 +43,7 @@
         <input type="hidden" name="knum" value="{{student.k_number}}"></input>
         <td><input type="submit" class="btn btn-lg btn-block btn-primary" value="More Details"></input></td>
     </form>
-</tr>        
+</tr>
 {% endfor %}
 </tbody>
 
@@ -70,7 +68,7 @@
     }
 
     function filterName(row, reg) {
-        if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) {   // need to impl show/no show if other filter on 
+        if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) {   // need to impl show/no show if other filter on
             return true
         } else {
             return false
@@ -97,5 +95,5 @@
     }
 
 </script>
-{% endblock content_block %}
 
+{% endblock content_block %}

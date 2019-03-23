@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+
+{% block nav_block %}
+  {% if current_user.is_authenticated %}
+    <li><a href="/dashboard">Back</a></li>
+  {% else %}
+    <li><a href="/home">Home</a></li>
+  {% endif %}
+{% endblock nav_block %}
+
+{% block content_block %}
+  <h1> {{ title }} </h1>
+  <p> {{ message }} </p>
+{% endblock content_block %}

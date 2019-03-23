@@ -2,41 +2,58 @@
 
 {% block content_block %}
 
-<h3> Preferences </h3>
-<h4> K-Number: {{user_info["k_number"]}}<h4>
-<h4> First Name: {{user_info["first_name"]}}<h4>
-<h4> Last Name: {{user_info["last_name"]}}<h4>
-<h4> Age: {{user_info["age"]}}<h4>
+<h1> Preference </h1>
+<h4> K-Number: {{user_data["k_number"]}}<h4>
+<h4> First Name: {{user_data["first_name"]}}<h4>
+<h4> Last Name: {{user_data["last_name"]}}<h4>
 
 <form action = "{{url_for('mentee.mentee_preferences')}}" method = "post">
-    <div class="form-group">
-        <h4> Hobbies:</h4>
 
-        <label class="checkbox"><input type="checkbox" name="hobbies" value="Football" {% if "Football" in user_info["hobbies"] %} checked {% endif %}>Football</label>
-        <label class="checkbox"><input type="checkbox" name="hobbies" value="Poker" {% if "Poker" in user_info["hobbies"] %} checked {% endif %}>Poker</label>
-        <label class="checkbox"><input type="checkbox" name="hobbies" value="Gaming" {% if "Gaming" in user_info["hobbies"] %} checked {% endif %}>Gaming</label>
-        <label class="checkbox"><input type="checkbox" name="hobbies" value="Smoking" {% if "Smoking" in user_info["hobbies"] %} checked {% endif %}>Smoking</label>
+    <h4>Gender:</h4>
+    <label class="custom-control custom-radio">
+    <input id="radio1" name="gender" type="radio" class="custom-control-input" value="Male" {% if user_data["gender"] == "Male" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Male</span>
+    </label>
+    <label class="custom-control custom-radio">
+    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Female" {% if user_data["gender"] == "Female" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Female</span>
+    </label>
+    <label class="custom-control custom-radio">
+    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Other" {% if user_data["gender"] == "Other" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Other</span>
+    </label>
+    <label class="custom-control custom-radio">
+    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Prefer not to say" {% if user_data["gender"] == "Prefer not to say" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Prefer not to say</span>
+    </label>
+    
+    <div>
+        <label class="form-inline">Date of Birth
+        <input class="help-block" type="date" name="date_of_birth" value="{{user_data["date_of_birth"]}}"></label>
     </div>
-    <div class="form-group">
-    <h4> Academic Interests:</h4>
 
-    <label class="checkbox"><input type="checkbox"  name="interests" value="AI" {% if "AI" in user_info["interests"] %} checked {% endif %}>AI</label>
-        <label class="checkbox"><input type="checkbox" name="interests" value="Blockchain" {% if "Blockchain" in user_info["interests"] %} checked {% endif %}>Blockchain</label>
-        <label class="checkbox"><input type="checkbox" name="interests" value="Data Science" {% if "Data Science" in user_info["interests"] %} checked {% endif %}>Data Science</label>
-        <label class="checkbox"><input type="checkbox" name="interests" value="Quantum" {% if "Quantum" in user_info["interests"] %} checked {% endif %}>Quantum</label>
-      </div>
-
-
-
-<div id="submit">
+    <div class="form-check">
+        <h4> Hobbies:</h4>
+        {% for hobby in data_definitions["hobbies"] %}
+            <label class="checkbox"><input type="checkbox" name="hobby" value="{{hobby["id"]}}" {% if hobby["id"] in user_data["hobbies"] %} checked {% endif %}>{{hobby["hobby_name"]}}</label>
+        {% endfor %}
+    </div>
+    <div class="form-check">
+        <h4> Academic Interests:</h4>
+        {% for interest in data_definitions["interests"] %}
+            <label class="checkbox"><input type="checkbox" name="interest" value="{{interest["id"]}}" {% if interest["id"] in user_data["interests"] %} checked {% endif %}>{{interest["interest_name"]}}</label>
+        {% endfor %}
+    </div>
+    <div id="submit">
         <p><input class="btn btn-large btn-info" type = "submit" value = "Submit" /></p>
     </div>
-
 </form>
-
 
 <div id="dashboard">
     <a class="btn btn-large btn-info" href="{{url_for('mentee.mentee')}}">Back to Dashboard</a>
-
 </div>
 {% endblock content_block %}

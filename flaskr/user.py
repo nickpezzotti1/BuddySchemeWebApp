@@ -61,7 +61,6 @@ class SystemAdmin(User):
     def __init__(self, email):
         User.__init__(self)
         self._scheme_handler = SchemeModel() # change?
-
         self.scheme_id = request.cookies.get('scheme') if 'scheme' in request.cookies else 1 ## can be any -> set to first in DB to prevent errors
         self.k_number = 69 ## needed?
         self.id = "sysadmin:" + email

@@ -132,10 +132,12 @@ class StudentModel(BasicModel):
         try:
             self._dao.execute("DELETE FROM Allocation WHERE mentor_k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
             self._dao.execute("DELETE FROM Allocation WHERE mentee_k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
-            self._dao.execute("DELETE FROM Hobby WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
-            self._dao.execute("DELETE FROM Interest WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            self._dao.execute("DELETE FROM Student_Hobby WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            self._dao.execute("DELETE FROM Student_Interest WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
             self._dao.execute("DELETE FROM Student WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            succ = self._dao.rowcount()
             self._dao.commit()
+            return succ
 
         except Exception as e:
             self._log.exception("Could not delete student")
@@ -158,8 +160,10 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number) and sanity_check(is_admin):
 
             try:
-                self._dao.execute("UPDATE Student SET is_admin = {is_admin} WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                self._dao.execute("UPDATE Student SET is_admin = %s WHERE k_number = %s AND scheme_id = %s;", (is_admin, k_number, scheme_id))
+                succ = self._dao.rowcount()
                 self._dao.commit()
+                return succ
 
             except Exception as e:
                 self._log.exception("Could not alter admin status")

@@ -28,6 +28,7 @@ class MenteeLogic():
 
         try:
             if request.method == "POST":
+                print(request.form.getlist('hobby'))
                 self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
                 self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
                 self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, request.form['date_of_birth'])

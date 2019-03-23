@@ -260,6 +260,9 @@ class AdminLogic():
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
                 return abort(500)
+    
+    def invite_to_scheme(self):
+        return "here"
 
     def __init__(self):
         try:

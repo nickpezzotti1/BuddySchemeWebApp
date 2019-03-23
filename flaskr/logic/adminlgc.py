@@ -106,7 +106,9 @@ class AdminLogic():
                         flash("Interest successfully created")
                         self._interest_handler.insert_interest(new_interest_form.interest_name.data)
 
-            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form)
+            currentInterests = self._interest_handler.get_interest_list()
+            currentHobbies = self._hobby_handler.get_hobby_list()
+            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
         except Exception as e:
             self._log.exception("Invalid new hobby form")

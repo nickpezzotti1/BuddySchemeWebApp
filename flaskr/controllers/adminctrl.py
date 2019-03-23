@@ -8,7 +8,7 @@ admin_blueprint = Blueprint('admin', __name__)
 handler = AdminLogic()
 
 @admin_blueprint.route('/admin')
-# @admin_login_required()
+@admin_login_required()
 def admin_dashboard():
     return handler.admin_dashboard()
 
@@ -28,7 +28,7 @@ def delete_student_details():
     return handler.delete_student_details()
 
 @admin_blueprint.route('/admin/general_settings', methods=['GET', 'POST'])
-# @admin_login_required()
+@admin_login_required()
 def general_settings():
     return handler.general_settings()
 

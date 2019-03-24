@@ -3,16 +3,16 @@ from flask_login import LoginManager, UserMixin, current_user, login_required, l
 import logging
 import json
 import requests
-from auth_token import generate_token, verify_token
-from models.allocationconfigmdl import AllocationConfigModel
-from models.allocationmdl import AllocationModel
-from models.student_interestmdl import StudentInterestModel
-from models.student_hobbymdl import StudentHobbyModel
-from models.interestmdl import InterestModel
-from models.hobbymdl import HobbyModel
-from models.studentmdl import StudentModel
+from flaskr.auth_token import generate_token, verify_token
+from flaskr.models.allocationconfigmdl import AllocationConfigModel
+from flaskr.models.allocationmdl import AllocationModel
+from flaskr.models.student_interestmdl import StudentInterestModel
+from flaskr.models.student_hobbymdl import StudentHobbyModel
+from flaskr.models.interestmdl import InterestModel
+from flaskr.models.hobbymdl import HobbyModel
+from flaskr.models.studentmdl import StudentModel
 from datetime import date, datetime
-from forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
+from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
 
 class AdminLogic():
     def admin_dashboard(self):
@@ -118,10 +118,10 @@ class AdminLogic():
         return render_template('admin/general_settings.html', title='General Settings')
 
     def allocation_config(self):
-        
+
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
-        
+
         form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data['gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
 
         if(request.method == 'POST'):
@@ -132,7 +132,7 @@ class AdminLogic():
                 'hobby_weight': form.hobby_weight.data,
                 'interest_weight': form.interest_weight.data,
             }
-            
+
             self._allocation_config_handler.update_allocation_config(current_user.scheme_id, config)
 
             # Text displayed after updating the config - as feedback for the user
@@ -141,7 +141,7 @@ class AdminLogic():
             update_message = ''
 
         # Always render the page
-        
+
         return render_template('admin/allocation_config.html', title='Allocation Algorithm', form=form, allocation_config=config_data, update_message=update_message)
 
     def allocation_algorithm(self):
@@ -261,7 +261,7 @@ class AdminLogic():
         except Exception as e:
                 self._log.exception("Could not execute get all user data logic")
                 return abort(500)
-    
+
     def invite_to_scheme(self):
         schemeId = current_user.scheme_id
 

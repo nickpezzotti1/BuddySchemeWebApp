@@ -1,14 +1,14 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from datetime import date
-from forms import MentorPreferencesForm
+from flaskr.forms import MentorPreferencesForm
 import logging
-from models.allocationmdl import AllocationModel
-from models.student_interestmdl import StudentInterestModel
-from models.student_hobbymdl import StudentHobbyModel
-from models.interestmdl import InterestModel
-from models.hobbymdl import HobbyModel
-from models.studentmdl import StudentModel
+from flaskr.models.allocationmdl import AllocationModel
+from flaskr.models.student_interestmdl import StudentInterestModel
+from flaskr.models.student_hobbymdl import StudentHobbyModel
+from flaskr.models.interestmdl import InterestModel
+from flaskr.models.hobbymdl import HobbyModel
+from flaskr.models.studentmdl import StudentModel
 
 class MentorLogic():
 
@@ -24,13 +24,13 @@ class MentorLogic():
                 self._log.exception("Could not execute get mentor logic")
                 return abort(500)
 
-    def mentor_preferences(self,request):                
+    def mentor_preferences(self,request):
         try:
             user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
-            
+
             # Create new form and pre-populate with existing values
             form = MentorPreferencesForm(request.form, date_of_birth=user_data["date_of_birth"], gender=user_data["gender"], buddy_limit=user_data["buddy_limit"], interests=user_data["interests"], hobbies=user_data["hobbies"])
-            
+
             # Update data on form submission
             if request.method == "POST" :
                 self._student_interest_handler.update_interests(current_user.scheme_id, current_user.k_number, form.interests.data)
@@ -44,15 +44,15 @@ class MentorLogic():
                 # Pre-populate interest and hobbies with existing values
                 form.interests.data=[interest_id for interest_id, interest_name in user_data["interests"].items()]
                 form.hobbies.data=[hobby_id for hobby_id, hobby_name in user_data["hobbies"].items()]
-                
-                # Populate possible choices using data from data_definitions   
+
+                # Populate possible choices using data from data_definitions
                 data_definitions = self.get_data_definitions()
                 gender_definitions = self.get_gender_definitions()
 
                 form.gender.choices = [(gender_type, gender_type) for gender_type in gender_definitions]
                 form.interests.choices = [(interest["id"], interest["interest_name"]) for interest in data_definitions["interests"]]
                 form.hobbies.choices = [(hobby["id"], hobby["hobby_name"]) for hobby in data_definitions["hobbies"]]
-                
+
                 return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, form=form)
 
         except Exception as e:
@@ -70,10 +70,10 @@ class MentorLogic():
                 return redirect(url_for("mentor.mentor"))
             else:
                 return render_template("user_screens/mentor/mentor_delete_page.html")
- 
+
         except Exception as e:
             self._log.exception("Could not delete student")
-            return abort(500) 
+            return abort(500)
 
     def mentor_mentee_list(self,request):
 
@@ -93,7 +93,7 @@ class MentorLogic():
         except Exception as e:
                 self._log.exception("Could not execute mentor mentee list logic")
                 return abort(500)
-                
+
     def mentee_view(self, k_number_mentee):
 
         try:

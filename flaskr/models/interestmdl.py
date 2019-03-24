@@ -1,10 +1,10 @@
-from models.helpers import sanity_check, to_str
-from models.basicmdl import BasicModel
+from flaskr.models.helpers import sanity_check, to_str
+from flaskr.models.basicmdl import BasicModel
 import logging
 
 class InterestModel(BasicModel):
 
-    def delete_interest(self, interest_id, scheme_id=1): # remove default 
+    def delete_interest(self, interest_id, scheme_id=1): # remove default
         """ Given the interest_id will delete the interest"""
 
         try:
@@ -28,7 +28,7 @@ class InterestModel(BasicModel):
 
     def get_interest_list(self, scheme_id=1):
         """ Will retrieve a list of possible hobbies from the database"""
-        
+
         try:
             return self._dao.execute("SELECT * FROM Interest WHERE scheme_id = %s;", (scheme_id, ))
 

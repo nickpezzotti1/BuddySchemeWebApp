@@ -1,7 +1,7 @@
-import basic as db
+import flaskr.basic as db
 from flask_login import UserMixin
-from models.schememdl import SchemeModel
-from models.studentmdl import StudentModel
+from flaskr.models.schememdl import SchemeModel
+from flaskr.models.studentmdl import StudentModel
 from werkzeug.security import generate_password_hash
 from flask import request
 

@@ -1,8 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from permissions import permissioned_login_required
+from flaskr.permissions import permissioned_login_required
 import logging
-from logic.mentorlgc import MentorLogic
+from flaskr.logic.mentorlgc import MentorLogic
 
 mentor_blueprint = Blueprint('mentor', __name__)
 
@@ -23,7 +23,7 @@ def mentor_mentee_list():
 
 @mentor_blueprint.route("/mentor/delete", methods=['POST', 'GET'])
 def mentor_delete():
-    
+
     return handler.mentor_delete(request)
 
 @mentor_blueprint.route('/mentor/mentee/<k_number_mentee>')

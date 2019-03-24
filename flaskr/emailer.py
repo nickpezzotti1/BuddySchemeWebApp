@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
-import user
-from auth_token import generate_token
+import flaskr.user
+from flaskr.auth_token import generate_token
 from flask import current_app
 
 COMMASPACE = ', '

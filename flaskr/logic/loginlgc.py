@@ -1,14 +1,14 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from forms import LoginForm, RegistrationForm
+from flaskr.forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash, check_password_hash
-from auth_token import verify_token
-from user import Student
+from flaskr.auth_token import verify_token
+from flaskr.user import Student
 from werkzeug.security import check_password_hash, generate_password_hash
-from emailer import send_email, send_email_confirmation_to_user
+from flaskr.emailer import send_email, send_email_confirmation_to_user
 import logging
-from models.studentmdl import StudentModel
-from models.schememdl import SchemeModel
+from flaskr.models.studentmdl import StudentModel
+from flaskr.models.schememdl import SchemeModel
 
 class LoginLogic():
 
@@ -50,7 +50,7 @@ class LoginLogic():
                                 target = "/mentor"
                             else:
                                 target = "/mentee"
-                                
+
                             return redirect(target)
                         else:
                             flash('The password you entered is incorrect')

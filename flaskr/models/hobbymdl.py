@@ -1,5 +1,5 @@
-from models.helpers import sanity_check, to_str
-from models.basicmdl import BasicModel
+from flaskr.models.helpers import sanity_check, to_str
+from flaskr.models.basicmdl import BasicModel
 import logging
 
 class HobbyModel(BasicModel):
@@ -28,7 +28,7 @@ class HobbyModel(BasicModel):
 
     def get_hobby_list(self, scheme_id=1): ## add scheme_id
         """ Will retrieve a list of possible hobbies from the database"""
-        
+
         try:
             return self._dao.execute("SELECT * FROM Hobby WHERE scheme_id = %s;", (scheme_id, ))
 

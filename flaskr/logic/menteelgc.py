@@ -2,12 +2,12 @@ from flask import Flask, flash, redirect, render_template, request, url_for, Blu
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from datetime import date
 import logging
-from models.allocationmdl import AllocationModel
-from models.student_interestmdl import StudentInterestModel
-from models.student_hobbymdl import StudentHobbyModel
-from models.interestmdl import InterestModel
-from models.hobbymdl import HobbyModel
-from models.studentmdl import StudentModel
+from flaskr.models.allocationmdl import AllocationModel
+from flaskr.models.student_interestmdl import StudentInterestModel
+from flaskr.models.student_hobbymdl import StudentHobbyModel
+from flaskr.models.interestmdl import InterestModel
+from flaskr.models.hobbymdl import HobbyModel
+from flaskr.models.studentmdl import StudentModel
 
 class MenteeLogic():
 

@@ -1,4 +1,4 @@
-import models.dao as dao
+import flaskr.models.dao as dao
 import logging
 
 class BasicModel:

@@ -1,8 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from permissions import admin_login_required
+from flaskr.permissions import admin_login_required
 import logging
-from logic.adminlgc import AdminLogic
+from flaskr.logic.adminlgc import AdminLogic
 
 admin_blueprint = Blueprint('admin', __name__)
 handler = AdminLogic()

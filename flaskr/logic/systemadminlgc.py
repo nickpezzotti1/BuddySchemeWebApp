@@ -13,16 +13,16 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-from forms import NewSchemeForm
-from forms import SystemLoginForm
+from flaskr.forms import NewSchemeForm
+from flaskr.forms import SystemLoginForm
 import json
 import logging
-from models.schememdl import SchemeModel
-from models.studentmdl import StudentModel
+from flaskr.models.schememdl import SchemeModel
+from flaskr.models.studentmdl import StudentModel
 from os import urandom
-from permissions import system_admin_login_required
+from flaskr.permissions import system_admin_login_required
 import requests
-from user import SystemAdmin
+from flaskr.user import SystemAdmin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
@@ -47,7 +47,7 @@ class SystemAdminLogic():
                         # check if he is authorised
                         if check_password_hash(system_admin.password, system_login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
-                            
+
                             login_user(system_admin, remember=False)
                             return redirect("/dashboard")
                         else:
@@ -128,14 +128,14 @@ class SystemAdminLogic():
         if(request.method == 'POST' and 'scheme_id' in request.form):
             scheme_id = request.form['scheme_id']
             ##conf exists in db
-            current_user.set_scheme_id(scheme_id)            
+            current_user.set_scheme_id(scheme_id)
             resp = make_response(redirect('/admin'))
             resp.set_cookie('scheme', scheme_id)
             return resp
-            
+
         else:
             return redirect('/system')
-        
+
 
 
     def __init__(self):

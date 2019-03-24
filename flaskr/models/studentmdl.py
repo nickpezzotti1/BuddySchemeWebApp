@@ -1,6 +1,6 @@
-from models.basicmdl import BasicModel
-from models.helpers import sanity_check
-from models.helpers import to_str
+from flaskr.models.basicmdl import BasicModel
+from flaskr.models.helpers import sanity_check
+from flaskr.models.helpers import to_str
 
 class StudentModel(BasicModel):
 
@@ -88,15 +88,15 @@ class StudentModel(BasicModel):
         except KeyError:
             raise KeyError(f"{self.HASH_COL} not found in table.")
 
-    
+
     def user_exist(self, scheme_id, k_number):
         try:
             get_user_data(scheme_id=scheme_id, k_number=k_number)
             return True
-        
+
         except Exception as e:
             return False
-        
+
 
     #TODO Should I return something here?
 
@@ -121,7 +121,7 @@ class StudentModel(BasicModel):
             succ = self._dao.rowcount()
             self._dao.commit()
             return succ
-            
+
         except Exception as e:
             self._log.exception("Could not insert student")
             raise e
@@ -144,7 +144,7 @@ class StudentModel(BasicModel):
 
     def get_all_students_data_basic(self, scheme_id):
         if sanity_check(scheme_id):
-    
+
             try:
                 return self._dao.execute("SELECT k_number, first_name, last_name, gender, is_mentor FROM Student WHERE Student.scheme_id = %s ORDER BY last_name ASC;", (scheme_id,))   ## add has matches
 
@@ -206,7 +206,7 @@ class StudentModel(BasicModel):
 
         else:
             return "Error: one of the field did not pass the sanity check"
-        
+
     def update_gender(self, scheme_id, k_number, gender):
         if sanity_check(scheme_id) and sanity_check(k_number):
             ## sanity check dob

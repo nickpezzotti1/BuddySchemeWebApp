@@ -1,8 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from permissions import permissioned_login_required
+from flaskr.permissions import permissioned_login_required
 import logging
-from logic.menteelgc import MenteeLogic
+from flaskr.logic.menteelgc import MenteeLogic
 
 mentee_blueprint = Blueprint('mentee', __name__)
 
@@ -24,4 +24,3 @@ def mentee_mentor_list():
 @mentee_blueprint.route('/mentee/mentor/<k_number_mentor>')
 def mentee_mentor(k_number_mentor):
     return handler.mentor_view(k_number_mentor)
-

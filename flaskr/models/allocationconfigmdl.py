@@ -1,5 +1,5 @@
-from models.helpers import sanity_check, to_str
-from models.basicmdl import BasicModel
+from flaskr.models.helpers import sanity_check, to_str
+from flaskr.models.basicmdl import BasicModel
 import logging
 
 class AllocationConfigModel(BasicModel):

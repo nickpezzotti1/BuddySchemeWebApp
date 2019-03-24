@@ -2,7 +2,7 @@ import boto3
 import logging
 
 
-class HandleSQS():
+class HandleSQS:
 
     REGION_NAME = 'eu-west-1'
     QUEUE_NAME = 'budyapp-algortihm'
@@ -45,8 +45,7 @@ class HandleSQS():
             # handle any errors
             else:
                 try:
-                    delete_response = self._queue.delete_messages(
-                        Entries=messages_to_delete)
+                    self._queue.delete_messages(Entries=messages_to_delete)
                 except Exception as e:
                     self._log.exception("Could not delete queue element")
                     raise e

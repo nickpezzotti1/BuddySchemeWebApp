@@ -36,7 +36,7 @@ class Student(User):
         except Exception as e:
             print("Exeception occured:{}".format(e))
 
-        if (not bool(user_data["email_confirmed"])):
+        if not bool(user_data["email_confirmed"]):
             raise Exception("User needs to confirm his email")
 
         self.email_confirmed = bool(user_data["email_confirmed"])

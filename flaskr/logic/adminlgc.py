@@ -15,54 +15,21 @@ from datetime import date, datetime
 from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
 
 
-class AdminLogic():
-    def admin_dashboard(self):
+class AdminLogic:
+    @staticmethod
+    def admin_dashboard():
         return render_template('admin/dashboard.html', title='Admin Dashboard')
 
     def admin_view_students(self):
         try:
             data = self._student_handler.get_all_students_data_basic(current_user.scheme_id)
             return render_template('admin/view_students.html', title='View Students', data=data)
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute admin view")
             return abort(500)
 
     def view_student_details(self):
-        try:
-            if(request.method == 'POST' and 'knum' in request.form):
-                k_number = request.form['knum']
-                if('mkAdmin' in request.form):
-                    res = self._student_handler.alter_admin_status(
-                        current_user.scheme_id, k_number, True)
-                elif('rmAdmin' in request.form):
-                    res = self._student_handler.alter_admin_status(
-                        current_user.scheme_id, k_number, False)
-                elif('mkAlloc' in request.form):
-                    torNum = request.form['torNum']
-                    teeNum = request.form['teeNum']
-                    res = self._allocation_handler.make_manual_allocation(
-                        current_user.scheme_id, teeNum, torNum)
-                elif("rmAlloc" in request.form):
-                    torNum = request.form['torNum']
-                    teeNum = request.form['teeNum']
-                    res = self._allocation_handler.remove_allocation(
-                        current_user.scheme_id, teeNum, torNum)
-                udata = self.get_all_user_data(current_user.scheme_id, k_number)
-                isTor = udata['is_mentor']
-                if isTor:
-                    matches = self._allocation_handler.get_mentee_details(
-                        current_user.scheme_id, k_number)
-                else:
-                    matches = self._allocation_handler.get_mentor_details(
-                        current_user.scheme_id, k_number)
-                # add scheme name to title?
-                return render_template('admin/student_details.html', title='Details For ' + k_number, udata=udata, matches=matches)
-            else:
-                return redirect(url_for('admin.admin_view_students'))
-
-        except Exception as e:
-            self._log.exception("Could not execute student details")
-            return abort(500)
+        pass
 
     def delete_student_details(self):
         try:
@@ -73,7 +40,7 @@ class AdminLogic():
             else:
                 return redirect(url_for('admin.admin_view_students'))
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute delete student details")
             return abort(500)
 
@@ -118,11 +85,9 @@ class AdminLogic():
             currentHobbies = self._hobby_handler.get_hobby_list()
             return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Invalid new hobby form")
             return abort(500)
-
-        return render_template('admin/general_settings.html', title='General Settings')
 
     def allocation_config(self):
 
@@ -156,7 +121,8 @@ class AdminLogic():
         flash("The allocations have been made, please look at the student table for more information")
         return render_template('admin/dashboard.html', assignments=self.allocate())
 
-    def sign_up_settings(self):
+    @staticmethod
+    def sign_up_settings():
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
 
     def allocate(self):
@@ -183,7 +149,7 @@ class AdminLogic():
 
             return "The following assignments have been made:" + str(json_response["assignments"])
 
-        except Exception as e:
+        except Exception:
             self._log.exception(e)
             return abort(500)
 
@@ -200,20 +166,18 @@ class AdminLogic():
         # Get all mentees from database
         mentees = self._allocation_handler.get_all_mentees(current_user.scheme_id)
 
-        input = {"configurations": {}, "mentors": [], "mentees": []}
-
-        input["configurations"] = {
+        input = {"configurations": {
             "age_importance": allocation_config["age_weight"],
             "gender_importance": allocation_config["gender_weight"],
             "hobby_importance": allocation_config["hobby_weight"],
             "interest_importance": allocation_config["interest_weight"]
-        }
+        }, "mentors": [], "mentees": []}
 
         for mentor in mentors:
             input["mentors"].append(
                 {
                     "ID": mentor["k_number"],
-                    "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentor["date_of_birth"]), "%Y-%m-%d").year)),
+                    "age": (-1 if mentor["date_of_birth"] is None else (date.today().year - datetime.strptime(str(mentor["date_of_birth"]), "%Y-%m-%d").year)),
                     "gender": mentor["gender"],
                     "partnerLimit": mentor["buddy_limit"]
                 }
@@ -223,7 +187,7 @@ class AdminLogic():
             input["mentees"].append(
                 {
                     "ID": mentee["k_number"],
-                    "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentee["date_of_birth"]), "%Y-%m-%d").year)),
+                    "age": (-1 if mentee["date_of_birth"] is None else (date.today().year - datetime.strptime(str(mentee["date_of_birth"]), "%Y-%m-%d").year)),
                     "gender": mentee["gender"],
                     "partnerLimit": mentee["buddy_limit"]
                 }
@@ -244,7 +208,7 @@ class AdminLogic():
             else:
                 return redirect(url_for('admin.admin_view_students'))
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute manual assignment")
             flash("Something went wrong during manual assignment")
 
@@ -269,14 +233,15 @@ class AdminLogic():
 
             return user_data
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute get all user data logic")
             return abort(500)
 
-    def invite_to_scheme(self):
-        schemeId = current_user.scheme_id
+    @staticmethod
+    def invite_to_scheme():
+        scheme_id = current_user.scheme_id
 
-        result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=schemeId)
+        result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
         result = "/signup/" + result
         return result
 
@@ -290,6 +255,6 @@ class AdminLogic():
             self._student_interest_handler = StudentInterestModel()
             self._hobby_handler = HobbyModel()
             self._interest_handler = InterestModel()
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not create model instance")
-            return abort(500)
+            raise abort(500)

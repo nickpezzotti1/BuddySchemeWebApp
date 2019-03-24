@@ -6,7 +6,7 @@ import logging
 from botocore.exceptions import ClientError
 
 
-class Dao():
+class Dao:
     # Singleton class to ensure all models use only one DB bridge
 
     instance = None
@@ -18,7 +18,7 @@ class Dao():
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
-    class __Dao():
+    class __Dao:
         """ Data access object for database operations"""
 
         SECRET = "beta/mysql"
@@ -26,22 +26,6 @@ class Dao():
 
         def _create_connection(self):
             """ Estabilish database connection """
-
-            try:
-                self.__connection = pymysql.connect(
-                    host=self._credentials['host'],
-                    user=self._credentials['username'],
-                    password=self._credentials['password'],
-                    db=self._credentials['dbname'],
-                    charset="utf8mb4",
-                    write_timeout=5,
-                    autocommit=True
-                )
-                self.__cursor = self.__connection.cursor(pymysql.cursors.DictCursor)
-                self._log.info("Created DB connection")
-            except Exception as e:
-                self._log.exception("Could not create DB connection")
-                raise
 
         def execute(self, query, escapes=None):
             """ Execute a provided query and return result"""

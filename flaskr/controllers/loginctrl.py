@@ -18,8 +18,8 @@ def signup():
 
 
 @login_blueprint.route("/signup/<token>", methods=["GET", "POST"])
-def signupToken(token):
-    return handler.signupToken(request, token)
+def signup_token(token):
+    return handler.signup_token(request, token)
 
 
 @login_blueprint.route("/confirm/<token>")

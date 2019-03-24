@@ -1,3 +1,5 @@
+from werkzeug.exceptions import abort
+
 from flaskr.models.helpers import sanity_check
 from flaskr.models.basicmdl import BasicModel
 
@@ -11,61 +13,25 @@ class AllocationModel(BasicModel):
             self._log.exception("Mentees not passed as list")
             return abort(500)
 
-        try:
-            delete_mentees(mentor_k_number)
-        except Exception as e:
-            self._log.exception("Could not delete mentees while updating")
-            return abort(500)
-
         for mentee_k_number in mentees_k_number:
-            try:
-                insert_mentor_mentee(mentor_k_number, mentee_k_number)
-            except Exception as e:
-                self._log.exception("Could not insert pair while updating mentee")
-                return abort(500)
+            pass
 
         return True
 
-    def update_mentor(self, scheme_id, mentee_k_number, mentors_k_number):
+    def update_mentor(self, mentors_k_number):
         """ Given the mentee_k_number will update all his mentors"""
 
         if type(mentors_k_number) is not list:
             self._log.exception("Mentors not passed as list")
             return abort(500)
-        try:
-            delete_mentors(scheme_id, mentee_k_number)
-        except Exception as e:
-            self._log.exception("Could not delete mentors while updating")
-            return abort(500)
-
-        for mentor_k_number in mentors_k_number:
-            try:
-                insert_mentor_mentee(scheme_id, mentor_k_number, mentee_k_number)
-            except Exception as e:
-                self._log.exception("Could not insert pairs while updating mentor")
-                return abort(500)
 
         return True
 
     def get_all_mentors(self, scheme_id):
         """ Returns all the k-number of mentors"""
 
-        try:
-            return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=1 AND scheme_id = %s;", (scheme_id, ))
-
-        except Exception as e:
-            self._log.exception("Could not get all mentors")
-            return abort(500)
-
     def get_all_mentees(self, scheme_id):
         """ Returns all the k-number of the mentees"""
-
-        try:
-            return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor = 0 AND scheme_id = %s;", (scheme_id, ))
-
-        except Exception as e:
-            self._log.exception("Could not get all mentees")
-            return abort(500)
 
     def get_mentee_details(self, scheme_id, k_number):
         if sanity_check(k_number):

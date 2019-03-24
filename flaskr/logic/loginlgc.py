@@ -12,7 +12,7 @@ from flaskr.models.studentmdl import StudentModel
 from flaskr.user import Student
 
 
-class LoginLogic():
+class LoginLogic:
 
     def login(self, request):
 
@@ -39,7 +39,7 @@ class LoginLogic():
                         return redirect("/login")
 
                     # if user exists in db then a password hash was successfully retrieved
-                    if (user.password):
+                    if user.password:
                         # check if he is authorised
                         if check_password_hash(user.password, login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
@@ -48,7 +48,7 @@ class LoginLogic():
                             is_mentor = self._student_handler.get_user_data(
                                 login_form.k_number.data).is_mentor
 
-                            if (is_mentor):
+                            if is_mentor:
                                 target = "/mentor"
                             else:
                                 target = "/mentee"
@@ -69,10 +69,10 @@ class LoginLogic():
             self._log.exception("Could not parse login form")
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
 
-    def signupToken(self, request, token):
-        schemeId = verify_token(
+    def signup_token(self, request, token):
+        scheme_id = verify_token(
             secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
-        return self.signup(request, schemeId=schemeId)
+        return self.signup(request, schemeId=scheme_id)
 
     def signup(self, request, schemeId=False):
 
@@ -94,7 +94,7 @@ class LoginLogic():
 
         try:
             if registration_form.registration_submit.data:  # if the registation form was submitted
-                if (registration_form.password.data != registration_form.confirm_password.data):
+                if registration_form.password.data != registration_form.confirm_password.data:
                     flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
                     return render_template("signup.html", registration_form=registration_form)
 
@@ -174,4 +174,4 @@ class LoginLogic():
             self._scheme_handler = SchemeModel()
         except Exception as e:
             self._log.exception("Could not create model instance")
-            return abort(500)
+            raise abort(500)

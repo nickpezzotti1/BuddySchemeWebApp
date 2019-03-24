@@ -58,7 +58,7 @@ class StudentModel(BasicModel):
         dict_fields = {field: value for field,
                        value in accepted_fields.items() if type(value) is not list}
 
-        return _update_students(** dict_fields)
+        return self._update_students(** dict_fields)
 
     def update_hash_password(self, scheme_id, k_number, password_hash):
         """ Given the k_number, will update the password_hash"""
@@ -90,12 +90,7 @@ class StudentModel(BasicModel):
             raise KeyError(f"{self.HASH_COL} not found in table.")
 
     def user_exist(self, scheme_id, k_number):
-        try:
-            get_user_data(scheme_id=scheme_id, k_number=k_number)
-            return True
-
-        except Exception as e:
-            return False
+        pass
 
     # TODO Should I return something here?
 

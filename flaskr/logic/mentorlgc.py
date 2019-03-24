@@ -12,7 +12,7 @@ from flaskr.models.student_interestmdl import StudentInterestModel
 from flaskr.models.studentmdl import StudentModel
 
 
-class MentorLogic():
+class MentorLogic:
 
     def mentor(self):
 
@@ -22,7 +22,7 @@ class MentorLogic():
 
             return render_template("user_screens/mentor/mentor_dashboard_page.html", title="Your Profile", user_data=user_data)
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute get mentor logic")
             return abort(500)
 
@@ -68,7 +68,7 @@ class MentorLogic():
 
                 return render_template("user_screens/mentor/mentor_preferences_page.html", title="Your Preferences", user_data=user_data, form=form)
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute mentor preferences logic")
             return abort(500)
 
@@ -83,7 +83,7 @@ class MentorLogic():
             else:
                 return render_template("user_screens/mentor/mentor_delete_page.html")
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not delete student")
             return abort(500)
 
@@ -104,7 +104,7 @@ class MentorLogic():
 
             return render_template("user_screens/mentor/mentor_mentee_list_page.html", title="Your Mentees", mentees=mentee_list_data)
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute mentor mentee list logic")
             return abort(500)
 
@@ -113,7 +113,7 @@ class MentorLogic():
         try:
             return render_template("user_screens/mentor/mentor_mentee_page.html", title="Your Mentee", mentee_data=self._student_handler.get_user_data(current_user.scheme_id, k_number_mentee), k_number_mentee=k_number_mentee)
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute mentee view logic")
             return abort(500)
 
@@ -124,7 +124,7 @@ class MentorLogic():
         try:
             return ["Male", "Female", "Other", "Prefer not to say"]
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute mentor get gender definitions logic")
             return abort(500)
 
@@ -138,7 +138,7 @@ class MentorLogic():
 
             return data_definitions
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute mentor get data definitions logic")
             return abort(500)
 
@@ -163,7 +163,7 @@ class MentorLogic():
 
             return user_data
 
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not execute get all user data logic")
             return abort(500)
 
@@ -176,6 +176,6 @@ class MentorLogic():
             self._student_interest_handler = StudentInterestModel()
             self._hobby_handler = HobbyModel()
             self._interest_handler = InterestModel()
-        except Exception as e:
+        except Exception:
             self._log.exception("Could not create model instance")
-            return abort(500)
+            raise abort(500)

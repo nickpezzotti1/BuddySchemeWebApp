@@ -1,5 +1,5 @@
 # BuddySchemeWebApp (Python 3.6)
-Buddy scheme management system web application. 
+Buddy scheme management system web application.
 
 # Notes for developers
 We are using pythons virtual enviorements to make sure we are all using the same version of the dependencies and of python. Python 3.6> is used.
@@ -23,7 +23,8 @@ We are using pythons virtual enviorements to make sure we are all using the same
 ## Run the application
 
 1. `$ source env/bin/activate`
-2. `(env) $ python app.py`
+2. `$ export FLASK_APP=flaskr`
+3. `(env) $ flask run`
 
 
 ## Setup Local SMTP Server

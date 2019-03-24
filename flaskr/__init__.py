@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from hashlib import sha3_256
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 import logging
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -10,21 +9,18 @@ import flaskr.controllers.loginctrl as loginctrl
 import flaskr.controllers.mentorctrl as mentorctrl
 import flaskr.controllers.menteectrl as menteectrl
 import flaskr.controllers.errorsctrl as errorsctrl
+from flaskr.config import Config
 
 login_manager = LoginManager()
 login_manager.login_view = "login.login"
 
 log = logging.getLogger(__name__)
 
-def create_app(config_class=None):
+def create_app(config_class=Config):
     app = Flask(__name__)
     login_manager.init_app(app)
 
-    app.config['SECRET_KEY'] = 'powerful secretkey'
-    app.config["EMAIL_CONFIRMATION_EXPIRATION"] = 86400
-    app.config["PASSWORD_RESET_EXPIRATION"] = 86400
-    app.config["MESSAGE_SEPARATION_TOKEN"] = "[" + sha3_256(bytes(app.config["SECRET_KEY"], "utf-8")).hexdigest() + "]"
-    #app.config.from_object(Config)
+    app.config.from_object(Config)
 
     import flaskr.controllers
     app.register_blueprint(controllers.systemadminctrl.system_admin_blueprint)

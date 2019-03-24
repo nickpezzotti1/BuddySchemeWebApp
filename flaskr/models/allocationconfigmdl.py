@@ -2,6 +2,7 @@ from flaskr.models.helpers import sanity_check, to_str
 from flaskr.models.basicmdl import BasicModel
 import logging
 
+
 class AllocationConfigModel(BasicModel):
 
     def get_allocation_config(self, scheme_id):
@@ -23,7 +24,8 @@ class AllocationConfigModel(BasicModel):
                 return "Error: one of the field did not pass the sanity check"
 
         try:
-            self._dao.execute(f"UPDATE Allocation_Config SET age_weight = {config['age_weight']}, gender_weight = {config['gender_weight']}, hobby_weight = {config['hobby_weight']}, interest_weight = {config['interest_weight']} WHERE scheme_id = {to_str(scheme_id)};")
+            self._dao.execute(
+                f"UPDATE Allocation_Config SET age_weight = {config['age_weight']}, gender_weight = {config['gender_weight']}, hobby_weight = {config['hobby_weight']}, interest_weight = {config['interest_weight']} WHERE scheme_id = {to_str(scheme_id)};")
             self._dao.commit()
 
         except Exception as e:

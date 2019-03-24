@@ -2,6 +2,7 @@ from flask import redirect
 from flask_login import current_user
 from functools import wraps
 
+
 def permissioned_login_required(role="ANY", redirect_on_fail="/"):
     def wrapper(fn):
         @wraps(fn)
@@ -15,7 +16,7 @@ def permissioned_login_required(role="ANY", redirect_on_fail="/"):
     return wrapper
 
 
-def admin_login_required(redirect_on_fail = '/'):
+def admin_login_required(redirect_on_fail='/'):
     def wrapper(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
@@ -28,7 +29,8 @@ def admin_login_required(redirect_on_fail = '/'):
         return decorated_view
     return wrapper
 
-def system_admin_login_required(redirect_on_fail = '/system'):
+
+def system_admin_login_required(redirect_on_fail='/system'):
     def wrapper(fn):
         @wraps(fn)
         def decorated_view(*args, **kwargs):

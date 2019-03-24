@@ -14,6 +14,7 @@ from flaskr.models.studentmdl import StudentModel
 from datetime import date, datetime
 from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
 
+
 class AdminLogic():
     def admin_dashboard(self):
         return render_template('admin/dashboard.html', title='Admin Dashboard')
@@ -26,30 +27,36 @@ class AdminLogic():
             self._log.exception("Could not execute admin view")
             return abort(500)
 
-
     def view_student_details(self):
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
                 if('mkAdmin' in request.form):
-                    res = self._student_handler.alter_admin_status(current_user.scheme_id, k_number, True)
+                    res = self._student_handler.alter_admin_status(
+                        current_user.scheme_id, k_number, True)
                 elif('rmAdmin' in request.form):
-                    res = self._student_handler.alter_admin_status(current_user.scheme_id, k_number, False)
+                    res = self._student_handler.alter_admin_status(
+                        current_user.scheme_id, k_number, False)
                 elif('mkAlloc' in request.form):
                     torNum = request.form['torNum']
                     teeNum = request.form['teeNum']
-                    res = self._allocation_handler.make_manual_allocation(current_user.scheme_id, teeNum, torNum)
+                    res = self._allocation_handler.make_manual_allocation(
+                        current_user.scheme_id, teeNum, torNum)
                 elif("rmAlloc" in request.form):
                     torNum = request.form['torNum']
                     teeNum = request.form['teeNum']
-                    res = self._allocation_handler.remove_allocation(current_user.scheme_id, teeNum, torNum)
+                    res = self._allocation_handler.remove_allocation(
+                        current_user.scheme_id, teeNum, torNum)
                 udata = self.get_all_user_data(current_user.scheme_id, k_number)
                 isTor = udata['is_mentor']
                 if isTor:
-                    matches = self._allocation_handler.get_mentee_details(current_user.scheme_id, k_number)
+                    matches = self._allocation_handler.get_mentee_details(
+                        current_user.scheme_id, k_number)
                 else:
-                    matches = self._allocation_handler.get_mentor_details(current_user.scheme_id, k_number)
-                return render_template('admin/student_details.html', title='Details For ' + k_number, udata=udata, matches=matches) ## add scheme name to title?
+                    matches = self._allocation_handler.get_mentor_details(
+                        current_user.scheme_id, k_number)
+                # add scheme name to title?
+                return render_template('admin/student_details.html', title='Details For ' + k_number, udata=udata, matches=matches)
             else:
                 return redirect(url_for('admin.admin_view_students'))
 
@@ -122,7 +129,8 @@ class AdminLogic():
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
-        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data['gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
+        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data[
+                                    'gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
 
         if(request.method == 'POST'):
             # Format the results in a dict and call the update query
@@ -155,7 +163,8 @@ class AdminLogic():
         try:
             input_string = self.generate_mentee_and_mentor_json()
 
-            response = requests.post('https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
+            response = requests.post(
+                'https://c4t2nyi7y4.execute-api.us-east-2.amazonaws.com/default', data=input_string)
             # remove surrounding quotes (first and last char) and remove the backslashes (ASK NICHOLAS, problem with aws formatting)
             response_text = response.text[1:-1].replace("\\", "")
             json_response = json.loads(response_text)
@@ -167,7 +176,8 @@ class AdminLogic():
 
                 # Insert the new allocations
                 for pair in pairs:
-                    self._allocation_handler.insert_mentor_mentee(current_user.scheme_id, pair["mentor_id"], pair["mentee_id"])
+                    self._allocation_handler.insert_mentor_mentee(
+                        current_user.scheme_id, pair["mentor_id"], pair["mentee_id"])
             except:
                 print("Error in inserting into db")
 
@@ -177,11 +187,12 @@ class AdminLogic():
             self._log.exception(e)
             return abort(500)
 
-    #TODO add try catch for this method
+    # TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
 
         # Get allocation configuration from database
-        allocation_config = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
+        allocation_config = self._allocation_config_handler.get_allocation_config(
+            current_user.scheme_id)
 
         # Get all mentors from database
         mentors = self._allocation_handler.get_all_mentors(current_user.scheme_id)
@@ -200,27 +211,25 @@ class AdminLogic():
 
         for mentor in mentors:
             input["mentors"].append(
-                                    {
-                                        "ID": mentor["k_number"],
-                                        "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentor["date_of_birth"]), "%Y-%m-%d").year)),
-                                        "gender": mentor["gender"],
-                                        "partnerLimit": mentor["buddy_limit"]
-                                    }
-                                )
+                {
+                    "ID": mentor["k_number"],
+                    "age": (-1 if mentor["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentor["date_of_birth"]), "%Y-%m-%d").year)),
+                    "gender": mentor["gender"],
+                    "partnerLimit": mentor["buddy_limit"]
+                }
+            )
 
         for mentee in mentees:
             input["mentees"].append(
-                                    {
-                                        "ID": mentee["k_number"],
-                                        "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentee["date_of_birth"]), "%Y-%m-%d").year)),
-                                        "gender": mentee["gender"],
-                                        "partnerLimit": mentee["buddy_limit"]
-                                    }
-                                )
+                {
+                    "ID": mentee["k_number"],
+                    "age": (-1 if mentee["date_of_birth"] == None else (date.today().year - datetime.strptime(str(mentee["date_of_birth"]), "%Y-%m-%d").year)),
+                    "gender": mentee["gender"],
+                    "partnerLimit": mentee["buddy_limit"]
+                }
+            )
 
         return json.dumps(input)
-
-
 
     def manually_assign(self):
 
@@ -228,8 +237,10 @@ class AdminLogic():
             if(request.method == 'POST'):
                 k_number = request.form['knum']
                 udata = self._student_handler.get_user_data(current_user.scheme_id, k_number)
-                potentials = self._allocation_handler.get_manual_allocation_matches(current_user.scheme_id, k_number, udata['is_mentor'])
-                return render_template('admin/manually_assign.html', title='Manually Assign Match', udata=udata, potentials=potentials) # imprv title?
+                potentials = self._allocation_handler.get_manual_allocation_matches(
+                    current_user.scheme_id, k_number, udata['is_mentor'])
+                # imprv title?
+                return render_template('admin/manually_assign.html', title='Manually Assign Match', udata=udata, potentials=potentials)
             else:
                 return redirect(url_for('admin.admin_view_students'))
 
@@ -259,8 +270,8 @@ class AdminLogic():
             return user_data
 
         except Exception as e:
-                self._log.exception("Could not execute get all user data logic")
-                return abort(500)
+            self._log.exception("Could not execute get all user data logic")
+            return abort(500)
 
     def invite_to_scheme(self):
         schemeId = current_user.scheme_id
@@ -280,5 +291,5 @@ class AdminLogic():
             self._hobby_handler = HobbyModel()
             self._interest_handler = InterestModel()
         except Exception as e:
-                self._log.exception("Could not create model instance")
-                return abort(500)
+            self._log.exception("Could not create model instance")
+            return abort(500)

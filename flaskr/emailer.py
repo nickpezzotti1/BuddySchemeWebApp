@@ -6,11 +6,12 @@ from flask import current_app
 
 COMMASPACE = ', '
 
+
 def send_email(sender, recipients, subject, content):
     try:
-        ## Run a local instance of a email server that echoes
-        ## the messages on terminal
-        ## (env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025
+        # Run a local instance of a email server that echoes
+        # the messages on terminal
+        # (env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025
         server = smtplib.SMTP("localhost", 1025)
 
         msg = MIMEText(content)
@@ -23,10 +24,12 @@ def send_email(sender, recipients, subject, content):
     except Exception as e:
         print(e)
 
+
 def send_email_confirmation_to_user(user, secret_key):
-    ## TODO: Possible feature to check if email
+    # TODO: Possible feature to check if email
     #  was already confirmed and keep track of multiple requests
-    message = str(user.k_number) + current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(user.scheme_id)
+    message = str(user.k_number) + \
+        current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(user.scheme_id)
     token = generate_token(secret_key=secret_key, message=message)
     sender = "no-reply@sbs.kcl.ac.uk"
     recipients = [str(user.k_number) + "@kcl.ac.uk"]

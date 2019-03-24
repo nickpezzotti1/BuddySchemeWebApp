@@ -2,10 +2,11 @@ from flaskr.models.basicmdl import BasicModel
 from flaskr.models.helpers import sanity_check
 from flaskr.models.helpers import to_str
 
+
 class SchemeModel(BasicModel):
 
     def get_system_admin_pass(self, email):
-        ## sanity but needs @ symbol
+        # sanity but needs @ symbol
         try:
             return self._dao.execute("SELECT password_hash FROM Super_user WHERE email = %s;", (email, ))[0]['password_hash']
 
@@ -31,7 +32,7 @@ class SchemeModel(BasicModel):
 
     def check_scheme_avail(self, scheme_name):
         """Returns true if new scheme name is available"""
-        if True: ##sanity_check(scheme_name):
+        if True:  # sanity_check(scheme_name):
             try:
                 return self._dao.execute("SELECT IF (COUNT(scheme_name) > 0, false, true) AS avail FROM Scheme WHERE scheme_name = %s;", (scheme_name, ))[0]['avail']
 
@@ -41,7 +42,7 @@ class SchemeModel(BasicModel):
 
     def create_new_scheme(self, scheme_name, is_active=1):
         """Inserts a new scheme"""
-        if True: ##sanity_check(scheme_name) and sanity_check(is_active):  ## combine check and add ?
+        if True:  # sanity_check(scheme_name) and sanity_check(is_active):  ## combine check and add ?
             try:
                 self._dao.execute("INSERT INTO Scheme VALUES(0, %s, %s);", (scheme_name, is_active))
                 succ = self._dao.rowcount()
@@ -54,9 +55,10 @@ class SchemeModel(BasicModel):
 
     def create_allocation_config_entry(self, scheme_id):
         """Inserts an entry for new scheme into allocation_config"""
-        if sanity_check(scheme_id): ## combine check and add ?
+        if sanity_check(scheme_id):  # combine check and add ?
             try:
-                self._dao.execute(f"INSERT INTO Allocation_Config VALUES({to_str(scheme_id)}, 1, 10, 5, 5, 0);")
+                self._dao.execute(
+                    f"INSERT INTO Allocation_Config VALUES({to_str(scheme_id)}, 1, 10, 5, 5, 0);")
                 succ = self._dao.rowcount()
                 self._dao.commit()
                 return succ
@@ -65,13 +67,12 @@ class SchemeModel(BasicModel):
                 self._log.exception("Could Not Create New Scheme")
                 raise e
 
-
-
     def get_scheme_id(self, scheme_name):
         """Returns true if new scheme name is available"""
-        if True: ##sanity_check(scheme_name):
+        if True:  # sanity_check(scheme_name):
             try:
-                return self._dao.execute("SELECT scheme_id FROM Scheme WHERE scheme_name = %;", (scheme_name, ))[0]['scheme_id'] ## errors if not exists
+                # errors if not exists
+                return self._dao.execute("SELECT scheme_id FROM Scheme WHERE scheme_name = %;", (scheme_name, ))[0]['scheme_id']
 
             except Exception as e:
                 self._log.exception("Could Not Get Scheme ID")
@@ -81,7 +82,8 @@ class SchemeModel(BasicModel):
         """Suspends a given scheme"""
         if sanity_check(scheme_id):
             try:
-                self._dao.execute("UPDATE Scheme SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE scheme_id = %s;", (scheme_id, ))
+                self._dao.execute(
+                    "UPDATE Scheme SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE scheme_id = %s;", (scheme_id, ))
                 self._dao.commit()
 
             except Exception as e:
@@ -92,7 +94,8 @@ class SchemeModel(BasicModel):
         """Suspends a given scheme"""
         if sanity_check(scheme_id):
             try:
-                self._dao.execute("DELETE FROM Scheme WHERE scheme_id = %s;", (scheme_id, )) ## needs cascades
+                self._dao.execute("DELETE FROM Scheme WHERE scheme_id = %s;",
+                                  (scheme_id, ))  # needs cascades
                 self._dao.commit()
 
             except Exception as e:

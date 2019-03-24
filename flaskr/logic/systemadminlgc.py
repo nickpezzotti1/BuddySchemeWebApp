@@ -26,11 +26,12 @@ from flaskr.user import SystemAdmin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
+
 class SystemAdminLogic():
 
     def system_admin_login(self, request):
-        ##if current_user.is_authenticated:
-        ##    return redirect("/dashboard")
+        # if current_user.is_authenticated:
+        # return redirect("/dashboard")
 
         try:
 
@@ -59,7 +60,6 @@ class SystemAdminLogic():
                     flash("Error logging in, please check the data that was entered")
                     return render_template("system_admin/login.html", system_login_form=system_login_form)
 
-
             return render_template("system_admin/login.html", system_login_form=system_login_form)
 
         except Exception as e:
@@ -68,7 +68,7 @@ class SystemAdminLogic():
 
     @system_admin_login_required()
     def system_admin_dashboard(self):
-        ## try:
+        # try:
         if(request.method == 'POST' and 'susScheme' in request.form):
             scheme_id = request.form['scheme_id']
             self._scheme_handler.suspend_scheme(scheme_id)
@@ -81,7 +81,7 @@ class SystemAdminLogic():
 
     @system_admin_login_required()
     def system_new_scheme(self, request):
-        ##require system admin
+        # require system admin
         try:
             new_scheme_form = NewSchemeForm(request.form)
 
@@ -93,24 +93,29 @@ class SystemAdminLogic():
 
             if new_scheme_form.submit.data:
                 if new_scheme_form.validate_on_submit():
-                    new_scheme_name = new_scheme_form.scheme_name.data + " " + str(new_scheme_form.year.data)
+                    new_scheme_name = new_scheme_form.scheme_name.data + \
+                        " " + str(new_scheme_form.year.data)
                     if self._scheme_handler.check_scheme_avail(new_scheme_name):
                         if self._scheme_handler.create_new_scheme(new_scheme_name):
                             scheme_admin_k_number = new_scheme_form.k_number.data
-                            scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name) ## new_scheme_name) ## return from create_new_scheme isntead?
+                            # new_scheme_name) ## return from create_new_scheme isntead?
+                            scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name)
                             ##
                             ## ToDo - below
                             ##
-                            password = "password"  ##urandom(16) ## send in email + force to change
+                            password = "password"  # urandom(16) ## send in email + force to change
                             hashed_password = generate_password_hash(password)
-                            if self._student_handler.insert_student(scheme_id, scheme_admin_k_number, 'admin change', 'admin change', 'admin change', 2, 'admin change', 1, hashed_password, 1, 1): ## check res?
+                            # check res?
+                            if self._student_handler.insert_student(scheme_id, scheme_admin_k_number, 'admin change', 'admin change', 'admin change', 2, 'admin change', 1, hashed_password, 1, 1):
                                 if self._scheme_handler.create_allocation_config_entry(scheme_id):
                                     flash("Scheme And Admin Account Succesfully Created")
                                 else:
-                                    flash("Scheme And Admin Account Created But Failed To Create Allocation Config")
+                                    flash(
+                                        "Scheme And Admin Account Created But Failed To Create Allocation Config")
 
                             else:
-                                flash("Scheme Created But Admin Account Failed To Create, Please Manually Assign")
+                                flash(
+                                    "Scheme Created But Admin Account Failed To Create, Please Manually Assign")
 
                         else:
                             flash("Database Error Creating New Scheme")
@@ -127,7 +132,7 @@ class SystemAdminLogic():
     def system_view_scheme_dashboard(self, request):
         if(request.method == 'POST' and 'scheme_id' in request.form):
             scheme_id = request.form['scheme_id']
-            ##conf exists in db
+            # conf exists in db
             current_user.set_scheme_id(scheme_id)
             resp = make_response(redirect('/admin'))
             resp.set_cookie('scheme', scheme_id)
@@ -135,8 +140,6 @@ class SystemAdminLogic():
 
         else:
             return redirect('/system')
-
-
 
     def __init__(self):
         try:

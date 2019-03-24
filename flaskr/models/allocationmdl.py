@@ -2,6 +2,7 @@ from flaskr.models.helpers import sanity_check, to_str
 from flaskr.models.basicmdl import BasicModel
 import logging
 
+
 class AllocationModel(BasicModel):
 
     def update_mentee(self, scheme_id, mentor_k_number, mentees_k_number):
@@ -14,8 +15,8 @@ class AllocationModel(BasicModel):
         try:
             delete_mentees(mentor_k_number)
         except Exception as e:
-                self._log.exception("Could not delete mentees while updating")
-                return abort(500)
+            self._log.exception("Could not delete mentees while updating")
+            return abort(500)
 
         for mentee_k_number in mentees_k_number:
             try:
@@ -26,7 +27,6 @@ class AllocationModel(BasicModel):
 
         return True
 
-
     def update_mentor(self, scheme_id, mentee_k_number, mentors_k_number):
         """ Given the mentee_k_number will update all his mentors"""
 
@@ -36,8 +36,8 @@ class AllocationModel(BasicModel):
         try:
             delete_mentors(scheme_id, mentee_k_number)
         except Exception as e:
-                self._log.exception("Could not delete mentors while updating")
-                return abort(500)
+            self._log.exception("Could not delete mentors while updating")
+            return abort(500)
 
         for mentor_k_number in mentors_k_number:
             try:
@@ -55,9 +55,8 @@ class AllocationModel(BasicModel):
             return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=1 AND scheme_id = %s;", (scheme_id, ))
 
         except Exception as e:
-                self._log.exception("Could not get all mentors")
-                return abort(500)
-
+            self._log.exception("Could not get all mentors")
+            return abort(500)
 
     def get_all_mentees(self, scheme_id):
         """ Returns all the k-number of the mentees"""
@@ -66,9 +65,8 @@ class AllocationModel(BasicModel):
             return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor = 0 AND scheme_id = %s;", (scheme_id, ))
 
         except Exception as e:
-                self._log.exception("Could not get all mentees")
-                return abort(500)
-
+            self._log.exception("Could not get all mentees")
+            return abort(500)
 
     def get_mentee_details(self, scheme_id, k_number):
         if sanity_check(k_number):
@@ -94,7 +92,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-                return abort(500)
+            return abort(500)
 
     def get_manual_allocation_matches(self, scheme_id, k_number, is_tor):
         if sanity_check(k_number):    # and _sanity_check(is_tor):
@@ -108,7 +106,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-                return abort(500)
+            return abort(500)
 
     def make_manual_allocation(self, scheme_id, tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
@@ -122,7 +120,7 @@ class AllocationModel(BasicModel):
                 raise e
 
         else:
-                return abort(500)
+            return abort(500)
 
     def remove_allocation(self, scheme_id, tee_number, tor_number):
         if sanity_check(tee_number) and sanity_check(tor_number):
@@ -158,12 +156,12 @@ class AllocationModel(BasicModel):
             self._log.exception("Could not get mentees")
             raise e
 
-
     def insert_mentor_mentee(self, scheme_id, mentor_k_number, mentee_k_number):
         """ Insert the mentor, mentee pair k number """
 
         try:
-            self._dao.execute("INSERT INTO Allocation VALUES(%s, %s, %s);", (scheme_id, mentor_k_number, mentee_k_number))
+            self._dao.execute("INSERT INTO Allocation VALUES(%s, %s, %s);",
+                              (scheme_id, mentor_k_number, mentee_k_number))
             self._dao.commit()
 
         except Exception as e:
@@ -173,7 +171,8 @@ class AllocationModel(BasicModel):
     def delete_mentors(self, scheme_id, mentee_k_number):
         """ Given the mentee k-number will delete all his mentors"""
         try:
-            self._dao.execute("DELETE FROM Allocation where mentee_k_number = %s AND scheme_id = %s;", (mentee_k_number, scheme_id))
+            self._dao.execute(
+                "DELETE FROM Allocation where mentee_k_number = %s AND scheme_id = %s;", (mentee_k_number, scheme_id))
             self._dao.commit()
 
         except Exception as e:
@@ -183,7 +182,8 @@ class AllocationModel(BasicModel):
     def delete_mentees(self, scheme_id, mentor_k_number):
         """ Given the mentor k-number will delete all his mentees"""
         try:
-            self._dao.execute("DELETE FROM Allocation where mentor_k_number = %s AND scheme_id = %s;", (mentor_k_number, scheme_id))
+            self._dao.execute(
+                "DELETE FROM Allocation where mentor_k_number = %s AND scheme_id = %s;", (mentor_k_number, scheme_id))
             self._dao.commit()
 
         except Exception as e:

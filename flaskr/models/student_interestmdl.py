@@ -1,6 +1,7 @@
 from flaskr.models.helpers import sanity_check, to_str
 from flaskr.models.basicmdl import BasicModel
 
+
 class StudentInterestModel(BasicModel):
 
     def get_interests(self, scheme_id, k_number):
@@ -16,7 +17,8 @@ class StudentInterestModel(BasicModel):
     def insert_interest(self, scheme_id, k_number, interest_id):
         """ Will entirely populate an entry for Student_Interest table"""
         try:
-            self._dao.execute("INSERT INTO Student_Interest VALUES(%s, %s, %s);", (scheme_id, interest_id, k_number))
+            self._dao.execute("INSERT INTO Student_Interest VALUES(%s, %s, %s);",
+                              (scheme_id, interest_id, k_number))
             self._dao.commit()
 
         except Exception as e:
@@ -50,7 +52,8 @@ class StudentInterestModel(BasicModel):
         if interest:
             try:
                 # TODO Allow for single interest
-                self._dao.execute("DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                self._dao.execute(
+                    "DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -58,7 +61,8 @@ class StudentInterestModel(BasicModel):
                 raise e
         else:
             try:
-                self._dao.execute("DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                self._dao.execute(
+                    "DELETE Student_Interest FROM Student_Interest INNER JOIN Interest ON Student_Interest.interest_id=Interest.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:

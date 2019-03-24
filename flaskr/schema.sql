@@ -12,7 +12,7 @@ CREATE TABLE Super_user
  password_hash VARCHAR(255) NOT NULL,
  CONSTRAINT su_pk PRIMARY KEY (email)
 );
-
+ 
 CREATE TABLE Student
 (
  scheme_id INT NOT NULL,
@@ -117,14 +117,3 @@ INSERT INTO Student VALUES(2, "k1234567", "Angela", "Merkle", "European Law Msc"
 
 INSERT INTO Student VALUES(3, "k7654321", "Donald", "Trump", "Womens Studies Phd", 4, "Male", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1946-06-14');
 INSERT INTO Student VALUES(3, "k1234567", "John", "Doe", "Gender Studies Bsc", 1, "Male", 0, 1,"pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1999-06-11');
-
-
-
-
-
-
-
-
-
-
-

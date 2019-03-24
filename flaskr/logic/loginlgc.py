@@ -10,8 +10,8 @@ import logging
 from flaskr.models.studentmdl import StudentModel
 from flaskr.models.schememdl import SchemeModel
 
-class LoginLogic():
 
+class LoginLogic():
 
     def login(self, request):
 
@@ -44,7 +44,8 @@ class LoginLogic():
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
 
-                            is_mentor = self._student_handler.get_user_data(login_form.k_number.data).is_mentor
+                            is_mentor = self._student_handler.get_user_data(
+                                login_form.k_number.data).is_mentor
 
                             if(is_mentor):
                                 target = "/mentor"
@@ -61,7 +62,6 @@ class LoginLogic():
                     flash("Error logging in, please check the data that was entered")
                     return render_template("login.html", login_form=login_form)
 
-
             return render_template("login.html", login_form=login_form)
 
         except Exception as e:
@@ -69,7 +69,8 @@ class LoginLogic():
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
 
     def signupToken(self, request, token):
-        schemeId = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
+        schemeId = verify_token(
+            secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
         return self.signup(request, schemeId=schemeId)
 
     def signup(self, request, schemeId=False):
@@ -78,7 +79,8 @@ class LoginLogic():
             schemes = self._scheme_handler.get_active_scheme_data()
 
             if schemeId:
-                scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes if (s['scheme_id'] == int(schemeId)) ]
+                scheme_options = [(s['scheme_id'], s['scheme_name'])
+                                  for s in schemes if (s['scheme_id'] == int(schemeId))]
             else:
                 scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 
@@ -90,12 +92,12 @@ class LoginLogic():
             return abort(500)
 
         try:
-            if registration_form.registration_submit.data: # if the registation form was submitted
+            if registration_form.registration_submit.data:  # if the registation form was submitted
                 if (registration_form.password.data != registration_form.confirm_password.data):
                     flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
                     return render_template("signup.html", registration_form=registration_form)
 
-                if registration_form.validate_on_submit(): # if the form was valid
+                if registration_form.validate_on_submit():  # if the form was valid
                     # hash the user password
                     scheme_id = registration_form.scheme_id.data
                     first_name = registration_form.first_name.data
@@ -108,16 +110,18 @@ class LoginLogic():
                         flash("User already exists")
                         return render_template("signup.html", registration_form=registration_form)
 
-                    db_insert_success = self._student_handler.insert_student(scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say", (1 if is_mentor else 0), hashed_password, False, 1)
+                    db_insert_success = self._student_handler.insert_student(
+                        scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say", (1 if is_mentor else 0), hashed_password, False, 1)
                     #app.logger.warning("register user: " + k_number)
                     user = Student(scheme_id, k_number)
                     print(user.k_number)
                     #app.logger.warning("user's knumber: " + user.k_number)
-                    send_email_confirmation_to_user(user=user, secret_key=current_app.config["SECRET_KEY"])
+                    send_email_confirmation_to_user(
+                        user=user, secret_key=current_app.config["SECRET_KEY"])
 
                     #app.logger.warning("register user: " + str(db_insert_success))
 
-                    #redirect to profile page, where he must insert his preferences
+                    # redirect to profile page, where he must insert his preferences
                     return redirect("/dashboard")
                 else:
                     flash("Error logging in, please check the data that was entered correctly")
@@ -129,11 +133,11 @@ class LoginLogic():
             self._log.exception("Could not parse registration form")
             return abort(500)
 
-
-    def confirm_email(self,token): ### add scheme_id
+    def confirm_email(self, token):  # add scheme_id
 
         try:
-            message = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
+            message = verify_token(
+                secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
 
         except Exception as e:
             self._log.exception("Could not verify token")
@@ -143,7 +147,8 @@ class LoginLogic():
             if message:
                 print(message)
                 print(current_app.config["MESSAGE_SEPARATION_TOKEN"])
-                (k_number, scheme_id) = message.split(current_app.config["MESSAGE_SEPARATION_TOKEN"])
+                (k_number, scheme_id) = message.split(
+                    current_app.config["MESSAGE_SEPARATION_TOKEN"])
                 # return "this is: " + str(k_number)
                 user = Student(k_number=k_number, scheme_id=scheme_id)
                 if user.email_confirmed:
@@ -165,5 +170,5 @@ class LoginLogic():
             self._student_handler = StudentModel()
             self._scheme_handler = SchemeModel()
         except Exception as e:
-                self._log.exception("Could not create model instance")
-                return abort(500)
+            self._log.exception("Could not create model instance")
+            return abort(500)

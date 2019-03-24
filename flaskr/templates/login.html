@@ -1,69 +1,69 @@
-{% extends "template.html"%}	
+{% extends "template.html"%}
 
 {% block content_block %}
+<div>
 	<div>
 		<div>
-			<div>
 
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="alert alert-warning">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endwith %}
-          {% block content %}{% endblock %}
+			{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+			{% for category, message in messages %}
+			<div class="alert alert-warning">
+				{{ message }}
+			</div>
+			{% endfor %}
+			{% endif %}
+			{% endwith %}
+			{% block content %}{% endblock %}
 
-				<div id="first" style="inline">
-					<div class="myform form ">
-						<div class="logo mb-3">
-							<div class="col-md-12 text-center">
-								<h1>Login</h1>
+			<div id="first" style="inline">
+				<div class="myform form ">
+					<div class="logo mb-3">
+						<div class="col-md-12 text-center">
+							<h1>Login</h1>
+						</div>
+					</div>
+					<form action="" method="post" name="login">
+						{{ login_form.csrf_token }}
+
+						<div class="form-group">
+							{{ login_form.scheme_id.label(class="form-control-label") }}
+							{{ login_form.scheme_id(class="form-control form-control-lg", placeholder="Please Select Your Scheme") }}
+						</div>
+						<div class="form-group">
+							{{ login_form.k_number.label(class="form-control-label") }}
+							{{ login_form.k_number(class="form-control form-control-lg", placeholder="Enter your k-number") }}
+						</div>
+						<div class="form-group">
+							{{ login_form.password.label(class="form-control-label") }}
+							{{ login_form.password (class="form-control form-control-lg", placeholder="Enter password") }}
+						</div>
+
+
+
+						<div class="form-group">
+							<p class="text-center">By signing up you accept our <a href="/terms-conditions">Terms Of Use</a></p>
+						</div>
+
+
+						<div class="col-md-12 text-center ">
+							{{ login_form.login_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+						</div>
+						<div class="col-md-12 ">
+							<div class="login-or">
+								<hr class="hr-or">
+								<span class="span-or"></span>
 							</div>
 						</div>
-						<form action="" method="post" name="login">
-							{{ login_form.csrf_token }}
-                                                        
-                                                        <div class="form-group">
-								{{ login_form.scheme_id.label(class="form-control-label") }}
-								{{ login_form.scheme_id(class="form-control form-control-lg", placeholder="Please Select Your Scheme") }}
-							</div>
-							<div class="form-group">
-								{{ login_form.k_number.label(class="form-control-label") }}
-								{{ login_form.k_number(class="form-control form-control-lg", placeholder="Enter your k-number") }}
-							</div>
-							<div class="form-group">
-								{{ login_form.password.label(class="form-control-label") }}
-								{{ login_form.password (class="form-control form-control-lg", placeholder="Enter password") }}
-							</div>
+						<div class="form-group">
+							<p class="text-center">Don't have account? <a href="/signup" id="signup">Sign up here</a></p>
+						</div>
+					</form>
 
-
-
-							<div class="form-group">
-								<p class="text-center">By signing up you accept our <a href="/terms-conditions">Terms Of Use</a></p>
-							</div>
-
-
-							<div class="col-md-12 text-center ">
-								{{ login_form.login_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
-							</div>
-							<div class="col-md-12 ">
-								<div class="login-or">
-									<hr class="hr-or">
-									<span class="span-or"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<p class="text-center">Don't have account? <a href="/signup" id="signup">Sign up here</a></p>
-							</div>
-						</form>
-
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 
 {% endblock content_block %}

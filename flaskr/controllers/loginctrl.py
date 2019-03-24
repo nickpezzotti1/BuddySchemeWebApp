@@ -12,13 +12,16 @@ handler = LoginLogic()
 def login():
     return handler.login(request)
 
+
 @login_blueprint.route("/signup", methods=["GET", "POST"])
 def signup():
     return handler.signup(request)
 
+
 @login_blueprint.route("/signup/<token>", methods=["GET", "POST"])
 def signupToken(token):
     return handler.signupToken(request, token)
+
 
 @login_blueprint.route("/confirm/<token>")
 def confirm_email(token):

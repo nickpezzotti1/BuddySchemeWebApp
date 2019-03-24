@@ -2,18 +2,20 @@ import os
 import pymysql
 
 # Will set up the credentials
-DATABASE_USER = "root"  ## os.environ.get("BUDDY_DB_USER", '')
-DATABASE_PASSWORD = "testing" ## os.environ.get("BUDDY_DB_PASSWORD", '')
-DB_NAME = "test_buddy"   ##"Buddy"
-DB_HOST = "localhost"  ##   "buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com"
+DATABASE_USER = "root"  # os.environ.get("BUDDY_DB_USER", '')
+DATABASE_PASSWORD = "testing"  # os.environ.get("BUDDY_DB_PASSWORD", '')
+DB_NAME = "test_buddy"  # "Buddy"
+DB_HOST = "localhost"  # "buddy-scheme.cg0eqfj7blbe.eu-west-2.rds.amazonaws.com"
 
 HASH_COL = 'password_hash'
+
 
 def _query(sql_query):
     """ Returns a list of results of query """
 
     # Connect to the database
-    conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
+    conn = pymysql.connect(DB_HOST, user=DATABASE_USER,
+                           password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
 
     # Define result
     result = []
@@ -41,7 +43,8 @@ def _insert(sql_query):
     """ Will push a query to the DB"""
 
     # Connect to the database
-    conn = pymysql.connect(DB_HOST, user=DATABASE_USER, password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
+    conn = pymysql.connect(DB_HOST, user=DATABASE_USER,
+                           password=DATABASE_PASSWORD, db=DB_NAME, connect_timeout=5)
 
     try:
         with conn.cursor() as cursor:
@@ -97,18 +100,16 @@ def _to_str(my_str, password_hash=False):
     raise TypeError(f"{type(my_str)} type isn't accepted.")
 
 
-def _update_students( ** kwargs):
+def _update_students(** kwargs):
     """ Will update fields in Students based on the k_number
         You will need to precise the specific field"""
 
-    accepted_fields = {"first_name":str, "last_name":str, "degree_title":str,
-        "year_study":int, "gender":str, "k_number":str, "is_mentor":bool,
-        "email_confirmed": bool, "is_admin": bool}
+    accepted_fields = {"first_name": str, "last_name": str, "degree_title": str,
+                       "year_study": int, "gender": str, "k_number": str, "is_mentor": bool,
+                       "email_confirmed": bool, "is_admin": bool}
 
-        
-        
-    ##### check like below for schme_id #####    
-    
+    ##### check like below for schme_id #####
+
     # We need the k_number to update
     if "k_number" not in kwargs:
         raise NameError("K-number could not be found in the list of arguments")
@@ -124,12 +125,12 @@ def _update_students( ** kwargs):
     # Ie if there's k_number and another field to update
     if len(kwargs) > 1:
         sql_query = "UPDATE Student set "
-        sql_query += ", ".join([f"{field} = {_to_str(value)}" for field, value in kwargs.items() if field != "k_number"])  ## or field != "scheme_id" ???
+        sql_query += ", ".join([f"{field} = {_to_str(value)}" for field,
+                                value in kwargs.items() if field != "k_number"])  # or field != "scheme_id" ???
         sql_query += f" where k_number={_to_str(kwargs['k_number'])} AND scheme_id = {_to_str(kwargs['scheme_id'])};"
         return _insert(sql_query)
     else:
         raise Exception("Need at least one argument.")
-
 
 
 def update_students(scheme_id, k_number, first_name=[], last_name=[], degree_title=[], year_study=[], gender=[], is_mentor=[], is_admin=[], email_confirmed=[]):
@@ -137,16 +138,17 @@ def update_students(scheme_id, k_number, first_name=[], last_name=[], degree_tit
         don't need to know the underlying interface """
 
     accepted_fields = {"scheme_id": scheme_id, "k_number": k_number, "first_name": first_name,
-        "last_name": last_name, "degree_title": degree_title,
-        "year_study": year_study, "gender": gender, "is_mentor": is_mentor,
-        "is_admin": is_admin, "email_confirmed": email_confirmed}
+                       "last_name": last_name, "degree_title": degree_title,
+                       "year_study": year_study, "gender": gender, "is_mentor": is_mentor,
+                       "is_admin": is_admin, "email_confirmed": email_confirmed}
 
     # Set the dictionarry like it's needed
-    dict_fields = {field:value for field, value in  accepted_fields.items() if type(value) is not list}
+    dict_fields = {field: value for field, value in accepted_fields.items() if type(value)
+                   is not list}
 
-    return _update_students( ** dict_fields)
+    return _update_students(** dict_fields)
 
-###############################################################################################################3
+# 3
 
 
 def update_hobbies(scheme_id, k_number, hobbies):
@@ -221,8 +223,9 @@ def get_user_data(scheme_id, k_number):
     """ Returns all the data in the Students table except from password hash"""
 
     try:
-        result = _query(f"SELECT * FROM Student where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")[0]
-        result.pop(HASH_COL, None) # can check not none
+        result = _query(
+            f"SELECT * FROM Student where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")[0]
+        result.pop(HASH_COL, None)  # can check not none
         return result
 
     except IndexError:
@@ -230,14 +233,15 @@ def get_user_data(scheme_id, k_number):
     except KeyError:
         raise KeyError(f"{HASH_COL} not found in table.")
 
-#TODO Should I return something here?
+# TODO Should I return something here?
 
 
 def get_user_hashed_password(scheme_id, k_number):
     """ Returns the hashed password for the user"""
 
     try:
-        result = _query(f"select password_hash from Student where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
+        result = _query(
+            f"select password_hash from Student where k_number={_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
         return result[0].pop(HASH_COL, None)
 
     except IndexError:
@@ -322,6 +326,7 @@ def delete_mentors(scheme_id, mentee_k_number):
 
     return _insert(f"DELETE FROM Allocation where mentee_k_number={_to_str(mentee_k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
+
 def delete_mentees(scheme_id, mentor_k_number):
     """ Given the mentor k-number will delete all his mentees"""
 
@@ -331,7 +336,6 @@ def delete_mentees(scheme_id, mentor_k_number):
 def delete_students(scheme_id, k_number):
     """ Delete the students entry in the Tables"""
 
-
     delete_hobbies(scheme_id, k_number)
     delete_interests(scheme_id, k_number)
     delete_mentors(scheme_id, k_number)
@@ -340,6 +344,7 @@ def delete_students(scheme_id, k_number):
     return _insert(f"DELETE FROM Student where k_number = {_to_str(k_number)} AND scheme_id = {_to_str(scheme_id)};")
 
 #########################################################################################
+
 
 def get_all_students_data_basic(scheme_id):
     """ God knows what this function does"""
@@ -361,10 +366,11 @@ def get_all_mentees(scheme_id):
         return _query("SELECT k_number FROM Student Where is_mentor=0 AND Student.scheme_id = {_to_str(scheme_id)};")
 
 
-
 def get_all_students_data_basic(scheme_id):
     if _sanity_check(scheme_id):
-        return _query("SELECT k_number, first_name, last_name, gender, is_mentor FROM Student WHERE Student.scheme_id = {_to_str(scheme_id)} ORDER BY last_name ASC;")   ## add has matches
+        # add has matches
+        return _query("SELECT k_number, first_name, last_name, gender, is_mentor FROM Student WHERE Student.scheme_id = {_to_str(scheme_id)} ORDER BY last_name ASC;")
+
 
 def get_mentee_details(scheme_id, k_number):
     if _sanity_check(scheme_id) and _sanity_check(k_number):
@@ -372,24 +378,29 @@ def get_mentee_details(scheme_id, k_number):
     else:
         return "Error: one of the field did not pass the sanity check"
 
+
 def get_mentor_details(scheme_id, k_number):
     if _sanity_check(scheme_id) and _sanity_check(k_number):
         return _query(f"SELECT k_number, first_name, last_name, year_study FROM Student, Allocation WHERE Student.k_number = Allocation.mentor_k_number AND Allocation.mentee_k_number = {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)};")
     else:
         return "Error: one of the field did not pass the sanity check"
 
+
 def get_manual_allocation_matches(scheme_id, k_number, is_tor):
     if _sanity_check(scheme_id) and _sanity_check(k_number):    # and _sanity_check(is_tor):
         join_col = 'mentee_k_number' if is_tor else 'mentor_k_number'
-        return _query(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC;") ## on ... and scheme_id???
+        # on ... and scheme_id???
+        return _query(f"SELECT k_number, first_name, last_name, gender, year_study, COUNT(Allocation.{join_col}) AS matches FROM Student LEFT JOIN Allocation ON Student.k_number = Allocation.{join_col} WHERE is_mentor != {is_tor} AND k_number != {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)} GROUP BY Student.k_number ORDER BY matches, k_number ASC;")
     else:
         return "Error: one of the field did not pass the sanity check"
+
 
 def make_manual_allocation(scheme_id, tee_number, tor_number):
     if _sanity_check(scheme_id) and _sanity_check(tee_number) and _sanity_check(tor_number):
         return _insert(f"INSERT INTO Allocation VALUES({_to_str(scheme_id)}, {_to_str(tor_number)}, {_to_str(tee_number)});")
     else:
         return "Error: one of the field did not pass the sanity check"
+
 
 def remove_allocation(scheme_id, tee_number, tor_number):
     if _sanity_check(scheme_id) and _sanity_check(tee_number) and _sanity_check(tor_number):
@@ -398,29 +409,12 @@ def remove_allocation(scheme_id, tee_number, tor_number):
         return "Error: one of the field did not pass the sanity check"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def alter_admin_status(scheme_id, k_number, is_admin):
     if _sanity_check(scheme_id) and _sanity_check(k_number) and _sanity_check(is_admin):
         return _insert(f"UPDATE Student SET is_admin = {is_admin} WHERE k_number = {_to_str(k_number)} AND Student.scheme_id = {_to_str(scheme_id)};")
     else:
         return "Error: one of the field did not pass the sanity check"
+
 
 if __name__ == '__main__':
     print(_query("SELECT * from Interests;"))

@@ -10,9 +10,11 @@ index_blueprint = Blueprint('index', __name__)
 def home():
     return render_template("index.html")
 
+
 @index_blueprint.route("/terms-conditions")
 def terms_condititons():
     return render_template("terms_conditions.html")
+
 
 @index_blueprint.route("/dashboard")
 @login_required

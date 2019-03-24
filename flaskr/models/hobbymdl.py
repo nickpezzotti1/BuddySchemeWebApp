@@ -2,19 +2,20 @@ from flaskr.models.helpers import sanity_check, to_str
 from flaskr.models.basicmdl import BasicModel
 import logging
 
+
 class HobbyModel(BasicModel):
 
-    def delete_hobby(self, hobby_id, scheme_id=1): ## add scheme id
+    def delete_hobby(self, hobby_id, scheme_id=1):  # add scheme id
         """ Given the hobby_id will delete the hobby"""
 
         try:
-            self._dao.execute("DELETE FROM Hobby WHERE id = %s AND scheme_id = %s;", (hobby_id, scheme_id))
+            self._dao.execute("DELETE FROM Hobby WHERE id = %s AND scheme_id = %s;",
+                              (hobby_id, scheme_id))
             self._dao.commit()
 
         except Exception as e:
             self._log.exception("Could not delete the hobby")
             raise e
-
 
     def insert_hobby(self, hobby, scheme_id=1):
         """ Will insert an entry for a hobby into the database"""
@@ -26,7 +27,7 @@ class HobbyModel(BasicModel):
             self._log.exception("Could not insert the hobby")
             raise e
 
-    def get_hobby_list(self, scheme_id=1): ## add scheme_id
+    def get_hobby_list(self, scheme_id=1):  # add scheme_id
         """ Will retrieve a list of possible hobbies from the database"""
 
         try:

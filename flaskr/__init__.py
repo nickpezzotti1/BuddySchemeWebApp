@@ -16,6 +16,7 @@ login_manager.login_view = "login.login"
 
 log = logging.getLogger(__name__)
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     login_manager.init_app(app)

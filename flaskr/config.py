@@ -1,6 +1,7 @@
 import os
 from hashlib import sha3_256
 
+
 class Config:
     SECRET_KEY = 'powerful secretkey'
     EMAIL_CONFIRMATION_EXPIRATION = 86400

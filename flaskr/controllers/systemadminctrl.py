@@ -1,8 +1,7 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from flaskr.permissions import system_admin_login_required
-import logging
+from flask import request, Blueprint
+
 from flaskr.logic.systemadminlgc import SystemAdminLogic
+from flaskr.permissions import system_admin_login_required
 
 system_admin_blueprint = Blueprint('systemadmin', __name__)
 handler = SystemAdminLogic()

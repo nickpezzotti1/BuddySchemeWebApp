@@ -1,7 +1,6 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from flaskr.permissions import permissioned_login_required
-import logging
+from flask import redirect, request, Blueprint
+from flask_login import login_required, logout_user
+
 from flaskr.logic.loginlgc import LoginLogic
 
 login_blueprint = Blueprint('login', __name__)

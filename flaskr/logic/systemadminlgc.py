@@ -1,30 +1,22 @@
-from flask import Blueprint
-from flask import Flask
+import logging
+
 from flask import abort
 from flask import flash
+from flask import make_response
 from flask import redirect
 from flask import render_template
 from flask import request
-from flask import make_response
-from flask import url_for
-from flask_login import LoginManager
-from flask_login import UserMixin
 from flask_login import current_user
-from flask_login import login_required
 from flask_login import login_user
-from flask_login import logout_user
-from flaskr.forms import NewSchemeForm
-from flaskr.forms import SystemLoginForm
-import json
-import logging
-from flaskr.models.schememdl import SchemeModel
-from flaskr.models.studentmdl import StudentModel
-from os import urandom
-from flaskr.permissions import system_admin_login_required
-import requests
-from flaskr.user import SystemAdmin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
+
+from flaskr.forms import NewSchemeForm
+from flaskr.forms import SystemLoginForm
+from flaskr.models.schememdl import SchemeModel
+from flaskr.models.studentmdl import StudentModel
+from flaskr.permissions import system_admin_login_required
+from flaskr.user import SystemAdmin
 
 
 class SystemAdminLogic():

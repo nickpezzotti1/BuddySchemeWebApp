@@ -1,4 +1,3 @@
-import os
 from hashlib import sha3_256
 
 

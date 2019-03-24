@@ -54,9 +54,9 @@
 	}
 
 	function filter() {
-		var tb = ele('tbody')
-		var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i")
-		var menFil = selMenFil()
+		var tb = ele('tbody');
+		var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i");
+		var menFil = selMenFil();
 		for (var i = 0, row; row = tb.rows[i]; i++) {
 			if (filterName(row, reg) && (menFil === 'All' || mentorFilter(row, menFil))) {
 				row.style.display = ''

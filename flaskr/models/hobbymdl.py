@@ -1,6 +1,4 @@
-from flaskr.models.helpers import sanity_check, to_str
 from flaskr.models.basicmdl import BasicModel
-import logging
 
 
 class HobbyModel(BasicModel):

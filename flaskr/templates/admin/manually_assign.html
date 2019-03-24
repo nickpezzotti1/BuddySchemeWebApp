@@ -82,8 +82,8 @@
 	}
 
 	function filterName() {
-		var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i")
-		var tb = ele('tbody')
+		var reg = new RegExp(".*" + ele("nameFilt").value + ".*", "i");
+		var tb = ele('tbody');
 		for (var i = 0, row; row = tb.rows[i]; i++) {
 			if (reg.test(row.cells[1].innerHTML + " " + row.cells[2].innerHTML)) { // need to impl show/no show if other filter on
 				row.style.display = ''

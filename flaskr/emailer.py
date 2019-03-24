@@ -1,6 +1,5 @@
 import smtplib
 from email.mime.text import MIMEText
-import flaskr.user
 from flaskr.auth_token import generate_token
 from flask import current_app
 
@@ -29,7 +28,7 @@ def send_email_confirmation_to_user(user, secret_key):
     # TODO: Possible feature to check if email
     #  was already confirmed and keep track of multiple requests
     message = str(user.k_number) + \
-        current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(user.scheme_id)
+              current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(user.scheme_id)
     token = generate_token(secret_key=secret_key, message=message)
     sender = "no-reply@sbs.kcl.ac.uk"
     recipients = [str(user.k_number) + "@kcl.ac.uk"]

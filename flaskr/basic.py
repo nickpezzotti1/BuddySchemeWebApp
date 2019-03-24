@@ -1,4 +1,3 @@
-import os
 import pymysql
 
 # Will set up the credentials

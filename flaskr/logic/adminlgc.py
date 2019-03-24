@@ -1,9 +1,9 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
+from flask import flash, redirect, render_template, request, url_for, abort, current_app
+from flask_login import current_user
 import logging
 import json
 import requests
-from flaskr.auth_token import generate_token, verify_token
+from flaskr.auth_token import generate_token
 from flaskr.models.allocationconfigmdl import AllocationConfigModel
 from flaskr.models.allocationmdl import AllocationModel
 from flaskr.models.student_interestmdl import StudentInterestModel

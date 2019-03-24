@@ -1,14 +1,15 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from flaskr.forms import LoginForm, RegistrationForm
-from werkzeug.security import generate_password_hash, check_password_hash
-from flaskr.auth_token import verify_token
-from flaskr.user import Student
-from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.emailer import send_email, send_email_confirmation_to_user
 import logging
-from flaskr.models.studentmdl import StudentModel
+
+from flask import flash, redirect, render_template, abort, current_app
+from flask_login import current_user, login_user
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from flaskr.auth_token import verify_token
+from flaskr.emailer import send_email_confirmation_to_user
+from flaskr.forms import LoginForm, RegistrationForm
 from flaskr.models.schememdl import SchemeModel
+from flaskr.models.studentmdl import StudentModel
+from flaskr.user import Student
 
 
 class LoginLogic():
@@ -38,7 +39,7 @@ class LoginLogic():
                         return redirect("/login")
 
                     # if user exists in db then a password hash was successfully retrieved
-                    if(user.password):
+                    if (user.password):
                         # check if he is authorised
                         if check_password_hash(user.password, login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
@@ -47,7 +48,7 @@ class LoginLogic():
                             is_mentor = self._student_handler.get_user_data(
                                 login_form.k_number.data).is_mentor
 
-                            if(is_mentor):
+                            if (is_mentor):
                                 target = "/mentor"
                             else:
                                 target = "/mentee"
@@ -111,15 +112,16 @@ class LoginLogic():
                         return render_template("signup.html", registration_form=registration_form)
 
                     db_insert_success = self._student_handler.insert_student(
-                        scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say", (1 if is_mentor else 0), hashed_password, False, 1)
-                    #app.logger.warning("register user: " + k_number)
+                        scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say",
+                        (1 if is_mentor else 0), hashed_password, False, 1)
+                    # app.logger.warning("register user: " + k_number)
                     user = Student(scheme_id, k_number)
                     print(user.k_number)
-                    #app.logger.warning("user's knumber: " + user.k_number)
+                    # app.logger.warning("user's knumber: " + user.k_number)
                     send_email_confirmation_to_user(
                         user=user, secret_key=current_app.config["SECRET_KEY"])
 
-                    #app.logger.warning("register user: " + str(db_insert_success))
+                    # app.logger.warning("register user: " + str(db_insert_success))
 
                     # redirect to profile page, where he must insert his preferences
                     return redirect("/dashboard")
@@ -137,7 +139,8 @@ class LoginLogic():
 
         try:
             message = verify_token(
-                secret_key=current_app.config["SECRET_KEY"], token=token, expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
+                secret_key=current_app.config["SECRET_KEY"], token=token,
+                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
 
         except Exception as e:
             self._log.exception("Could not verify token")
@@ -157,7 +160,7 @@ class LoginLogic():
                     user.activate()
                     return "account activated"
             else:
-                #app.logger.warning("token verification failed")
+                # app.logger.warning("token verification failed")
                 return "token verification fail"
 
         except Exception as e:

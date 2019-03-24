@@ -1,13 +1,14 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from datetime import date
-from flaskr.forms import MentorPreferencesForm
 import logging
+
+from flask import flash, redirect, render_template, url_for, abort
+from flask_login import current_user
+
+from flaskr.forms import MentorPreferencesForm
 from flaskr.models.allocationmdl import AllocationModel
-from flaskr.models.student_interestmdl import StudentInterestModel
-from flaskr.models.student_hobbymdl import StudentHobbyModel
-from flaskr.models.interestmdl import InterestModel
 from flaskr.models.hobbymdl import HobbyModel
+from flaskr.models.interestmdl import InterestModel
+from flaskr.models.student_hobbymdl import StudentHobbyModel
+from flaskr.models.student_interestmdl import StudentInterestModel
 from flaskr.models.studentmdl import StudentModel
 
 

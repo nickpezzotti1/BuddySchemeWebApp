@@ -1,6 +1,5 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-import logging
+from flask import redirect, render_template, Blueprint
+from flask_login import current_user, login_required
 
 index_blueprint = Blueprint('index', __name__)
 

@@ -29,7 +29,34 @@ class AdminLogic:
             return abort(500)
 
     def view_student_details(self):
-        pass
+        try:
+            if(request.method == 'POST' and 'knum' in request.form):
+                k_number = request.form['knum']
+                if('mkAdmin' in request.form):
+                    res = self._student_handler.alter_admin_status(current_user.scheme_id, k_number, True)
+                elif('rmAdmin' in request.form):
+                    res = self._student_handler.alter_admin_status(current_user.scheme_id, k_number, False)
+                elif('mkAlloc' in request.form):
+                    torNum = request.form['torNum']
+                    teeNum = request.form['teeNum']
+                    res = self._allocation_handler.make_manual_allocation(current_user.scheme_id, teeNum, torNum)
+                elif("rmAlloc" in request.form):
+                    torNum = request.form['torNum']
+                    teeNum = request.form['teeNum']
+                    res = self._allocation_handler.remove_allocation(current_user.scheme_id, teeNum, torNum)
+                udata = self.get_all_user_data(current_user.scheme_id, k_number)
+                isTor = udata['is_mentor']
+                if isTor:
+                    matches = self._allocation_handler.get_mentee_details(current_user.scheme_id, k_number)
+                else:
+                    matches = self._allocation_handler.get_mentor_details(current_user.scheme_id, k_number)
+                return render_template('admin/student_details.html', title='Details For ' + k_number, udata=udata, matches=matches) ## add scheme name to title?
+            else:
+                return redirect(url_for('admin.admin_view_students'))
+
+         except Exception as e:
+            self._log.exception("Could not execute student details")
+            return abort(500)
 
     def delete_student_details(self):
         try:
@@ -115,7 +142,9 @@ class AdminLogic:
 
         # Always render the page
 
-        return render_template('admin/allocation_config.html', title='Allocation Algorithm', form=form, allocation_config=config_data, update_message=update_message)
+        return render_template('admin/allocation_config.html',
+            title='Allocation Algorithm', form=form,
+            allocation_config=config_data, update_message=update_message)
 
     def allocation_algorithm(self):
         flash("The allocations have been made, please look at the student table for more information")

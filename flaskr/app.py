@@ -41,6 +41,11 @@ def load_user(id):
 def home():
     return render_template("index.html")
 
+# Ping for checing if server is active
+@app.route("/ping")
+def ping():
+    return "pong"
+
 @app.route("/dashboard")
 @login_required
 def dashboard():

@@ -36,16 +36,8 @@ class MentorLogic:
 
             # Update data on form submission
             if request.method == "POST":
-                self._student_interest_handler.update_interests(
-                    current_user.scheme_id, current_user.k_number, form.interests.data)
-                self._student_hobby_handler.update_hobbies(
-                    current_user.scheme_id, current_user.k_number, form.hobbies.data)
-                self._student_handler.update_date_of_birth(
-                    current_user.scheme_id, current_user.k_number, form.date_of_birth.data)
-                self._student_handler.update_gender(
-                    current_user.scheme_id, current_user.k_number, form.gender.data)
-                self._student_handler.update_buddy_limit(
-                    current_user.scheme_id, current_user.k_number, form.buddy_limit.data)
+                self._update_mentee(request.form.getlist('hobby'), request.form.getlist('interest'),
+                                    request.form['date_of_birth'], request.form['gender'])
 
                 return redirect(url_for("mentor.mentor"))
             else:
@@ -71,6 +63,16 @@ class MentorLogic:
         except Exception:
             self._log.exception("Could not execute mentor preferences logic")
             return abort(500)
+
+    def _update_mentor(self, hobbies, interests, date_of_birth, gender):
+        self._student_hobby_handler.update_hobbies(
+            current_user.scheme_id, current_user.k_number, hobbies)
+        self._student_interest_handler.update_interests(
+            current_user.scheme_id, current_user.k_number, interests)
+        self._student_handler.update_date_of_birth(
+            current_user.scheme_id, current_user.k_number, date_of_birth)
+        self._student_handler.update_gender(
+            current_user.scheme_id, current_user.k_number, gender)
 
     def mentor_delete(self, request):
         """ Will delete all the mentors informations from the database"""

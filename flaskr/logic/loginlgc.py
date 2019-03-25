@@ -20,18 +20,16 @@ class LoginLogic:
             return redirect("/dashboard")
 
         try:
-            schemes = self._scheme_handler.get_active_scheme_data()
-            scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
+            scheme_options = self._get_scheme()
 
         except Exception as e:
             self._log.exception("Invalid login form")
             flash("Error logging in, please check the data that was entered")
 
-
         login_form = LoginForm(request.form)
         login_form.scheme_id.choices = scheme_options
         try:
-            if login_form.login_submit.data:
+            if request.method == "POST":
                 if login_form.validate_on_submit():
                     try:
                         user = Student(login_form.scheme_id.data, login_form.k_number.data)
@@ -46,7 +44,8 @@ class LoginLogic:
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
 
-                            is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data, login_form.k_number.data)['is_mentor']
+                            is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data,
+                                                                            login_form.k_number.data)['is_mentor']
 
                             if is_mentor:
                                 target = "/mentor"
@@ -69,19 +68,13 @@ class LoginLogic:
             self._log.exception("Could not parse login form")
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
 
-    def signup_token(self, request, token):
-        scheme_id = verify_token(
-            secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
-        return self.signup(request, schemeId=scheme_id)
-
     def signup(self, request, schemeId=False):
 
         try:
             schemes = self._scheme_handler.get_active_scheme_data()
 
             if schemeId:
-                scheme_options = [(s['scheme_id'], s['scheme_name'])
-                                  for s in schemes if (s['scheme_id'] == int(schemeId))]
+                scheme_options = self._get_scheme()
             else:
                 scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 
@@ -93,13 +86,12 @@ class LoginLogic:
             return abort(500)
 
         try:
-            if registration_form.registration_submit.data:  # if the registation form was submitted
+            if request.method == "POST":  # if the registation form was submitted
                 if registration_form.password.data != registration_form.confirm_password.data:
                     flash("Password don't match. Make sure the 'password' and 'confirm passowrd' fields match")
                     return render_template("signup.html", registration_form=registration_form)
 
                 if registration_form.validate_on_submit():  # if the form was valid
-                    # hash the user password
                     scheme_id = registration_form.scheme_id.data
                     first_name = registration_form.first_name.data
                     last_name = registration_form.last_name.data
@@ -111,17 +103,13 @@ class LoginLogic:
                         flash("User already exists")
                         return render_template("signup.html", registration_form=registration_form)
 
-                    db_insert_success = self._student_handler.insert_student(
+                    self._student_handler.insert_student(
                         scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say",
                         (1 if is_mentor else 0), hashed_password, False, 1)
-                    # app.logger.warning("register user: " + k_number)
                     user = Student(scheme_id, k_number)
                     print(user.k_number)
-                    # app.logger.warning("user's knumber: " + user.k_number)
                     send_email_confirmation_to_user(
                         user=user, secret_key=current_app.config["SECRET_KEY"])
-
-                    # app.logger.warning("register user: " + str(db_insert_success))
 
                     # redirect to profile page, where he must insert his preferences
                     return redirect("/dashboard")
@@ -135,7 +123,7 @@ class LoginLogic:
             self._log.exception("Could not parse registration form")
             return abort(500)
 
-    def confirm_email(self, token):  # add scheme_id
+    def confirm_email(self, token):  #TODO add scheme_id
 
         try:
             message = verify_token(
@@ -166,6 +154,18 @@ class LoginLogic:
         except Exception as e:
             self._log.exception("Could not activate account")
             return abort(500)
+
+    def _get_scheme(self):
+        schemes = self._scheme_handler.get_active_scheme_data()
+        scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
+
+        return scheme_options
+
+    def signup_token(self, request, token):
+        scheme_id = verify_token(
+        secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
+
+        return self.signup(request, schemeId=scheme_id)
 
     def __init__(self):
         try:

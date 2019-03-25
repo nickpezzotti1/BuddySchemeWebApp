@@ -27,14 +27,8 @@ class MenteeLogic:
 
         try:
             if request.method == "POST":
-                self._student_hobby_handler.update_hobbies(
-                    current_user.scheme_id, current_user.k_number, request.form.getlist('hobby'))
-                self._student_interest_handler.update_interests(
-                    current_user.scheme_id, current_user.k_number, request.form.getlist('interest'))
-                self._student_handler.update_date_of_birth(
-                    current_user.scheme_id, current_user.k_number, request.form['date_of_birth'])
-                self._student_handler.update_gender(
-                    current_user.scheme_id, current_user.k_number, request.form['gender'])
+                self._update_mentee(request.form.getlist('hobby'), request.form.getlist('interest'),
+                                    request.form['date_of_birth'], request.form['gender'])
                 return redirect(url_for("mentee.mentee"))
             else:
                 data_definitions = self.get_data_definitions()
@@ -44,6 +38,16 @@ class MenteeLogic:
         except Exception:
             self._log.exception("Could not execute mentee preferences logic")
             return abort(500)
+
+    def _update_mentee(self, hobbies, interests, date_of_birth, gender):
+        self._student_hobby_handler.update_hobbies(
+            current_user.scheme_id, current_user.k_number, hobbies)
+        self._student_interest_handler.update_interests(
+            current_user.scheme_id, current_user.k_number, interests)
+        self._student_handler.update_date_of_birth(
+            current_user.scheme_id, current_user.k_number, date_of_birth)
+        self._student_handler.update_gender(
+            current_user.scheme_id, current_user.k_number, gender)
 
     def mentee_mentor_list(self, request):
 

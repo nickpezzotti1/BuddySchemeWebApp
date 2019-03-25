@@ -1,7 +1,9 @@
 import boto3
 import logging
 
-
+# Currently not used, as we interact with allocation algorithm via an API Gateway, though both can be easily configure
+# communicate with queues, if we prefer to have the communication to happen within the application rather than over
+# the internet.
 class HandleSQS:
 
     REGION_NAME = 'eu-west-1'

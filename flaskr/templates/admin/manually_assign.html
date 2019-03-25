@@ -2,22 +2,27 @@
 
 {% block content_block %}
 
-<div class="text-center">
-    <h2> K-Number: {{udata.k_number}}</h2> 
-    <h2> First Name: {{udata.first_name}}</h2> 
-    <h2> Last Name: {{udata.last_name}}</h2> 
-    <h2> Age: {{udata.age}}</h2> 
-</div>
+<div>
+        {% if udata['is_mentor'] %}
+        <h1> Mentor </h1>
+        {% else %}
+        <h1> Mentee </h1>
+        {% endif %}
+        <h4> K-Number: {{udata.k_number}}</h4> 
+        <h4> First Name: {{udata.first_name}}</h4> 
+        <h4> Last Name: {{udata.last_name}}</h4> 
+        <h4> Age: {{udata.age}}</h4> 
+    </div>
 <br />
-<div class="container">
-    <h2> Hobbies:</h2>
+<div>
+    <h4> Hobbies:</h4>
     <ul>
         {% for hobby in hobbies %}
         <li>{{ hobby.hobby }}</li>
         {% endfor %}
     </ul>
     <br />
-    <h2> Academic Interests: </h2>
+    <h4> Academic Interests: </h4>
     <ul>
         {% for interest in interests %}
         <li>{{ interest.interest }}</li>
@@ -28,7 +33,7 @@
 {% if potentials|length  %}
 <table class="table table-hover" id='table'>
     <thead>
-        <tr colspan=5><h1 class='text-center'>Potential {% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %} To Match</h1></tr>
+        <tr colspan=5><h2 class='text-center'>Potential {% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %} To Match</h2></tr>
 <tr>
 <tr>
 <div class="searchBar">

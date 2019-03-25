@@ -44,7 +44,7 @@ class LoginLogic():
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
 
-                            is_mentor = self._student_handler.get_user_data(login_form.k_number.data).is_mentor
+                            is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data, login_form.k_number.data)['is_mentor']
 
                             if(is_mentor):
                                 target = "/mentor"

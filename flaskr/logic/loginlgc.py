@@ -106,10 +106,11 @@ class LoginLogic:
                     self._student_handler.insert_student(
                         scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say",
                         (1 if is_mentor else 0), hashed_password, False, 1)
-                    user = Student(scheme_id, k_number)
-                    print(user.k_number)
+                    # user = Student(scheme_id, k_number)
+                    # print(user.k_number)
                     send_email_confirmation_to_user(
-                        user=user, secret_key=current_app.config["SECRET_KEY"])
+                        scheme_id=scheme_id, k_number=k_number, 
+                        secret_key=current_app.config["SECRET_KEY"])
 
                     # redirect to profile page, where he must insert his preferences
                     return redirect("/dashboard")

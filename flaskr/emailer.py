@@ -24,14 +24,14 @@ def send_email(sender, recipients, subject, content):
         print(e)
 
 
-def send_email_confirmation_to_user(user, secret_key):
+def send_email_confirmation_to_user(k_number, scheme_id, secret_key):
     # TODO: Possible feature to check if email
     #  was already confirmed and keep track of multiple requests
-    message = str(user.k_number) + \
-              current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(user.scheme_id)
+    message = str(k_number) + \
+              current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(scheme_id)
     token = generate_token(secret_key=secret_key, message=message)
     sender = "no-reply@sbs.kcl.ac.uk"
-    recipients = [str(user.k_number) + "@kcl.ac.uk"]
+    recipients = [str(k_number) + "@kcl.ac.uk"]
     subject = "Email Confirmation - Student Buddy System"
     path = "http://localhost:5000/confirm/"
     content = f"Welcome to KCL\'s Student Buddy System. \n Please activate your email at {path}{token}"

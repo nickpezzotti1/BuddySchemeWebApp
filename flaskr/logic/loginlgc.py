@@ -74,7 +74,8 @@ class LoginLogic:
             schemes = self._scheme_handler.get_active_scheme_data()
 
             if schemeId:
-                scheme_options = self._get_scheme()
+                scheme_options = [(s['scheme_id'], s['scheme_name'])
+                                  for s in schemes if (s['scheme_id'] == int(schemeId))]
             else:
                 scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 

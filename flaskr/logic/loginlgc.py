@@ -23,12 +23,13 @@ class LoginLogic:
             schemes = self._scheme_handler.get_active_scheme_data()
             scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 
-            login_form = LoginForm(request.form)
-            login_form.scheme_id.choices = scheme_options
-
         except Exception as e:
             self._log.exception("Invalid login form")
             flash("Error logging in, please check the data that was entered")
+
+
+        login_form = LoginForm(request.form)
+        login_form.scheme_id.choices = scheme_options
         try:
             if login_form.login_submit.data:
                 if login_form.validate_on_submit():

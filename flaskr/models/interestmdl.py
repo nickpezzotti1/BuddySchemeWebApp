@@ -30,7 +30,7 @@ class InterestModel(BasicModel):
         """ Will retrieve a list of possible hobbies from the database"""
 
         try:
-            return self._dao.execute("SELECT * FROM Interest WHERE scheme_id = %s;", (scheme_id, ))
+            return self._dao.execute("SELECT * FROM Interest;") ## WHERE scheme_id = %s;", (scheme_id, ))
 
         except Exception as e:
             self._log.exception("Could not get the list of hobbies")

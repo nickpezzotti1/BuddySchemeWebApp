@@ -51,7 +51,7 @@
   <div class="form-group row">
       {{ form.date_of_birth.label(class="col-sm-2 col-form-label") }}
       <div class="col-sm-10">
-        {{ form.date_of_birth(class="form-control") }}
+        {{ form.date_of_birth(class="form-control", type="date") }}
       </div>
   </div>
   
@@ -62,7 +62,7 @@
       {{ form.interests.label(class="col-sm-2 col-form-label") }}
       <div class="col-sm-10">
         <div class="form-check">
-          {{ form.interests(class="col-sm-12 col-form-label text-primary") }}
+          {{ form.interests(class="col-sm-12 col-form-label text-primary", size="12") }}
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
     {{ form.hobbies.label(class="col-sm-2 col-form-label") }}
     <div class="col-sm-10">
       <div class="form-check">
-        {{ form.hobbies(class="col-sm-12 row-sm-12 col-form-label text-primary") }}
+        {{ form.hobbies(class="col-sm-12 row-sm-12 col-form-label text-primary", size="12") }}
       </div>
     </div>
   </div>

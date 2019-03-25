@@ -2,29 +2,27 @@
 
 {% block content_block %}
 
-
-
 <div>
     {% if udata['is_mentor'] %}
-    <h2> Mentor </h2>
+    <h1> Mentor </h1>
     {% else %}
-    <h2> Mentee </h2>
+    <h1> Mentee </h1>
     {% endif %}
-    <h2> K-Number: {{udata.k_number}}</h2> 
-    <h2> First Name: {{udata.first_name}}</h2> 
-    <h2> Last Name: {{udata.last_name}}</h2> 
-    <h2> Age: {{udata.age}}</h2> 
+    <h4> K-Number: {{udata.k_number}}</h4> 
+    <h4> First Name: {{udata.first_name}}</h4> 
+    <h4> Last Name: {{udata.last_name}}</h4> 
+    <h4> Age: {{udata.age}}</h4> 
 </div>
 <br />
 <div>
-    <h2> Hobbies:</h2>
+    <h4> Hobbies:</h4>
     <ul>
         {% for hobby_id, hobby_name in udata["hobbies"].items() %}
         <li>{{ hobby_name }}</li>
         {% endfor %}
     </ul>
     <br />
-    <h2> Academic Interests: </h2>
+    <h4> Academic Interests: </h4>
     <ul>
         {% for interest_id, interest_name in udata["interests"].items() %}
         <li>{{ interest_name }}</li>
@@ -35,7 +33,7 @@
 {% if matches|length  %}
 <table class="table table-hover" id='table'>
     <thead>
-        <tr colspan=5><h1 class='text-center'>{% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %}</h1></tr>
+        <tr colspan=5><h3 class='text-center'>{% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %}</h3></tr>
 <tr>
     <th scope="col" class="text-center">K Number</th>
     <th scope="col">First Name</th>
@@ -62,7 +60,7 @@
 </tbody>
 </table>
 {% else %}
-<h1 class='text-center'> No Allocations </h1>
+<h3 class='text-center'> No Allocations </h3>
 {% endif %}
 <form method="POST" action="{{url_for("admin.manually_assign")}}">
     <input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='manAlloc' value="Manually Assign Allocation"></input> 

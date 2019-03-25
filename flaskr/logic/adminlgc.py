@@ -53,8 +53,7 @@ class AdminLogic:
                 return render_template('admin/student_details.html', title='Details For ' + k_number, udata=udata, matches=matches) ## add scheme name to title?
             else:
                 return redirect(url_for('admin.admin_view_students'))
-
-         except Exception as e:
+        except Exception:
             self._log.exception("Could not execute student details")
             return abort(500)
 

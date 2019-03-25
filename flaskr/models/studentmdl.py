@@ -153,13 +153,8 @@ class StudentModel(BasicModel):
         if sanity_check(scheme_id) and sanity_check(k_number) and sanity_check(is_admin):
 
             try:
-<<<<<<< HEAD
-                self._dao.execute(
-                    "UPDATE Student SET is_admin = {is_admin} WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
-=======
                 self._dao.execute("UPDATE Student SET is_admin = %s WHERE k_number = %s AND scheme_id = %s;", (is_admin, k_number, scheme_id))
                 succ = self._dao.rowcount()
->>>>>>> dev
                 self._dao.commit()
                 return succ
 

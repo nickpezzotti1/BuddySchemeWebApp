@@ -6,33 +6,6 @@ from flaskr.models.basicmdl import BasicModel
 
 class AllocationModel(BasicModel):
 
-    def update_mentee(self, scheme_id, mentor_k_number, mentees_k_number):
-        """ Given the mentor_k_number will update all his mentees"""
-
-        if type(mentees_k_number) is not list:
-            self._log.exception("Mentees not passed as list")
-            return abort(500)
-
-        for mentee_k_number in mentees_k_number:
-            pass
-
-        return True
-
-    def update_mentor(self, mentors_k_number):
-        """ Given the mentee_k_number will update all his mentors"""
-
-        if type(mentors_k_number) is not list:
-            self._log.exception("Mentors not passed as list")
-            return abort(500)
-
-        return True
-
-    def get_all_mentors(self, scheme_id):
-        """ Returns all the k-number of mentors"""
-
-    def get_all_mentees(self, scheme_id):
-        """ Returns all the k-number of the mentees"""
-
     def get_mentee_details(self, scheme_id, k_number):
         if sanity_check(k_number):
 

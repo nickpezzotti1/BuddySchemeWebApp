@@ -71,9 +71,8 @@ class LoginLogic:
     def signup(self, request, scheme_id=False):
 
         try:
-            schemes = self._scheme_handler.get_active_scheme_data()
-
             if scheme_id:
+                schemes = self._scheme_handler.get_active_scheme_data()
                 scheme_options = [(s['scheme_id'], s['scheme_name'])
                                   for s in schemes if (s['scheme_id'] == int(scheme_id))]
             else:

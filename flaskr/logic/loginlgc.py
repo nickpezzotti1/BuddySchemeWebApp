@@ -68,14 +68,14 @@ class LoginLogic:
             self._log.exception("Could not parse login form")
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
 
-    def signup(self, request, schemeId=False):
+    def signup(self, request, scheme_id=False):
 
         try:
             schemes = self._scheme_handler.get_active_scheme_data()
 
-            if schemeId:
+            if scheme_id:
                 scheme_options = [(s['scheme_id'], s['scheme_name'])
-                                  for s in schemes if (s['scheme_id'] == int(schemeId))]
+                                  for s in schemes if (s['scheme_id'] == int(scheme_id))]
             else:
                 scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 
@@ -166,7 +166,7 @@ class LoginLogic:
         scheme_id = verify_token(
         secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
 
-        return self.signup(request, schemeId=scheme_id)
+        return self.signup(request, scheme_id=scheme_id)
 
     def __init__(self):
         try:

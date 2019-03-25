@@ -77,7 +77,7 @@ class LoginLogic:
                 scheme_options = [(s['scheme_id'], s['scheme_name'])
                                   for s in schemes if (s['scheme_id'] == int(scheme_id))]
             else:
-                scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
+                scheme_options = self._get_scheme()
 
             registration_form = RegistrationForm(request.form)
             registration_form.scheme_id.choices = scheme_options

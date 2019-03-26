@@ -23,15 +23,15 @@
   <div class="form-group row">
     <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
     <div class="col-sm-10">
-      <input class="form-control" type="text" value="{{user_data["last_name"]}}" readonly>                                                                                           
+      <input class="form-control" type="text" value="{{user_data["last_name"]}}" readonly>
     </div>
   </div>
 
   <div class="form-group row">
     <label for="inputEmail3" class="col-sm-2 col-form-label">Gender</label>
     <div class="col-sm-10">
-      <input class="form-control" type="text" value="{{user_data["gender"]}}" readonly>                                                                                           
-    </div>                                                                                   
+      <input class="form-control" type="text" value="{{user_data["gender"]}}" readonly>
+    </div>
   </div>
 
   <div class="form-group row">
@@ -48,28 +48,39 @@
     </div>
   </div>
 
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">User Role</label>
+    <div class="col-sm-10">
+      {% if user_data["is_mentor"] %}
+        <input class="form-control" type="text" value="Mentor" readonly>
+      {% else %}
+        <input class="form-control" type="text" value="Mentee" readonly>
+      {% endif %}  
+    </div>
+  </div>
 
-   <div class="form-check"> 
+
+   <div class="form-check">
     <label for="inputEmail3" class="col-sm-2 col-form-label">Interests</label>
-         <div class="col-sm-10">   
+         <div class="col-sm-10">
           {% for interest_id, interest_name in user_data["interests"].items() %}
             <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
             <label class="form-check-label" for="gridCheck1">
               {{interest_name}}
             </label>
-        {% endfor %}  
+        {% endfor %}
       </div>
     </div>
 
    <div class="form-check">
     <label for="inputEmail3" class="col-sm-2 col-form-label">Hobbies</label>
-         <div class="col-sm-10">   
+         <div class="col-sm-10">
           {% for hobby_id, hobby_name in user_data["hobbies"].items() %}
             <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
             <label class="form-check-label" for="gridCheck1">
               {{hobby_name}}
             </label>
-        {% endfor %}  
+        {% endfor %}
       </div>
     </div>
 

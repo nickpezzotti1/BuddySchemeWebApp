@@ -15,7 +15,6 @@ from flaskr.forms import NewSchemeForm
 from flaskr.forms import SystemLoginForm
 from flaskr.models.schememdl import SchemeModel
 from flaskr.models.studentmdl import StudentModel
-from flaskr.permissions import system_admin_login_required
 from flaskr.user import SystemAdmin
 
 
@@ -58,7 +57,6 @@ class SystemAdminLogic:
             self._log.exception("Could not parse login form")
             flash("Error logging in, please check the data that was entered")
 
-    @system_admin_login_required()
     def system_admin_dashboard(self):
         # try:
         if request.method == 'POST' and 'susScheme' in request.form:
@@ -71,7 +69,6 @@ class SystemAdminLogic:
         schemes = self._scheme_handler.get_all_scheme_data()
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
-    @system_admin_login_required()
     def system_new_scheme(self, request):
         # require system admin
         try:
@@ -120,7 +117,6 @@ class SystemAdminLogic:
             self._log.exception("Error Creating New Scheme")
             return abort(500)
 
-    @system_admin_login_required()
     def system_view_scheme_dashboard(self, request):
         if request.method == 'POST' and 'scheme_id' in request.form:
             scheme_id = request.form['scheme_id']

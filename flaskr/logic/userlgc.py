@@ -37,7 +37,12 @@ class UserLogic():
                 self._student_hobby_handler.update_hobbies(current_user.scheme_id, current_user.k_number, form.hobbies.data)
                 self._student_handler.update_date_of_birth(current_user.scheme_id, current_user.k_number, form.date_of_birth.data)
                 self._student_handler.update_gender(current_user.scheme_id, current_user.k_number, form.gender.data)
-                self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, form.buddy_limit.data)
+
+                # If mentor 
+                if user_data["is_mentor"]:
+                    self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, form.buddy_limit.data)
+                else:
+                    self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number)
 
                 return redirect(url_for("user.user"))
             else:

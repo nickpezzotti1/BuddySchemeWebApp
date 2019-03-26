@@ -24,7 +24,7 @@ class Dao:
         SECRET = "beta/mysql"
         REGION = "eu-west-2"
 
-        def _create_connection(self,schema):
+        def _create_connection(self):
             """ Estabilish database connection """
             try:
                 self.__connection = pymysql.connect(
@@ -113,4 +113,4 @@ class Dao:
             self._schema = schema
             self._get_credentials()
             self._credentials['dbname'] = schema
-            self._create_connection(schema)
+            self._create_connection()

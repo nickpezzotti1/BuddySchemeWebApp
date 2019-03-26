@@ -173,7 +173,7 @@ class StudentModel(BasicModel):
 
             try:
                 self._dao.execute(
-                    "UPDATE Student SET email_confirmed = True WHERE WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                    "UPDATE Student SET email_confirmed = True WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:

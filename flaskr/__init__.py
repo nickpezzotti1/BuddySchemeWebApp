@@ -45,6 +45,10 @@ def create_app(config_class=Config):
     def terms_condititons():
         return render_template("terms_conditions.html")
 
+    @app.route("/ping")
+    def ping():
+        return 'pong'
+
     @app.route("/dashboard")
     @login_required
     def dashboard():

@@ -18,7 +18,7 @@ class UserLogic():
             data_definitions = self.get_data_definitions()
             user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
 
-            return render_template("user_screens/user/dashboard_page.html", title="Your Profile", user_data=user_data)
+            return render_template("user_screens/dashboard_page.html", title="Your Profile", user_data=user_data)
 
         except Exception as e:
                 self._log.exception("Could not execute get user logic")
@@ -53,7 +53,7 @@ class UserLogic():
                 form.interests.choices = [(interest["id"], interest["interest_name"]) for interest in data_definitions["interests"]]
                 form.hobbies.choices = [(hobby["id"], hobby["hobby_name"]) for hobby in data_definitions["hobbies"]]
                 
-                return render_template("user_screens/user/preferences_page.html", title="Your Preferences", user_data=user_data, form=form)
+                return render_template("user_screens/preferences_page.html", title="Your Preferences", user_data=user_data, form=form)
 
         except Exception as e:
                 self._log.exception("Could not execute user preferences logic")
@@ -69,7 +69,7 @@ class UserLogic():
                 self._student_handler.delete_students(current_user.scheme_id, current_user.k_number)
                 return redirect(url_for("user.user"))
             else:
-                return render_template("user_screens/user/delete_page.html")
+                return render_template("user_screens/delete_page.html")
  
         except Exception as e:
             self._log.exception("Could not delete student")
@@ -101,7 +101,7 @@ class UserLogic():
                     buddy_k_number = buddy['mentor_k_number']
                     buddy_list_data[buddy_k_number] = self._student_handler.get_user_data(current_user.scheme_id, buddy_k_number)
 
-            return render_template("user_screens/user/buddy_list_page.html", title="Your Buddies", buddies=buddy_list_data)
+            return render_template("user_screens/buddy_list_page.html", title="Your Buddies", buddies=buddy_list_data)
 
         except Exception as e:
                 self._log.exception("Could not execute buddy list logic")
@@ -110,7 +110,7 @@ class UserLogic():
     def user_buddy_view(self, k_number_buddy):
 
         try:
-            return render_template("user_screens/user/buddy_page.html", title="Your Mentee", buddy_data=self._student_handler.get_user_data(current_user.scheme_id, k_number_buddy), k_number_buddy=k_number_buddy)
+            return render_template("user_screens/buddy_page.html", title="Your Mentee", buddy_data=self._student_handler.get_user_data(current_user.scheme_id, k_number_buddy), k_number_buddy=k_number_buddy)
 
         except Exception as e:
             self._log.exception("Could not execute buddy view logic")

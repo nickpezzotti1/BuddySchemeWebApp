@@ -18,6 +18,7 @@ from flaskr.forms import SchemeFeedbackForm
 from flaskr.models.schememdl import SchemeModel
 from flaskr.models.studentmdl import StudentModel
 from flaskr.user import SystemAdmin
+from flaskr.emailer import send_email_scheme_feedback
 
 
 class SystemAdminLogic:
@@ -139,10 +140,11 @@ class SystemAdminLogic:
         feedback_form = SchemeFeedbackForm(request.form)
 
         if request.method == 'POST':
-            print("naice")
-        # if request.method == 'POST':
-            # return redirect(url_for("systemadmin.system_admin_dashboard"))
-            # print("submitted")
+            if feedback_form.validate_on_submit:
+                users = self._student_handler.get_all_students_data_basic(scheme_id=scheme_id)
+                k_numbers = [i["k_number"] for i in users]
+                send_email_scheme_feedback(k_numbers, feedback_url=feedback_form.feedback_form_url.data)
+                flash("Email sent to " + str(len(k_numbers)) + " students.")
                     
         return render_template('system_admin/feedback.html', title='Scheme Feedback', feedback_form=feedback_form)
 

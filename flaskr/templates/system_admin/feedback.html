@@ -2,6 +2,19 @@
 
 {% block content_block %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+			<div class="alert alert-warning">
+				{{ message }}
+			</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% block content %}
+{% endblock %}
+
 Please input the link to a feedback form to be emailed to all users in this scheme.
 </br></br>
 <form action="" method="post" name="feedback">

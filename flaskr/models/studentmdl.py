@@ -225,7 +225,9 @@ class StudentModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def update_buddy_limit(self, scheme_id, k_number, buddy_limit):
+    
+    def update_buddy_limit(self, scheme_id, k_number, buddy_limit=1):
+        """ Update the buddy limit for a user """
         if sanity_check(scheme_id) and sanity_check(k_number):
             # sanity check dob
             try:

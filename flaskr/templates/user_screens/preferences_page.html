@@ -47,12 +47,14 @@
     </div>
   </fieldset>
 
+{% if user_data["is_mentor"] %}
   <div class="form-group row">
-      {{ form.buddy_limit.label(class="col-sm-2 col-form-label") }}
-      <div class="col-sm-10">
-        {{ form.buddy_limit(class="form-control") }}
-      </div>
+    {{ form.buddy_limit.label(class="col-sm-2 col-form-label") }}
+    <div class="col-sm-10">
+      {{ form.buddy_limit(class="form-control") }}
+    </div>
   </div>
+{% endif %}
 
   <div class="form-group row">
       {{ form.date_of_birth.label(class="col-sm-2 col-form-label") }}

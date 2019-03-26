@@ -28,3 +28,8 @@ def system_new_scheme():
 @system_admin_login_required()
 def system_view_scheme_dashboard():
     return handler.system_view_scheme_dashboard(request)
+
+@system_admin_blueprint.route('/system/admin/scheme_feedback/<scheme_id>', methods=['get', 'post'])
+@system_admin_login_required()
+def system_scheme_feedback(scheme_id):
+    return handler.system_scheme_feedback(request, scheme_id)

@@ -78,3 +78,7 @@ class AllocationConfigForm(FlaskForm):
     hobby_weight = IntegerField('Hobby Weight')
     interest_weight = IntegerField('Interest Weight')
     allocation_config_submit = SubmitField("Update")
+
+class SchemeFeedbackForm(FlaskForm):
+    feedback_form_url = StringField('Feedback Form URL', validators=[DataRequired()])
+    feedback_submit = SubmitField("Send")

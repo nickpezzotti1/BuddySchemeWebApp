@@ -48,3 +48,12 @@ def send_email_reset_password(user, secret_key):
     content = f"Please click on the following link to reset your password {path}{token}"
 
     send_email(sender, recipients, subject, content)
+
+def send_email_scheme_feedback(k_numbers, feedback_url):
+
+    sender = "no-reply@sbs.kcl.ac.uk"
+    subject = "Student buddy scheme feedback"
+    recipients = [(str(i) + "@kcl.ac.uk") for i in k_numbers]
+    content = f"Your feedback is very important to us. Please click on the following link and let us know what can be done better next time! {feedback_url}"
+
+    send_email(sender, recipients, subject, content)

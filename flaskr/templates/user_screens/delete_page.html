@@ -4,8 +4,9 @@
 
 <form action = "{{url_for('user.user_delete')}}" method = "post">
     <h3 id="title">You are about to delete all of your data that we are keeping on you.</h3>
-    
+
     <div id="browse_app navigate">
+      <a class="btn btn-large btn-info" href="{{url_for('user.user_preferences')}}">Cancel</a>
       <input class="btn btn-large btn-info" type = "submit" value = "Delete" />
     </div>
 </form>

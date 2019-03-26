@@ -1,0 +1,31 @@
+{% extends "template.html"%}
+
+{% block content_block %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+			<div class="alert alert-warning">
+				{{ message }}
+			</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% block content %}
+{% endblock %}
+
+Please input the email to be invited to this scheme.
+</br></br>
+<form action="" method="post" name="invite">
+    {{ invite_form.csrf_token }}
+    <div class="form-group">
+        {{ invite_form.email.label(class="form-control-label") }}
+        {{ invite_form.email(class="form-control form-control-lg", placeholder="Please insert the email to invite") }}
+    </div>
+    <div class="col-md-12 text-center ">
+        {{ invite_form.submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+    </div>
+</form>
+
+{% endblock content_block %}

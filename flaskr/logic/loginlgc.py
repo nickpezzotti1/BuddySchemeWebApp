@@ -119,7 +119,7 @@ class LoginLogic:
             self._log.exception("Could not parse registration form")
             return abort(500)
 
-    def confirm_email(self, token):  #TODO add scheme_id
+    def confirm_email(self, token):
 
         try:
             message = verify_token(
@@ -136,8 +136,8 @@ class LoginLogic:
                 print(current_app.config["MESSAGE_SEPARATION_TOKEN"])
                 (k_number, scheme_id) = message.split(
                     current_app.config["MESSAGE_SEPARATION_TOKEN"])
-                # return "this is: " + str(k_number)
-                user = Student(k_number=k_number, scheme_id=scheme_id)
+                
+                user = Student(k_number=k_number, scheme_id=int(scheme_id))
                 if user.email_confirmed:
                     return "account already active"
                 else:

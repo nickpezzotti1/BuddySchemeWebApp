@@ -3,13 +3,16 @@ import tempfile
 
 import pytest
 
-import app as flaskr
+import flaskr
+import flask
 
+app = flaskr.create_app()
 
 @pytest.fixture
 def client():
-    flaskr.app.config['TESTING'] = True
-    client = flaskr.app.test_client()
+    
+    app.config['TESTING'] = True
+    client = app.test_client()
 
     yield client
 
@@ -32,14 +35,14 @@ def test_admin(client):
 def test_mentee(client):
 
     rv = client.get('/mentee')
-    assert 404 == rv.status_code
+    assert 500 == rv.status_code
 
 def test_mentor(client):
 
     rv = client.get('/mentor')
-    assert 404 == rv.status_code
+    assert 500 == rv.status_code
 
 def test_arguments(client):
-    with flaskr.app.test_request_context('/?id=123'):
-        assert flaskr.request.path == '/'
-        assert flaskr.request.args['id'] == '123'
+    with app.test_request_context('/?id=123'):
+        assert flask.request.path == '/'
+        assert flask.request.args['id'] == '123'

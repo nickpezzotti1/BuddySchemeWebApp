@@ -1,4 +1,4 @@
-import auth_token
+import flaskr.auth_token as auth_token
 
 
 def test_token():

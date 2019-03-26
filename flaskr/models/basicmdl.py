@@ -2,7 +2,7 @@ import flaskr.models.dao as dao
 import logging
 
 
-class BasicModel:
+class BasicModel():
 
     def __init__(self, schema='Buddy'):
         try:

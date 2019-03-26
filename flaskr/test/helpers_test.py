@@ -1,4 +1,4 @@
-from models import helpers
+from flaskr.models import helpers
 
 
 

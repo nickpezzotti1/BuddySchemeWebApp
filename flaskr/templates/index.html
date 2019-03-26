@@ -1,5 +1,12 @@
 {%extends "template.html" %}
 
+{% block nav_block %}
+  {% if not current_user.is_authenticated %}
+    <li><a href="/signup">Sign Up</a></li>
+    <li><a href="/login">Log In</a></li>
+  {% endif %}
+{% endblock nav_block %}
+
 {% block content_block %}
 <div>
 	<h1 class="cover-heading">Welcome to KCL Buddy.</h1>

@@ -6,6 +6,7 @@ from flask import make_response
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import url_for
 from flask_login import current_user
 from flask_login import login_user
 from werkzeug.security import check_password_hash
@@ -13,9 +14,9 @@ from werkzeug.security import generate_password_hash
 
 from flaskr.forms import NewSchemeForm
 from flaskr.forms import SystemLoginForm
+from flaskr.forms import SchemeFeedbackForm
 from flaskr.models.schememdl import SchemeModel
 from flaskr.models.studentmdl import StudentModel
-from flaskr.permissions import system_admin_login_required
 from flaskr.user import SystemAdmin
 
 
@@ -58,12 +59,15 @@ class SystemAdminLogic:
             self._log.exception("Could not parse login form")
             flash("Error logging in, please check the data that was entered")
 
-    @system_admin_login_required()
     def system_admin_dashboard(self):
         # try:
+        if request.method == 'POST' and 'feedbackScheme' in request.form:
+            scheme_id = request.form['scheme_id']
+            return redirect(url_for('systemadmin.system_scheme_feedback', scheme_id=scheme_id))
         if request.method == 'POST' and 'susScheme' in request.form:
             scheme_id = request.form['scheme_id']
-            self._scheme_handler.suspend_scheme(scheme_id)
+            print("suspend: " + scheme_id)
+            # self._scheme_handler.suspend_scheme(scheme_id)
         elif request.method == 'POST' and 'delScheme' in request.form:
             scheme_id = request.form['scheme_id']
             self._scheme_handler.delete_scheme(scheme_id)
@@ -71,7 +75,6 @@ class SystemAdminLogic:
         schemes = self._scheme_handler.get_all_scheme_data()
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
-    @system_admin_login_required()
     def system_new_scheme(self, request):
         # require system admin
         try:
@@ -120,7 +123,6 @@ class SystemAdminLogic:
             self._log.exception("Error Creating New Scheme")
             return abort(500)
 
-    @system_admin_login_required()
     def system_view_scheme_dashboard(self, request):
         if request.method == 'POST' and 'scheme_id' in request.form:
             scheme_id = request.form['scheme_id']
@@ -132,6 +134,17 @@ class SystemAdminLogic:
 
         else:
             return redirect('/system')
+
+    def system_scheme_feedback(self, request, scheme_id):
+        feedback_form = SchemeFeedbackForm(request.form)
+
+        if request.method == 'POST':
+            print("naice")
+        # if request.method == 'POST':
+            # return redirect(url_for("systemadmin.system_admin_dashboard"))
+            # print("submitted")
+                    
+        return render_template('system_admin/feedback.html', title='Scheme Feedback', feedback_form=feedback_form)
 
     def __init__(self):
         try:

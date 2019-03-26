@@ -22,6 +22,7 @@
 				<th scope="col">Registered Students</th>
 				<th scope="col">Status</th>
 				<th scope="col" class="text-center">View</th>
+				<th scope="col" class="text-center">Feedback</th>
 				<th scope="col" class="text-center">Suspend</th>
 				<th scope="col" class="text-center">Delete</th>
 			</tr>
@@ -39,6 +40,7 @@
 				</form>
 				<form method="POST" action='{{url_for("systemadmin.system_admin_dashboard")}}'>
 					<input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
+					<td><input type="submit" class="btn btn-lg btn-block btn-primary" name='feedbackScheme' value="Request Scheme Feedback"></input></td>
 					<td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confSus()" name='susScheme' value='{% if scheme.is_active %}{{"Suspend Scheme"}}{% else %}{{"Activate Scheme"}}{% endif %}'></input></td>
 					<td><input type="submit" class="btn btn-lg btn-block btn-primary" onclick="return confDel()" name='delScheme' value="Delete Scheme"></input></td>
 				</form>

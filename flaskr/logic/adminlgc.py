@@ -4,6 +4,7 @@ import logging
 import json
 import requests
 from flaskr.auth_token import generate_token
+from flaskr.emailer import send_email_scheme_invite
 from flaskr.models.allocationconfigmdl import AllocationConfigModel
 from flaskr.models.allocationmdl import AllocationModel
 from flaskr.models.student_interestmdl import StudentInterestModel
@@ -12,7 +13,7 @@ from flaskr.models.interestmdl import InterestModel
 from flaskr.models.hobbymdl import HobbyModel
 from flaskr.models.studentmdl import StudentModel
 from datetime import date, datetime
-from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
+from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, InviteForm
 
 
 class AdminLogic:
@@ -264,13 +265,19 @@ class AdminLogic:
             self._log.exception("Could not execute get all user data logic")
             return abort(500)
 
-    @staticmethod
-    def invite_to_scheme():
-        scheme_id = current_user.scheme_id
+    def invite_to_scheme(self):
+        invite_form = InviteForm()
 
-        result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
-        result = "/signup/" + result
-        return result
+        if request.method == 'POST':
+            if invite_form.validate_on_submit:
+                email = invite_form.email.data
+                scheme_id = current_user.scheme_id
+                token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
+                
+                send_email_scheme_invite(email=email, token=token)
+                flash("Invite sent.")
+        
+        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form)
 
     def __init__(self):
         try:

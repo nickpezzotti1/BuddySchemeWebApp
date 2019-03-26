@@ -57,3 +57,13 @@ def send_email_scheme_feedback(k_numbers, feedback_url):
     content = f"Your feedback is very important to us. Please click on the following link and let us know what can be done better next time! {feedback_url}"
 
     send_email(sender, recipients, subject, content)
+
+def send_email_scheme_invite(email, token):
+
+    sender = "no-reply@sbs.kcl.ac.uk"
+    subject = "Student buddy scheme feedback"
+    recipients = [email]
+    path = "http://localhost:5000/signup/"
+    content = f"You have been invited to join the KCL's new Student Buddy Scheme. Follow this link and register! {path}{token}"
+
+    send_email(sender, recipients, subject, content)

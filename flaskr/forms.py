@@ -81,3 +81,7 @@ class AllocationConfigForm(FlaskForm):
 class SchemeFeedbackForm(FlaskForm):
     feedback_form_url = StringField('Feedback Form URL', validators=[DataRequired()])
     feedback_submit = SubmitField("Send")
+
+class InviteForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField("Send")

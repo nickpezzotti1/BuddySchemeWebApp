@@ -4,6 +4,7 @@ from models import helpers
 
 def test_string():
     assert helpers.to_str('test') == '"test"'
+    assert helpers.to_str('ASADASF') == '"ASADASF"'
 
 def test_list():
     assert helpers.to_str(['test','best','jest']) == '"test","best","jest"'

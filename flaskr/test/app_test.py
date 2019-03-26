@@ -8,16 +8,10 @@ import app as flaskr
 
 @pytest.fixture
 def client():
-    db_fd, flaskr.app.config['DATABASE'] = tempfile.mkstemp()
     flaskr.app.config['TESTING'] = True
     client = flaskr.app.test_client()
 
-
     yield client
-
-    os.close(db_fd)
-    os.unlink(flaskr.app.config['DATABASE'])
-
 
 def test_ping(client):
 

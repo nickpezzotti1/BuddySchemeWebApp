@@ -58,8 +58,6 @@ def create_app(config_class=Config):
         priv = current_user.priv
         if priv == 'system_admin':
             return redirect('/system/admin')
-        elif priv == 'admin':
-            return redirect('/admin')
         else:
             return redirect('/user')
 

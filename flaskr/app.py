@@ -58,11 +58,12 @@ def dashboard():
     elif priv == 'admin':
         return redirect('/admin')
     else:
-        role = current_user.role
-        if role == 'mentee':
-            return redirect('/mentee')
-        elif role == 'mentor':
-            return redirect('/mentor')
+        return redirect('/user')
+        # role = current_user.role
+        # if role == 'mentee':
+        #     return redirect('/mentee')
+        # elif role == 'mentor':
+        #     return redirect('/mentor')
         
     return redirect('/')
 

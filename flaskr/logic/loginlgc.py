@@ -46,12 +46,12 @@ class LoginLogic():
 
                             is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data, login_form.k_number.data)['is_mentor']
 
-                            if(is_mentor):
-                                target = "/mentor"
-                            else:
-                                target = "/mentee"
+                            # if(is_mentor):
+                            #     target = "/mentor"
+                            # else:
+                            #     target = "/mentee"
                                 
-                            return redirect(target)
+                            return redirect("/user")
                         else:
                             flash('The password you entered is incorrect')
                             return redirect("/login")

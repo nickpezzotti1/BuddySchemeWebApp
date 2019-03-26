@@ -6,7 +6,7 @@ from user import User
 import controllers.systemadminctrl as systemadminctrl
 import controllers.adminctrl as adminctrl
 import controllers.loginctrl as loginctrl
-import controllers.mentorctrl as mentorctrl
+import controllers.userctrl as userctrl
 import controllers.menteectrl as menteectrl
 import controllers.errorsctrl as errorsctrl
 import logging
@@ -29,7 +29,7 @@ app.register_blueprint(adminctrl.admin_blueprint)
 app.register_blueprint(loginctrl.login_blueprint)
 app.register_blueprint(menteectrl.mentee_blueprint)
 app.register_blueprint(errorsctrl.errors_blueprint)
-app.register_blueprint(mentorctrl.mentor_blueprint)
+app.register_blueprint(userctrl.user_blueprint)
 
 
 log = logging.getLogger(__name__)

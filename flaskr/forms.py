@@ -8,32 +8,32 @@ from wtforms.validators import DataRequired, Length, EqualTo
 
 class LoginForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
-    k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
+    k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     login_submit = SubmitField("Login")
 
 
 class RegistrationForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
-    first_name = StringField('first_name', validators=[DataRequired()])
-    last_name = StringField('last_name', validators=[DataRequired()])
-    k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('confirm_password', validators=[
+    confirm_password = PasswordField('Confirm Password', validators=[
                                      DataRequired(), EqualTo("password")])
-    is_mentor = BooleanField('is_mentor')
+    is_mentor = BooleanField('Is Mentor')
     registration_submit = SubmitField("Sign Up")
 
 
 class RequestPasswordResetForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
-    k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
+    k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     request_reset_password_submit = SubmitField("Send me an email")
 
 
 class ResetPasswordForm(FlaskForm):  # scheme_id?
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('confirm_password', validators=[
+    confirm_password = PasswordField('Confirm Password', validators=[
                                      DataRequired(), EqualTo("password")])
     reset_password_submit = SubmitField("Reset Password")
 

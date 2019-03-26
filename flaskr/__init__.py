@@ -6,8 +6,7 @@ from flask_login import LoginManager, current_user, login_required
 import flaskr.controllers.adminctrl
 import flaskr.controllers.errorsctrl
 import flaskr.controllers.loginctrl
-import flaskr.controllers.menteectrl
-import flaskr.controllers.mentorctrl
+import flaskr.controllers.userctrl
 from flaskr.config import Config
 from flaskr.controllers import systemadminctrl
 from flaskr.user import User
@@ -34,9 +33,8 @@ def create_app(config_class=Config):
     app.register_blueprint(controllers.systemadminctrl.system_admin_blueprint)
     app.register_blueprint(controllers.adminctrl.admin_blueprint)
     app.register_blueprint(controllers.loginctrl.login_blueprint)
-    app.register_blueprint(controllers.menteectrl.mentee_blueprint)
+    app.register_blueprint(controllers.userctrl.user_blueprint)
     app.register_blueprint(controllers.errorsctrl.errors_blueprint)
-    app.register_blueprint(controllers.mentorctrl.mentor_blueprint)
 
     @app.route("/")
     @app.route("/home")
@@ -59,11 +57,7 @@ def create_app(config_class=Config):
         elif priv == 'admin':
             return redirect('/admin')
         else:
-            role = current_user.role
-            if role == 'mentee':
-                return redirect('/mentee')
-            elif role == 'mentor':
-                return redirect('/mentor')
+            return redirect('/user')
 
         return redirect('/')
 

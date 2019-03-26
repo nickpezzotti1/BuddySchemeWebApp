@@ -120,8 +120,7 @@ class AdminLogic:
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
-        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data[
-                                    'gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
+        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data['gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
 
         if(request.method == 'POST'):
             # Format the results in a dict and call the update query
@@ -177,7 +176,7 @@ class AdminLogic:
 
             return "The following assignments have been made:" + str(json_response["assignments"])
 
-        except Exception:
+        except Exception as e:
             self._log.exception(e)
             return abort(500)
 

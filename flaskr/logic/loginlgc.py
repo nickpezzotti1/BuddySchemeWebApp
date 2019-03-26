@@ -47,12 +47,7 @@ class LoginLogic:
                             is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data,
                                                                             login_form.k_number.data)['is_mentor']
 
-                            if is_mentor:
-                                target = "/mentor"
-                            else:
-                                target = "/mentee"
-
-                            return redirect(target)
+                            return redirect("/dashboard")
                         else:
                             flash('The password you entered is incorrect')
                             return redirect("/login")
@@ -109,7 +104,7 @@ class LoginLogic:
                     # user = Student(scheme_id, k_number)
                     # print(user.k_number)
                     send_email_confirmation_to_user(
-                        scheme_id=scheme_id, k_number=k_number, 
+                        scheme_id=scheme_id, k_number=k_number,
                         secret_key=current_app.config["SECRET_KEY"])
 
                     # redirect to profile page, where he must insert his preferences

@@ -62,8 +62,7 @@ class NewInterestForm(FlaskForm):
     interest_name = StringField('Interest Name', validators=[DataRequired()])
     interest_submit = SubmitField("Add new interest")
 
-
-class MentorPreferencesForm(FlaskForm):
+class UserPreferencesForm(FlaskForm):
     gender = RadioField('Gender', choices=[], validators=[DataRequired()])
     date_of_birth = DateField('Date Of Birth')
     buddy_limit = IntegerField('Buddy Limit', validators=[DataRequired()])

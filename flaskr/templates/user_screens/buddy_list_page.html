@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block content_block %}
-<h1 id="title"> Mentees </h1>
+<h1 id="title"> Buddies </h1>
 
 <table class="table table-dark">
   <thead>
@@ -14,13 +14,13 @@
   </thead>
   <tbody>
 
-  {% for k_number, mentee in mentees.items() %}
+  {% for k_number, buddy in buddies.items() %}
     <tr>
-      <td>{{mentee["first_name"]}}</td>
-      <td>{{mentee["last_name"]}}</td>
+      <td>{{buddy["first_name"]}}</td>
+      <td>{{buddy["last_name"]}}</td>
       <td>{{k_number}}</td>
       <td>
-          <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_mentee', k_number_mentee=k_number)}}">More Info </a>
+          <a class="btn btn-large btn-info" href="{{url_for('user.user_buddy', k_number_buddy=k_number)}}">More Info </a>
       </td>
     </tr>
   {% endfor %}
@@ -30,7 +30,7 @@
 
 
 <div id="browse_app navigate">
-    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard </a>
+    <a class="btn btn-large btn-info" href="{{url_for('user.user')}}">Back to Dashboard </a>
 </div>
 
 {% endblock content_block %}

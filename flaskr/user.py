@@ -36,8 +36,6 @@ class Student(User):
         except Exception as e:
             print("Exeception occured:{}".format(e))
 
-        if not bool(user_data["email_confirmed"]):
-            raise Exception("User needs to confirm his email")
 
         self.email_confirmed = bool(user_data["email_confirmed"])
         self.role = 'mentor' if user_data["is_mentor"] else "mentee"
@@ -46,7 +44,7 @@ class Student(User):
     @property
     def is_active(self):
         # user only able to login if email is confirmed
-        return True  # self.email_confirmed
+        return self.email_confirmed
 
     def activate(self):
         # activates user account in database

@@ -123,8 +123,9 @@ class LoginLogic:
 
         try:
             message = verify_token(
-                secret_key=current_app.config["SECRET_KEY"], token=token,
-                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
+                secret_key=current_app.config["SECRET_KEY"],
+                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"],
+                token=token)
 
         except Exception as e:
             self._log.exception("Could not verify token")
@@ -132,24 +133,23 @@ class LoginLogic:
 
         try:
             if message:
-                print(message)
-                print(current_app.config["MESSAGE_SEPARATION_TOKEN"])
                 (k_number, scheme_id) = message.split(
                     current_app.config["MESSAGE_SEPARATION_TOKEN"])
                 
-                user = Student(k_number=k_number, scheme_id=int(scheme_id))
+                user = Student(k_number=k_number, scheme_id=scheme_id)
+
                 if user.email_confirmed:
-                    return "account already active"
+                    flash("Account already active.")
                 else:
                     user.activate()
-                    return "account activated"
+                    flash("Account successfully activated.")
             else:
-                # app.logger.warning("token verification failed")
-                return "token verification fail"
+                flash("The token verification has failed")
 
         except Exception as e:
             self._log.exception("Could not activate account")
             return abort(500)
+        return redirect("/login")
 
     def _get_scheme(self):
         schemes = self._scheme_handler.get_active_scheme_data()

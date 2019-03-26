@@ -139,10 +139,8 @@ class SystemAdminLogic:
         feedback_form = SchemeFeedbackForm(request.form)
 
         if request.method == 'POST':
-            print("naice")
-        # if request.method == 'POST':
-            # return redirect(url_for("systemadmin.system_admin_dashboard"))
-            # print("submitted")
+            if feedback_form.validate_on_submit:
+                flash("Feedback email sent to scheme users.")
                     
         return render_template('system_admin/feedback.html', title='Scheme Feedback', feedback_form=feedback_form)
 

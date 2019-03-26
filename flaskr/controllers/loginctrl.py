@@ -1,8 +1,7 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint
-from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
-from permissions import permissioned_login_required
-import logging
-from logic.loginlgc import LoginLogic
+from flask import redirect, request, Blueprint
+from flask_login import login_required, logout_user
+
+from flaskr.logic.loginlgc import LoginLogic
 
 login_blueprint = Blueprint('login', __name__)
 handler = LoginLogic()
@@ -12,9 +11,15 @@ handler = LoginLogic()
 def login():
     return handler.login(request)
 
+
 @login_blueprint.route("/signup", methods=["GET", "POST"])
 def signup():
     return handler.signup(request)
+
+
+@login_blueprint.route("/signup/<token>", methods=["GET", "POST"])
+def signup_token(token):
+    return handler.signup_token(request, token)
 
 
 @login_blueprint.route("/confirm/<token>")

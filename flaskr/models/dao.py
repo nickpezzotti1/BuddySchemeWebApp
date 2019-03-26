@@ -6,10 +6,11 @@ import logging
 from botocore.exceptions import ClientError
 
 
-class Dao():
-    #Ssingleton class to ensure all models use only one DB bridge
+class Dao:
+    # Singleton class to ensure all models use only one DB bridge
 
     instance = None
+
     def __init__(self, arg='Buddy'):
         if not Dao.instance:
             Dao.instance = Dao.__Dao(arg)
@@ -17,7 +18,7 @@ class Dao():
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
-    class __Dao():
+    class __Dao:
         """ Data access object for database operations"""
 
         SECRET = "beta/mysql"
@@ -25,7 +26,6 @@ class Dao():
 
         def _create_connection(self):
             """ Estabilish database connection """
-
             try:
                 self.__connection = pymysql.connect(
                     host=self._credentials['host'],
@@ -42,11 +42,13 @@ class Dao():
                 self._log.exception("Could not create DB connection")
                 raise
 
-        def execute(self, query):
+        def execute(self, query, escapes=None):
             """ Execute a provided query and return result"""
-
             try:
-                self.__cursor.execute(query)
+                if type(escapes) is tuple:
+                    self.__cursor.execute(query, escapes)
+                else:
+                    self.__cursor.execute(query)
                 data = self.__cursor.fetchall()
                 return data
             except:
@@ -72,14 +74,14 @@ class Dao():
             except:
                 self._log.exception("Could not commit changes")
                 raise
-        
+
         def rowcount(self):
             try:
                 return self.__cursor.rowcount
             except:
                 self._log.exception("Could Not Get Affected Rows")
-                raise    
-            
+                raise
+
         def _get_credentials(self):
             """ Retreive credentials for database connection """
 
@@ -100,13 +102,13 @@ class Dao():
                 if 'SecretString' in get_secret_value_response:
                     self._credentials = json.loads(get_secret_value_response['SecretString'])
                 else:
-                    self._credentials = json.loads(base64.b64decode(get_secret_value_response['SecretBinary']))
+                    self._credentials = json.loads(base64.b64decode(
+                        get_secret_value_response['SecretBinary']))
 
         def __str__(self):
             return repr(self)
 
-        
-        def __init__(self,schema='Buddy'):
+        def __init__(self, schema='Buddy'):
             self._log = logging.getLogger(__name__)
             self._schema = schema
             self._get_credentials()

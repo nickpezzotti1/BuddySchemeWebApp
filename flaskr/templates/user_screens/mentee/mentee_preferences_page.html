@@ -2,13 +2,40 @@
 
 {% block content_block %}
 
-<h3> Preferences </h3>
+<h1> Preference </h1>
 <h4> K-Number: {{user_data["k_number"]}}<h4>
 <h4> First Name: {{user_data["first_name"]}}<h4>
 <h4> Last Name: {{user_data["last_name"]}}<h4>
-<h4> Age: {{user_data["age"]}}<h4>
 
 <form action = "{{url_for('mentee.mentee_preferences')}}" method = "post">
+
+    <h4>Gender:</h4>
+    <label class="custom-control custom-radio">
+    <input id="radio1" name="gender" type="radio" class="custom-control-input" value="Male" {% if user_data["gender"] == "Male" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Male</span>
+    </label>
+    <label class="custom-control custom-radio">
+    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Female" {% if user_data["gender"] == "Female" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Female</span>
+    </label>
+    <label class="custom-control custom-radio">
+    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Other" {% if user_data["gender"] == "Other" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Other</span>
+    </label>
+    <label class="custom-control custom-radio">
+    <input id="radio2" name="gender" type="radio" class="custom-control-input" value="Prefer not to say" {% if user_data["gender"] == "Prefer not to say" %} checked {% endif %}>
+    <span class="custom-control-indicator"></span>
+    <span class="custom-control-description">Prefer not to say</span>
+    </label>
+    
+    <div>
+        <label class="form-inline">Date of Birth
+        <input class="help-block" type="date" name="date_of_birth" value="{{user_data["date_of_birth"]}}"></label>
+    </div>
+
     <div class="form-check">
         <h4> Hobbies:</h4>
         {% for hobby in data_definitions["hobbies"] %}

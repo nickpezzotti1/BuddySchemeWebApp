@@ -2,8 +2,22 @@
 
 {% block content_block %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-warning">
+	{{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+
+
 <a href="{{ url_for('admin.admin_view_students') }}" class="btn btn-lg btn-block btn-primary my-3" role="button">View Students</a>
 <a href="{{ url_for('admin.allocation_config') }}" class="btn btn-lg btn-block btn-primary my-3" role="button">Allocation Algorithm</a>
+<a href="{{ url_for('admin.general_settings') }}" class="btn btn-lg btn-block btn-primary my-3" role="button">General Settings</a>
+<a href="{{ url_for('admin.invite_to_scheme') }}" class="btn btn-lg btn-block btn-primary my-3" role="button">Invite users to this scheme</a>
 <!--
 <a href="{{ url_for('admin.general_settings') }}" class="btn btn-lg btn-block btn-primary my-3" role="button">General Settings</a>
 <a href="{{ url_for('admin.sign_up_settings') }}" class="btn btn-lg btn-block btn-primary my-3" role="button">Sign-up Settings</a>

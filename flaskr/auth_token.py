@@ -1,16 +1,16 @@
 from itsdangerous import URLSafeTimedSerializer
 
-# TODO: include password salt
-def generate_token(secret_key, k_number):
+
+def generate_token(secret_key, message):
     serializer = URLSafeTimedSerializer(secret_key)
-    token = serializer.dumps(k_number)
+    token = serializer.dumps(message)
     return token
 
 
 def verify_token(secret_key, token, expiration=3600):
     serializer = URLSafeTimedSerializer(secret_key)
     try:
-        k_number = serializer.loads(token, max_age=expiration)
+        message = serializer.loads(token, max_age=expiration)
     except:
         return False
-    return k_number
+    return message

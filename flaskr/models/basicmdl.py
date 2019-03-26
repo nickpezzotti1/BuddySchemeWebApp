@@ -1,5 +1,6 @@
-import models.dao as dao
+import flaskr.models.dao as dao
 import logging
+
 
 class BasicModel:
 
@@ -8,5 +9,5 @@ class BasicModel:
             self._dao = dao.Dao(schema)
             self._log = logging.getLogger(__name__)
         except Exception as e:
-                self._log.exception("Could not initiate model")
-                raise e
+            self._log.exception("Could not initiate model")
+            raise e

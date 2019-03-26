@@ -12,7 +12,7 @@ CREATE TABLE Super_user
  password_hash VARCHAR(255) NOT NULL,
  CONSTRAINT su_pk PRIMARY KEY (email)
 );
-
+ 
 CREATE TABLE Student
 (
  scheme_id INT NOT NULL,
@@ -27,8 +27,10 @@ CREATE TABLE Student
  password_hash VARCHAR(255) NOT NULL,
  is_admin TINYINT(1) NOT NULL DEFAULT 0,
  buddy_limit INT NOT NULL DEFAULT 1,
+ date_of_birth DATE,
  CONSTRAINT student_pk PRIMARY KEY(scheme_id, k_number),
- CONSTRAINT scheme_fk FOREIGN KEY (scheme_id) REFERENCES Scheme(scheme_id)
+ CONSTRAINT scheme_fk FOREIGN KEY (scheme_id) REFERENCES Scheme(scheme_id),
+ CONSTRAINT chk_gender CHECK (gender IN ('Male', 'Female', 'Other', 'Prefer not to say'))
 );
 
 CREATE TABLE Hobby
@@ -104,25 +106,14 @@ INSERT INTO Allocation_Config VALUES(2, 1, 10, 5, 5, 0);
 INSERT INTO Allocation_Config VALUES(3, 1, 10, 5, 5, 0);
 
 
-INSERT INTO Student VALUES(1, "k1234567", "John", "Doe", "Comp Sci Bsc", 1, "Male", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3);
-INSERT INTO Student VALUES(1, "k1234568", "Janye", "Roe", "Comp Sci Msc", 2, "Female", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3);
-INSERT INTO Student VALUES(1, "k1234569", "Jong-un", "Kim", "Robotics Bsc", 1, "Male", 0, 1,"pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3);
-INSERT INTO Student VALUES(1, "k6666666", "Bernie", "Sanders", "Comp Sci Phd", 3, "Male", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3);
+INSERT INTO Student VALUES(1, "k1234567", "John", "Doe", "Comp Sci Bsc", 1, "Male", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3, '1999-06-16');
+INSERT INTO Student VALUES(1, "k1234568", "Janye", "Roe", "Comp Sci Msc", 2, "Female", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1998-01-29');
+INSERT INTO Student VALUES(1, "k1234569", "Jong-un", "Kim", "Robotics Bsc", 1, "Male", 0, 1,"pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3, '1984-01-08');
+INSERT INTO Student VALUES(1, "k6666666", "Bernie", "Sanders", "Comp Sci Phd", 3, "Male", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1941-09-08');
 
-INSERT INTO Student VALUES(2, "k1234569", "Hillary", "Clinton", "Law and Politics Bsc", 1, "Female", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3);
-INSERT INTO Student VALUES(2, "k1234567", "John", "Doe", "Law Bsc", 1, "Male", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3);
-INSERT INTO Student VALUES(2, "k1234567", "Angela", "Merkle", "European Law Msc", 3, "Female", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3);
+INSERT INTO Student VALUES(2, "k1234569", "Hillary", "Clinton", "Law and Politics Bsc", 1, "Female", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 0, 3, '1947-10-26');
+INSERT INTO Student VALUES(2, "k1234567", "John", "Doe", "Law Bsc", 1, "Male", 0, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1991-02-21');
+INSERT INTO Student VALUES(2, "k1234567", "Angela", "Merkle", "European Law Msc", 3, "Female", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1954-07-17');
 
-INSERT INTO Student VALUES(3, "k7654321", "Donald", "Trump", "Womens Studies Phd", 4, "Male", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3);
-INSERT INTO Student VALUES(3, "k1234567", "John", "Doe", "Gender Studies Bsc", 1, "Male", 0, 1,"pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3);
-
-
-
-
-
-
-
-
-
-
-
+INSERT INTO Student VALUES(3, "k7654321", "Donald", "Trump", "Womens Studies Phd", 4, "Male", 1, 1, "pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1946-06-14');
+INSERT INTO Student VALUES(3, "k1234567", "John", "Doe", "Gender Studies Bsc", 1, "Male", 0, 1,"pbkdf2:sha256:50000$igDdtEIs$17ab89312192f317e44bd9b29f2e04346519a6a06e79e4bfffc0156f44c7a13b", 1, 3, '1999-06-11');

@@ -1,15 +1,16 @@
 import smtplib
 from email.mime.text import MIMEText
-import user
-from auth_token import generate_token
+from flaskr.auth_token import generate_token
+from flask import current_app
 
 COMMASPACE = ', '
 
+
 def send_email(sender, recipients, subject, content):
     try:
-        ## Run a local instance of a email server that echoes
-        ## the messages on terminal
-        ## (env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025
+        # Run a local instance of a email server that echoes
+        # the messages on terminal
+        # (env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025
         server = smtplib.SMTP("localhost", 1025)
 
         msg = MIMEText(content)
@@ -22,13 +23,15 @@ def send_email(sender, recipients, subject, content):
     except Exception as e:
         print(e)
 
-def send_email_confirmation_to_user(user, secret_key):
-    ## TODO: Possible feature to check if email
+
+def send_email_confirmation_to_user(k_number, scheme_id, secret_key):
+    # TODO: Possible feature to check if email
     #  was already confirmed and keep track of multiple requests
-    print(user.k_number)
-    token = generate_token(secret_key, user.k_number)
+    message = str(k_number) + \
+              current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(scheme_id)
+    token = generate_token(secret_key=secret_key, message=message)
     sender = "no-reply@sbs.kcl.ac.uk"
-    recipients = [str(user.k_number) + "@kcl.ac.uk"]
+    recipients = [str(k_number) + "@kcl.ac.uk"]
     subject = "Email Confirmation - Student Buddy System"
     path = "http://localhost:5000/confirm/"
     content = f"Welcome to KCL\'s Student Buddy System. \n Please activate your email at {path}{token}"

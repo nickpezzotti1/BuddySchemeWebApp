@@ -1,7 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from datetime import date
-from flaskr.forms import UserPreferencesForm
+from flaskr.forms import UserPreferencesForm, ResetPasswordForm
+from werkzeug.security import check_password_hash, generate_password_hash
 import logging
 from flaskr.models.allocationmdl import AllocationModel
 from flaskr.models.hobbymdl import HobbyModel
@@ -79,6 +80,22 @@ class UserLogic():
         except Exception as e:
             self._log.exception("Could not delete student")
             return abort(500)
+    
+    def user_password_reset(self, request):
+        reset_password_form = ResetPasswordForm(request.form)
+
+        if request.method == "POST":
+            if reset_password_form.validate_on_submit():
+                if check_password_hash(current_user.password, reset_password_form.old_password.data):
+                    new_hashed_password = generate_password_hash(reset_password_form.password.data)
+                    self._student_handler.update_hash_password(current_user.scheme_id, current_user.k_number, new_hashed_password)
+                    flash("Password successfully updated")
+                else:
+                    flash("Old password incorrect")
+            else:
+                flash("Please double check your new password is valid.")
+                
+        return render_template("user_screens/reset_password.html", reset_password_form=reset_password_form)
 
     def user_buddy_list(self,request):
 

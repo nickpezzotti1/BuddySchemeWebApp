@@ -32,6 +32,12 @@ def user_delete():
     return handler.user_delete(request)
 
 
+@user_blueprint.route("/user/reset-password", methods=['POST', 'GET'])
+@login_required
+def user_password_reset():
+    return handler.user_password_reset(request)
+
+
 @user_blueprint.route('/user/buddy/<k_number_buddy>')
 @login_required
 def user_buddy(k_number_buddy):

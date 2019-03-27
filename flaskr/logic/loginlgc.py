@@ -31,8 +31,15 @@ class LoginLogic:
         try:
             if request.method == "POST":
                 if login_form.validate_on_submit():
+                    scheme_id = login_form.scheme_id.data
+                    k_number = login_form.k_number.data
+
+                    if not self._student_handler.user_exist(scheme_id, k_number):
+                        flash("This email and password combination does not exist in our database.")
+                        return redirect("/login")
+
                     try:
-                        user = Student(login_form.scheme_id.data, login_form.k_number.data)
+                        user = Student(scheme_id, k_number)
                     except:
                         flash('You must first confirm your email address')
                         return redirect("/login")
@@ -44,8 +51,8 @@ class LoginLogic:
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
 
-                            is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data,
-                                                                            login_form.k_number.data)['is_mentor']
+                            is_mentor = self._student_handler.get_user_data(scheme_id,
+                                                                            k_number)['is_mentor']
 
                             return redirect("/dashboard")
                         else:

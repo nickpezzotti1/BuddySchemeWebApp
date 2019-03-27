@@ -4,6 +4,9 @@
   {% if current_user.priv == 'admin'%}
     <li><a href="/user">User</a></li>
   {% endif %}
+  {% if current_user.priv == 'system_admin'%}
+    <li><a href="/system/admin">Admin</a></li>
+  {% endif %}
 {% endblock nav_block %}
 
 {% block content_block %}

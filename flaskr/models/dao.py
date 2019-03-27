@@ -31,7 +31,7 @@ class Dao:
                     host=self._credentials['host'],
                     user = self._credentials['username'],
                     password = self._credentials['password'],
-                    db = "clulow_test", ##self._credentials['dbname'],
+                    db = self._credentials['dbname'],
                     charset = "utf8mb4",
                     write_timeout = 5,
                     autocommit = True

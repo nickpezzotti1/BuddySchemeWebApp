@@ -62,9 +62,13 @@ class AdminLogic:
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
-                res = self._student_handler.delete_students(current_user.scheme_id, k_number)
-                flash(k_number + "was deleted successfully")
-                return render_template("admin/dashboard.html", title="Admin Dashboard")
+                if current_user.k_number != k_number:
+                    flash(k_number + "was deleted successfully")
+                    res = self._student_handler.delete_students(current_user.scheme_id, k_number)
+                else:
+                    flash("Be careful! you are about to delete your own account," +
+                        " if you wish to do so, do it from your user dashboard")
+                    return render_template("admin/dashboard.html", title="Admin Dashboard")
 
         except Exception:
             self._log.exception("Could not execute delete student details")

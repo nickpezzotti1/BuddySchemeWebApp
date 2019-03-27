@@ -1,7 +1,9 @@
 {% extends "template.html" %}
 
 {% block nav_block %}
-  <li><a href="/user">User</a></li>
+  {% if current_user.priv == 'admin'%}
+    <li><a href="/user">User</a></li>
+  {% endif %}
 {% endblock nav_block%}
 
 {% block content_block %}

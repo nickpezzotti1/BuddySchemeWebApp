@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block nav_block %}
-  <li><a href="/user">User</a></li>   
+  <li><a href="/user">User</a></li>
 {% endblock nav_block%}
 
 {% block content_block %}
@@ -93,23 +93,8 @@
 	<input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="Back" />
 </form>
 
-<script>
-	function delConf() {
-		return confirm("This Will Delete The Account, Allocations And All Other Associated Data In Compliance With GDPR Policy. Do You Wish To Continue?")
-	}
 
-	function mkAdConf() {
-		return confirm("Grant Account Admin Status?")
-	}
-
-	function rmAdConf() {
-		return confirm("Remove Admin Status From Account?")
-	}
-
-	function rmAllConf() {
-		return confirm("Remove Match?")
-	}
-</script>
+<script src="{{ url_for('static',filename='js/admin/student_details.js') }}"> </script>
 
 
 {% endblock content_block %}

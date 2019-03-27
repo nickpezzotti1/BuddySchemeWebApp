@@ -15,7 +15,7 @@ class UserLogic():
     def user(self):
 
         try:
-            data_definitions = self.get_data_definitions()
+            data_definitions = self.get_data_definitions(current_user.scheme_id)
             user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
 
             return render_template("user_screens/dashboard_page.html", title="Your Profile", user_data=user_data)
@@ -51,7 +51,7 @@ class UserLogic():
                 form.hobbies.data=[hobby_id for hobby_id, hobby_name in user_data["hobbies"].items()]
 
                 # Populate possible choices using data from data_definitions
-                data_definitions = self.get_data_definitions()
+                data_definitions = self.get_data_definitions(current_user.scheme_id)
                 gender_definitions = self.get_gender_definitions()
 
                 form.gender.choices = [(gender_type, gender_type) for gender_type in gender_definitions]
@@ -132,12 +132,12 @@ class UserLogic():
                 self._log.exception("Could not execute user get gender definitions logic")
                 return abort(500)
 
-    def get_data_definitions(self):
+    def get_data_definitions(self, scheme_id):
         """ Get a list of all possible hobbies and interests """
         try:
             data_definitions = {
-                "hobbies": self._hobby_handler.get_hobby_list(),
-                "interests": self._interest_handler.get_interest_list()
+                "hobbies": self._hobby_handler.get_hobby_list(scheme_id),
+                "interests": self._interest_handler.get_interest_list(scheme_id)
             }
 
             return data_definitions

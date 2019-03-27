@@ -78,7 +78,7 @@ class AdminLogic:
 
             if new_hobby_form.hobby_name.data:
                 if new_hobby_form.validate_on_submit():
-                    response = self._hobby_handler.get_hobby_list()
+                    response = self._hobby_handler.get_hobby_list(current_user.scheme_id)
                     exists = False
 
                     for hobby in response:
@@ -89,13 +89,13 @@ class AdminLogic:
                         flash("Hobby already created")
                     else:
                         flash("Hobby successfully created")
-                        self._hobby_handler.insert_hobby(new_hobby_form.hobby_name.data)
+                        self._hobby_handler.insert_hobby(current_user.scheme_id, new_hobby_form.hobby_name.data)
                 else:
                     flash("Error creating hobby")
 
             if new_interest_form.interest_name.data:
                 if new_interest_form.validate_on_submit():
-                    response = self._interest_handler.get_interest_list()
+                    response = self._interest_handler.get_interest_list(current_user.scheme_id)
                     exists = False
 
                     for interest in response:
@@ -106,10 +106,10 @@ class AdminLogic:
                         flash("Interest already created")
                     else:
                         flash("Interest successfully created")
-                        self._interest_handler.insert_interest(new_interest_form.interest_name.data)
+                        self._interest_handler.insert_interest(current_user.scheme_id, new_interest_form.interest_name.data)
 
-            currentInterests = self._interest_handler.get_interest_list()
-            currentHobbies = self._hobby_handler.get_hobby_list()
+            currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+            currentHobbies = self._hobby_handler.get_hobby_list(current_user.scheme_id)
             return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
         except Exception:

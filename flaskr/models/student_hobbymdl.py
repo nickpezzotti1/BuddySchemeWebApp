@@ -7,7 +7,7 @@ class StudentHobbyModel(BasicModel):
         """ Given the k_number will return all the student's hobbies"""
 
         try:
-            return self._dao.execute("SELECT hobby_id, hobby_name FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+            return self._dao.execute("SELECT hobby_id, hobby_name FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number = %s AND Student_Hobby.scheme_id = %s;", (k_number, scheme_id))
 
         except Exception as e:
             self._log.exception("Could not get hobbies")
@@ -55,7 +55,7 @@ class StudentHobbyModel(BasicModel):
             try:
                 # TODO Allow for single hobby
                 self._dao.execute(
-                    "DELETE Student_Hobby FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                    "DELETE Student_Hobby FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number = %s AND Student_Hobby.scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -64,7 +64,7 @@ class StudentHobbyModel(BasicModel):
         else:
             try:
                 self._dao.execute(
-                    "DELETE Student_Hobby FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                    "DELETE Student_Hobby FROM Student_Hobby INNER JOIN Hobby ON Student_Hobby.hobby_id=Hobby.id where k_number = %s AND Student_Hobby.scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:

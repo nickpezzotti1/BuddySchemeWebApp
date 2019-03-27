@@ -24,8 +24,6 @@ from flaskr.emailer import send_email_scheme_feedback
 class SystemAdminLogic:
 
     def system_admin_login(self, request):
-        # if current_user.is_authenticated:
-        # return redirect("/dashboard")
 
         try:
 
@@ -67,8 +65,7 @@ class SystemAdminLogic:
             return redirect(url_for('systemadmin.system_scheme_feedback', scheme_id=scheme_id))
         if request.method == 'POST' and 'susScheme' in request.form:
             scheme_id = request.form['scheme_id']
-            print("suspend: " + scheme_id)
-            # self._scheme_handler.suspend_scheme(scheme_id)
+            self._scheme_handler.suspend_scheme(scheme_id)
         elif request.method == 'POST' and 'delScheme' in request.form:
             scheme_id = request.form['scheme_id']
             self._scheme_handler.delete_scheme(scheme_id)
@@ -77,7 +74,6 @@ class SystemAdminLogic:
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
     def system_new_scheme(self, request):
-        # require system admin
         try:
             new_scheme_form = NewSchemeForm(request.form)
 

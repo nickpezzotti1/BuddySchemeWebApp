@@ -10,7 +10,7 @@ app = flaskr.create_app()
 
 @pytest.fixture
 def client():
-    
+
     app.config['TESTING'] = True
     client = app.test_client()
 
@@ -32,15 +32,10 @@ def test_admin(client):
     assert 302 == rv.status_code
 
 
-def test_mentee(client):
+def test_user(client):
 
-    rv = client.get('/mentee')
-    assert 500 == rv.status_code
-
-def test_mentor(client):
-
-    rv = client.get('/mentor')
-    assert 500 == rv.status_code
+    rv = client.get('/user')
+    assert 302 == rv.status_code
 
 def test_arguments(client):
     with app.test_request_context('/?id=123'):

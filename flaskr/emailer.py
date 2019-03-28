@@ -13,13 +13,24 @@ def send_email(sender, recipients, subject, content):
         # (env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025
         server = smtplib.SMTP("localhost", 1025)
 
+        gmail_address = "kclbuddysystem@gmail.com"
+        sender = gmail_address
+        gmail_password = "Password@123"
+
         msg = MIMEText(content)
         msg['From'] = sender
         msg['To'] = COMMASPACE.join(recipients)
         msg["Subject"] = subject
 
-        server.send_message(msg)
-        server.close()
+        try:  
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            server.ehlo()
+            server.login(gmail_address, gmail_password)
+            server.send_message(msg)
+            server.close()
+        except:  
+            print("Failed to send email")
+
     except Exception as e:
         print(e)
 

@@ -54,7 +54,6 @@ def send_email_reset_password(k_number, scheme_id, secret_key):
     send_email(sender, recipients, subject, content)
 
 def send_email_scheme_feedback(k_numbers, feedback_url):
-
     sender = "no-reply@sbs.kcl.ac.uk"
     subject = "Student buddy scheme feedback"
     recipients = [(str(i) + "@kcl.ac.uk") for i in k_numbers]

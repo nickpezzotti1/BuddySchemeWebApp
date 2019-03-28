@@ -11,7 +11,7 @@ def send_email(sender, recipients, subject, content):
         # Run a local instance of a email server that echoes
         # the messages on terminal
         # (env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025
-        server = smtplib.SMTP("localhost", 1025)
+        # server = smtplib.SMTP("localhost", 1025)
 
         gmail_address = "kclbuddysystem@gmail.com"
         sender = gmail_address

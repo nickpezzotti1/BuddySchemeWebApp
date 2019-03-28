@@ -17,27 +17,63 @@
     {% else %}
     <h1> Mentee </h1>
     {% endif %}
-    <h4> K-Number: {{udata.k_number}}</h4>
-    <h4> First Name: {{udata.first_name}}</h4>
-    <h4> Last Name: {{udata.last_name}}</h4>
-    <h4> Age: {{udata.age}}</h4>
+
+    <form>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">K-Number</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["k_number"]}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">First Name</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["first_name"]}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["last_name"]}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label"> Age </label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["age"]}}" readonly>
+        </div>
+      </div>
 </div>
 <br />
-<div>
-    <h4> Hobbies:</h4>
-    <ul>
-        {% for hobby_id, hobby_name in udata["hobbies"].items() %}
-        <li>{{ hobby_name }}</li>
+
+   <div class="form-check" id ='inputCol1'>
+    <label for="inputEmail3" class="col-sm-1 col-form-label" >Interests</label>
+         <div class="col-sm-11">
+          {% for interest_id, interest_name in udata["interests"].items() %}
+            <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
+            <label class="form-check-label" for="gridCheck1">
+              {{interest_name}}
+            </label>
         {% endfor %}
-    </ul>
-    <br />
-    <h4> Academic Interests: </h4>
-    <ul>
-        {% for interest_id, interest_name in udata["interests"].items() %}
-        <li>{{ interest_name }}</li>
+      </div>
+    </div>
+
+   <div class="form-check" id ='inputCol1'>
+    <label for="inputEmail3" class="col-sm-1 col-form-label" >Hobbies</label>
+         <div class="col-sm-11">
+          {% for hobby_id, hobby_name in udata["hobbies"].items() %}
+            <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
+            <label class="form-check-label" for="gridCheck1">
+              {{hobby_name}}
+            </label>
         {% endfor %}
-    </ul>
-</div>
+      </div>
+    </div>
+    </form>
 <br />
 {% if matches|length %}
 <table class="table table-hover" id='table'>

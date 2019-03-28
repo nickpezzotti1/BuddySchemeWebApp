@@ -15,8 +15,9 @@ class UserLogic():
 
     def user(self):
         """
+        Dynamically generate the user page        
 
-        :return:
+        :return: the user page as html
         """
         try:
             data_definitions = self.get_data_definitions(current_user.scheme_id)
@@ -83,8 +84,8 @@ class UserLogic():
 
     def user_delete(self, request):
         """ Will delete all the users informations from the database
-        :param request:
-        :return:
+        :param request: the request method type
+        :return: the web page to delete the user or redirect to the user dashboard if the user was deleted 
         """
 
         try:
@@ -101,9 +102,9 @@ class UserLogic():
     
     def user_password_reset(self, request):
         """
-
-        :param request:
-        :return:
+        Auto generate the web page from the template
+        :param request: the request method type
+        :return: the html page that enables you to reset your password
         """
         reset_password_form = ResetPasswordForm(request.form)
 
@@ -122,9 +123,9 @@ class UserLogic():
 
     def user_buddy_list(self,request):
         """
-
-        :param request:
-        :return:
+        Auto generate the web page from a template 
+        :param request: the request method type
+        :return: the html page with the list of the buddies
         """
         try:
 
@@ -158,9 +159,9 @@ class UserLogic():
 
     def user_buddy_view(self, k_number_buddy):
         """
-
-        :param k_number_buddy:
-        :return:
+        Auto generate the web page from a template  
+        :param k_number_buddy: the k-number of the buddy we want to view 
+        :return: the html page related to the buddy k-number
         """
         try:
             return render_template("user/buddy_page.html", title="Your Mentee", buddy_data=self._student_handler.get_user_data(current_user.scheme_id, k_number_buddy), k_number_buddy=k_number_buddy)
@@ -173,7 +174,7 @@ class UserLogic():
 
     def get_gender_definitions(self):
         """Get a list of all possible gender types
-        :return:
+        :return: a list of the possible gender types
         """
         try:
             return ["Male", "Female", "Other", "Prefer not to say"]
@@ -184,8 +185,8 @@ class UserLogic():
 
     def get_data_definitions(self, scheme_id):
         """ Get a list of all possible hobbies and interests
-        :param scheme_id:
-        :return:
+        :param scheme_id: the id of the scheme
+        :return: the data definition dictionnary 
         """
         try:
             data_definitions = {
@@ -201,9 +202,9 @@ class UserLogic():
 
     def get_all_user_data(self, scheme_id, k_number):
         """ Get all user data from database and format into a single dict
-        :param scheme_id:
-        :param k_number:
-        :return:
+        :param scheme_id: the id of the scheme 
+        :param k_number: the k-number of the student
+        :return: the user data object
         """
         try:
             user_data = self._student_handler.get_user_data(scheme_id, k_number)

@@ -270,17 +270,17 @@ class AdminLogic:
 
     def invite_to_scheme(self):
         invite_form = InviteForm()
+        scheme_id = current_user.scheme_id
+        token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
+        invite_url = current_app.config["WEBSITE_PATH"] + "signup/" + token
 
         if request.method == 'POST':
             if invite_form.validate_on_submit:
                 email = invite_form.email.data
-                scheme_id = current_user.scheme_id
-                token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
-
                 send_email_scheme_invite(email=email, token=token)
                 flash("Invite sent.")
 
-        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form)
+        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form, invite_url=invite_url)
 
     def __init__(self):
         try:

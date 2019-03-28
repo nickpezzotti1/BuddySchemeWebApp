@@ -150,11 +150,8 @@ class AdminLogic:
 
     def allocation_algorithm(self):
         flash("The allocations have been made, please look at the student table for more information")
-        return render_template('admin/dashboard.html', assignments=self.allocate())
-
-    @staticmethod
-    def sign_up_settings():
-        return render_template('admin/dashboard.html', title='Sign-Up Settings')
+        self.allocate()
+        return render_template('admin/dashboard.html')
 
     def allocate(self):
         try:
@@ -178,7 +175,7 @@ class AdminLogic:
             except:
                 print("Error in inserting into db")
 
-            return "The following assignments have been made:" + str(json_response["assignments"])
+
 
         except Exception as e:
             self._log.exception(e)

@@ -20,15 +20,16 @@ class AdminLogic:
     @staticmethod
     def admin_dashboard():
         """
-
-        :return: 
+        Redirects the admin back to the dashboard
+        :return: dashboard.html
         """
         return render_template('admin/dashboard.html', title='Admin Dashboard')
 
     def admin_view_students(self):
         """
-
-        :return: 
+        Retrieves the students from the database for the specific scheme which the admin looks over and lists them
+        with the option to request further information
+        :return: view_students.html
         """
         try:
             data = self._student_handler.get_all_students_data_basic(current_user.scheme_id)
@@ -39,8 +40,10 @@ class AdminLogic:
 
     def view_student_details(self):
         """
-
-        :return: 
+        Returns the details about a specific student using their k-number to send a request form retrieving the associated data
+        It allows the admin to change the admin status of the user and also manually assign them to a mentor/mentee as well giving the
+        option to delete the user from the database.
+        :return: student_details.html or 500 error code
         """
         try:
             if(request.method == 'POST' and 'knum' in request.form):
@@ -72,8 +75,10 @@ class AdminLogic:
 
     def delete_student_details(self):
         """
-
-        :return: 
+        Allows the admin to delete a user from the scheme by using their associated k-number
+        If the admin attempts to delete their own account they will be redirected to their dashboard where they can
+        delete their own account using their k-number
+        :return: dashboard.html or 500 error code
         """
         try:
             if(request.method == 'POST' and 'knum' in request.form):
@@ -92,8 +97,10 @@ class AdminLogic:
 
     def general_settings(self):
         """
-
-        :return: 
+        Retrieves the listed hobbies and interests associated with a given scheme and displays them
+        Gives the admin the option to add further hobbies and interests using a request form, checks it doesn't exist alrady
+        Page refreshes listing the new list of hobbies/interests
+        :return: general_settings.html
         """
         try:
             new_hobby_form = NewHobbyForm(request.form)
@@ -141,8 +148,9 @@ class AdminLogic:
 
     def allocation_config(self):
         """
-
-        :return: 
+        Allows the admin to changes the weights of the allocatio algorithm
+        Uses a post request and updates the page under the scheme id
+        :return: allocation_config.html
         """
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
@@ -173,8 +181,9 @@ class AdminLogic:
 
     def allocation_algorithm(self):
         """
-
-        :return: 
+        Runs the allocation algorithm and sends the admin back to the dashboard
+        Flashes it was successful
+        :return: dashboard.html
         """
         flash("The allocations have been made, please look at the student table for more information")
         return render_template('admin/dashboard.html', assignments=self.allocate())
@@ -183,14 +192,14 @@ class AdminLogic:
     def sign_up_settings():
         """
 
-        :return: 
+        :return:
         """
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
 
     def allocate(self):
         """
-
-        :return: 
+        Runs the allocation algorithm using the json provided from another method and returns the matches as a json
+        :return: json
         """
         try:
             input_string = self.generate_mentee_and_mentor_json()
@@ -219,11 +228,10 @@ class AdminLogic:
             self._log.exception(e)
             return abort(500)
 
-    # TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
         """
-
-        :return: 
+        Retrieves the mentor, mentees with their associated data and submits them as a json
+        :return: json
         """
         # Get allocation configuration from database
         allocation_config = self._allocation_config_handler.get_allocation_config(
@@ -266,8 +274,9 @@ class AdminLogic:
 
     def manually_assign(self):
         """
-
-        :return: 
+        Allows the admin manually assign a mentee/mentor using their k-number.
+        Restricts assignment of mentor-mentor, mentee-mentee and already matches users
+        :return: manually_assign.html
         """
         try:
             if(request.method == 'POST'):
@@ -313,8 +322,8 @@ class AdminLogic:
 
     def invite_to_scheme(self):
         """
-
-        :return:
+        Generates a url to allow users to sign up to the specific scheme using the scheme_id
+        :return: invite.html
         """
         invite_form = InviteForm()
 

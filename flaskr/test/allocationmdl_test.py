@@ -16,4 +16,6 @@ def test_delete_allocation():
 	tester.remove_allocation(1, 'k00000000', 'k99999999')
 	student.delete_students(1, 'k00000000')
 	student.delete_students(1, 'k99999999')
+	get = tester.get_allocation(1, 'k00000000', 'k99999999')
+	assert 0 == len(get)
 

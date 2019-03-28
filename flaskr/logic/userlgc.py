@@ -10,6 +10,7 @@ from flaskr.models.interestmdl import InterestModel
 from flaskr.models.student_hobbymdl import StudentHobbyModel
 from flaskr.models.student_interestmdl import StudentInterestModel
 from flaskr.models.studentmdl import StudentModel
+from flaskr.user import SystemAdmin
 
 class UserLogic():
 
@@ -95,7 +96,18 @@ class UserLogic():
             if reset_password_form.validate_on_submit():
                 if check_password_hash(current_user.password, reset_password_form.old_password.data):
                     new_hashed_password = generate_password_hash(reset_password_form.password.data)
-                    self._student_handler.update_hash_password(current_user.scheme_id, current_user.k_number, new_hashed_password)
+
+                    temp = current_user.get_id()
+                    id_role = temp.split(":")[0]
+
+                    # if first element is `sysadmin` instead of a scheme_id
+                    # call function to reset `sysadmin` pass
+                    if id_role == "sysadmin":
+                        flash("admin reset")
+                    else:
+                        # regular user reset
+                        self._student_handler.update_hash_password(current_user.scheme_id, current_user.k_number, new_hashed_password)
+
                     flash("Password successfully updated")
                 else:
                     flash("Old password incorrect")

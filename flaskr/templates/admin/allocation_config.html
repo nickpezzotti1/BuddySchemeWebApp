@@ -1,7 +1,12 @@
 {% extends "index.html" %}
 
 {% block nav_block %}
-<li><a href="/dashboard">Back</a></li>
+	{% if current_user.priv == 'admin'%}
+		<li><a href="/user">User</a></li>
+	{% endif %}
+	{% if current_user.priv == 'system_admin'%}
+    <li><a href="/system/admin">Admin</a></li>
+  {% endif %}
 {% endblock nav_block %}
 
 
@@ -39,7 +44,7 @@
 		{{ form.allocation_config_submit(class="btn btn-block btn-lg help-block btn-primary my-3") }}
 
 	</form>
-	<script src="{{ url_for('static',filename='js/admin_allocation_config_sliders.js') }}"> </script>
+	<script src="{{ url_for('static',filename='js/admin/admin_allocation_config_sliders.js') }}"> </script>
 </div>
 
 <div class="help-block" id="allocate">

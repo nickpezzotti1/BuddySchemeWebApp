@@ -1,0 +1,31 @@
+{% extends "template.html"%}
+
+{% block content_block %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+			<div class="alert alert-warning">
+				{{ message }}
+			</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% block content %}
+{% endblock %}
+
+Please input the link to a feedback form to be emailed to all users in this scheme.
+</br></br>
+<form action="" method="post" name="feedback">
+    {{ feedback_form.csrf_token }}
+    <div class="form-group">
+        {{ feedback_form.feedback_form_url.label(class="form-control-label") }}
+        {{ feedback_form.feedback_form_url(class="form-control form-control-lg", placeholder="Please insert the URL") }}
+    </div>
+    <div class="col-md-12 text-center ">
+        {{ feedback_form.feedback_submit(class="btn btn-block mybtn btn-primary tx-tfm") }}
+    </div>
+</form>
+
+{% endblock content_block %}

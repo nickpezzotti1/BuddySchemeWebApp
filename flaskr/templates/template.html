@@ -51,14 +51,8 @@
 						<ul class="nav masthead-nav">
 							{% if current_user.is_authenticated %}
 							<li><a href="/logout">Log Out</a></li>
-							<li><a href="{{url_for("dashboard")}}">Home</a></li>
-							<li><a href="#">Features</a></li>
-							<li><a href="#">Contact</a></li>
-							{% else %}
-							<li><a href="/signup">Sign Up</a></li>
-							<li><a href="/login">Log In</a></li>
 							{% endif %}
-							{% block nav_block %}{% endblock nav_block %}
+              {% block nav_block %}{% endblock nav_block %}
 						</ul>
 					</div>
 				</div>

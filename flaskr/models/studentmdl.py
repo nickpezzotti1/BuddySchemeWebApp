@@ -90,9 +90,12 @@ class StudentModel(BasicModel):
             raise KeyError(f"{self.HASH_COL} not found in table.")
 
     def user_exist(self, scheme_id, k_number):
-        pass
+        try:
+            if self.get_user_data(scheme_id=scheme_id, k_number=k_number):
+                return True
+        except Exception:
+            return False
 
-    # TODO Should I return something here?
 
     def get_user_hashed_password(self, scheme_id, k_number):
         """ Returns the hashed password for the user"""
@@ -170,7 +173,7 @@ class StudentModel(BasicModel):
 
             try:
                 self._dao.execute(
-                    "UPDATE Student SET email_confirmed = True WHERE WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
+                    "UPDATE Student SET email_confirmed = True WHERE k_number = %s AND scheme_id = %s;", (k_number, scheme_id))
                 self._dao.commit()
 
             except Exception as e:
@@ -222,7 +225,9 @@ class StudentModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
-    def update_buddy_limit(self, scheme_id, k_number, buddy_limit):
+    
+    def update_buddy_limit(self, scheme_id, k_number, buddy_limit=1):
+        """ Update the buddy limit for a user """
         if sanity_check(scheme_id) and sanity_check(k_number):
             # sanity check dob
             try:

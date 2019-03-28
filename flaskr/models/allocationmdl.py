@@ -94,6 +94,28 @@ class AllocationModel(BasicModel):
             self._log.exception("Could not get mentees")
             raise e
 
+    def get_all_mentors(self, scheme_id):
+        """ Returns all the k-number of mentors"""
+
+        try:
+            return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor=1 AND scheme_id = %s;", (scheme_id, ))
+
+        except Exception as e:
+                self._log.exception("Could not get all mentors")
+                return abort(500)
+
+
+    def get_all_mentees(self, scheme_id):
+        """ Returns all the k-number of the mentees"""
+
+        try:
+            return self._dao.execute("SELECT k_number, gender, buddy_limit, date_of_birth FROM Student WHERE is_mentor = 0 AND scheme_id = %s;", (scheme_id, ))
+
+        except Exception as e:
+                self._log.exception("Could not get all mentees")
+                return abort(500)
+
+
     def insert_mentor_mentee(self, scheme_id, mentor_k_number, mentee_k_number):
         """ Insert the mentor, mentee pair k number """
 

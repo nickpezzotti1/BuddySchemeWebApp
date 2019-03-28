@@ -39,12 +39,33 @@ def send_email_confirmation_to_user(k_number, scheme_id, secret_key):
     send_email(sender, recipients, subject, content)
 
 
-def send_email_reset_password(user, secret_key):
-    token = generate_token(secret_key, user.k_number)
+def send_email_reset_password(k_number, scheme_id, secret_key):
+    message = str(k_number) + \
+              current_app.config["MESSAGE_SEPARATION_TOKEN"] + str(scheme_id)
+    token = generate_token(secret_key=secret_key, message=message)
     sender = "no-reply@sbs.kcl.ac.uk"
-    recipients = [str(user.k_number) + "@kcl.ac.uk"]
+    recipients = [k_number + "@kcl.ac.uk"]
     subject = "Forgot my password"
-    path = "http://localhost:5000/reset-password/"
+    path = "http://localhost:5000/forgot-my-password/"
     content = f"Please click on the following link to reset your password {path}{token}"
+
+    send_email(sender, recipients, subject, content)
+
+def send_email_scheme_feedback(k_numbers, feedback_url):
+
+    sender = "no-reply@sbs.kcl.ac.uk"
+    subject = "Student buddy scheme feedback"
+    recipients = [(str(i) + "@kcl.ac.uk") for i in k_numbers]
+    content = f"Your feedback is very important to us. Please click on the following link and let us know what can be done better next time! {feedback_url}"
+
+    send_email(sender, recipients, subject, content)
+
+def send_email_scheme_invite(email, token):
+
+    sender = "no-reply@sbs.kcl.ac.uk"
+    subject = "Student buddy scheme feedback"
+    recipients = [email]
+    path = "http://localhost:5000/signup/"
+    content = f"You have been invited to join the KCL's new Student Buddy Scheme. Follow this link and register! {path}{token}"
 
     send_email(sender, recipients, subject, content)

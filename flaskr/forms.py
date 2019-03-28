@@ -8,32 +8,40 @@ from wtforms.validators import DataRequired, Length, EqualTo
 
 class LoginForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
-    k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
+    k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     login_submit = SubmitField("Login")
 
 
 class RegistrationForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
-    first_name = StringField('first_name', validators=[DataRequired()])
-    last_name = StringField('last_name', validators=[DataRequired()])
-    k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('confirm_password', validators=[
+    confirm_password = PasswordField('Confirm Password', validators=[
                                      DataRequired(), EqualTo("password")])
-    is_mentor = BooleanField('is_mentor')
+    is_mentor = BooleanField('Is Mentor')
     registration_submit = SubmitField("Sign Up")
 
 
-class RequestPasswordResetForm(FlaskForm):
+class RequestEmailPasswordResetForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
-    k_number = StringField('k-number', validators=[DataRequired(), Length(min=8, max=9)])
+    k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     request_reset_password_submit = SubmitField("Send me an email")
 
 
-class ResetPasswordForm(FlaskForm):  # scheme_id?
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('confirm_password', validators=[
+class ResetPasswordWithEmailForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm New Password', validators=[
+                                     DataRequired(), EqualTo("password")])
+    reset_password_submit = SubmitField("Reset Password")
+
+
+class ResetPasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired(), Length(min=8)])
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm New Password', validators=[
                                      DataRequired(), EqualTo("password")])
     reset_password_submit = SubmitField("Reset Password")
 
@@ -62,8 +70,7 @@ class NewInterestForm(FlaskForm):
     interest_name = StringField('Interest Name', validators=[DataRequired()])
     interest_submit = SubmitField("Add new interest")
 
-
-class MentorPreferencesForm(FlaskForm):
+class UserPreferencesForm(FlaskForm):
     gender = RadioField('Gender', choices=[], validators=[DataRequired()])
     date_of_birth = DateField('Date Of Birth')
     buddy_limit = IntegerField('Buddy Limit', validators=[DataRequired()])
@@ -78,3 +85,11 @@ class AllocationConfigForm(FlaskForm):
     hobby_weight = IntegerField('Hobby Weight')
     interest_weight = IntegerField('Interest Weight')
     allocation_config_submit = SubmitField("Update")
+
+class SchemeFeedbackForm(FlaskForm):
+    feedback_form_url = StringField('Feedback Form URL', validators=[DataRequired()])
+    feedback_submit = SubmitField("Send")
+
+class InviteForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField("Send")

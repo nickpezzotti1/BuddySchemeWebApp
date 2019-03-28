@@ -1,8 +1,14 @@
 {% extends "template.html" %}
 
+{% block nav_block %}
+  {% if current_user.priv == 'admin'%}
+    <li><a href="/admin">Admin</a></li>
+  {% endif %}
+{% endblock nav_block %}    
+
 {% block content_block %}
 
-<form action = "{{url_for('mentor.mentor_preferences')}}" method = "POST">
+<form action = "{{url_for('user.user_preferences')}}" method = "POST">
 
     <h1 id="title"> Preferences </h1>
 
@@ -41,12 +47,14 @@
     </div>
   </fieldset>
 
+{% if user_data["is_mentor"] %}
   <div class="form-group row">
-      {{ form.buddy_limit.label(class="col-sm-2 col-form-label") }}
-      <div class="col-sm-10">
-        {{ form.buddy_limit(class="form-control") }}
-      </div>
+    {{ form.buddy_limit.label(class="col-sm-2 col-form-label") }}
+    <div class="col-sm-10">
+      {{ form.buddy_limit(class="form-control") }}
+    </div>
   </div>
+{% endif %}
 
   <div class="form-group row">
       {{ form.date_of_birth.label(class="col-sm-2 col-form-label") }}
@@ -78,8 +86,8 @@
 
 <div id="browse_app navigate">
     {{ form.user_preferences_submit(class="btn btn-large btn-info") }}
-    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor')}}">Back to Dashboard </a>
-    <a class="btn btn-large btn-info" href="{{url_for('mentor.mentor_delete')}}">Delete Account</a>
+    <a class="btn btn-large btn-info" href="{{url_for('user.user')}}">Back to Dashboard </a>
+    <a class="btn btn-large btn-info" href="{{url_for('user.user_delete')}}">Delete Account</a>
 </div>                   
 
 </form>

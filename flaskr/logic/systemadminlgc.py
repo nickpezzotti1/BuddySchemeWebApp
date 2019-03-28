@@ -6,6 +6,7 @@ from flask import make_response
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import url_for
 from flask_login import current_user
 from flask_login import login_user
 from werkzeug.security import check_password_hash
@@ -13,16 +14,18 @@ from werkzeug.security import generate_password_hash
 
 from flaskr.forms import NewSchemeForm
 from flaskr.forms import SystemLoginForm
+from flaskr.forms import SchemeFeedbackForm
 from flaskr.models.schememdl import SchemeModel
 from flaskr.models.studentmdl import StudentModel
 from flaskr.user import SystemAdmin
+from flaskr.emailer import send_email_scheme_feedback
 
 
 class SystemAdminLogic:
 
     def system_admin_login(self, request):
-        # if current_user.is_authenticated:
-        # return redirect("/dashboard")
+        if current_user.is_authenticated:
+            return redirect("/dashboard")
 
         try:
 
@@ -59,6 +62,9 @@ class SystemAdminLogic:
 
     def system_admin_dashboard(self):
         # try:
+        if request.method == 'POST' and 'feedbackScheme' in request.form:
+            scheme_id = request.form['scheme_id']
+            return redirect(url_for('systemadmin.system_scheme_feedback', scheme_id=scheme_id))
         if request.method == 'POST' and 'susScheme' in request.form:
             scheme_id = request.form['scheme_id']
             self._scheme_handler.suspend_scheme(scheme_id)
@@ -70,7 +76,6 @@ class SystemAdminLogic:
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
     def system_new_scheme(self, request):
-        # require system admin
         try:
             new_scheme_form = NewSchemeForm(request.form)
 
@@ -128,6 +133,18 @@ class SystemAdminLogic:
 
         else:
             return redirect('/system')
+
+    def system_scheme_feedback(self, request, scheme_id):
+        feedback_form = SchemeFeedbackForm(request.form)
+
+        if request.method == 'POST':
+            if feedback_form.validate_on_submit:
+                users = self._student_handler.get_all_students_data_basic(scheme_id=scheme_id)
+                k_numbers = [i["k_number"] for i in users]
+                send_email_scheme_feedback(k_numbers, feedback_url=feedback_form.feedback_form_url.data)
+                flash("Email sent to " + str(len(k_numbers)) + " students.")
+                    
+        return render_template('system_admin/feedback.html', title='Scheme Feedback', feedback_form=feedback_form)
 
     def __init__(self):
         try:

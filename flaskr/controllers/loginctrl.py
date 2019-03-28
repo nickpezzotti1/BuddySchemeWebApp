@@ -28,6 +28,16 @@ def confirm_email(token):
     return handler.confirm_email(token)
 
 
+@login_blueprint.route("/forgot-my-password", methods=["GET", "POST"])
+def reset_password_via_email():
+    return handler.reset_password_via_email(request)
+
+
+@login_blueprint.route("/forgot-my-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    return handler.reset_password(request, token)
+
+
 @login_blueprint.route("/logout")
 @login_required
 def logout():

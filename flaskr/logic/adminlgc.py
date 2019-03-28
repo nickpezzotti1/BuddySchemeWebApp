@@ -4,6 +4,7 @@ import logging
 import json
 import requests
 from flaskr.auth_token import generate_token
+from flaskr.emailer import send_email_scheme_invite
 from flaskr.models.allocationconfigmdl import AllocationConfigModel
 from flaskr.models.allocationmdl import AllocationModel
 from flaskr.models.student_interestmdl import StudentInterestModel
@@ -12,7 +13,7 @@ from flaskr.models.interestmdl import InterestModel
 from flaskr.models.hobbymdl import HobbyModel
 from flaskr.models.studentmdl import StudentModel
 from datetime import date, datetime
-from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm
+from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, InviteForm
 
 
 class AdminLogic:
@@ -61,10 +62,13 @@ class AdminLogic:
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
-                res = self._student_handler.delete_students(current_user.scheme_id, k_number)
-                return render_template('admin/delete_student.html', title='Delete Student Profile ' + k_number, res=res, k_number=k_number)
-            else:
-                return redirect(url_for('admin.admin_view_students'))
+                if current_user.k_number != k_number:
+                    flash(k_number + "was deleted successfully")
+                    res = self._student_handler.delete_students(current_user.scheme_id, k_number)
+                else:
+                    flash("Be careful! you are about to delete your own account," +
+                        " if you wish to do so, do it from your user dashboard")
+                    return render_template("admin/dashboard.html", title="Admin Dashboard")
 
         except Exception:
             self._log.exception("Could not execute delete student details")
@@ -77,7 +81,7 @@ class AdminLogic:
 
             if new_hobby_form.hobby_name.data:
                 if new_hobby_form.validate_on_submit():
-                    response = self._hobby_handler.get_hobby_list()
+                    response = self._hobby_handler.get_hobby_list(current_user.scheme_id)
                     exists = False
 
                     for hobby in response:
@@ -88,13 +92,13 @@ class AdminLogic:
                         flash("Hobby already created")
                     else:
                         flash("Hobby successfully created")
-                        self._hobby_handler.insert_hobby(new_hobby_form.hobby_name.data)
+                        self._hobby_handler.insert_hobby(current_user.scheme_id, new_hobby_form.hobby_name.data)
                 else:
                     flash("Error creating hobby")
 
             if new_interest_form.interest_name.data:
                 if new_interest_form.validate_on_submit():
-                    response = self._interest_handler.get_interest_list()
+                    response = self._interest_handler.get_interest_list(current_user.scheme_id)
                     exists = False
 
                     for interest in response:
@@ -105,10 +109,10 @@ class AdminLogic:
                         flash("Interest already created")
                     else:
                         flash("Interest successfully created")
-                        self._interest_handler.insert_interest(new_interest_form.interest_name.data)
+                        self._interest_handler.insert_interest(current_user.scheme_id, new_interest_form.interest_name.data)
 
-            currentInterests = self._interest_handler.get_interest_list()
-            currentHobbies = self._hobby_handler.get_hobby_list()
+            currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+            currentHobbies = self._hobby_handler.get_hobby_list(current_user.scheme_id)
             return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
         except Exception:
@@ -120,8 +124,7 @@ class AdminLogic:
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
-        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data[
-                                    'gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
+        form = AllocationConfigForm(request.form, age_weight=config_data['age_weight'], gender_weight=config_data['gender_weight'], hobby_weight=config_data['hobby_weight'], interest_weight=config_data['interest_weight'])
 
         if(request.method == 'POST'):
             # Format the results in a dict and call the update query
@@ -177,7 +180,7 @@ class AdminLogic:
 
             return "The following assignments have been made:" + str(json_response["assignments"])
 
-        except Exception:
+        except Exception as e:
             self._log.exception(e)
             return abort(500)
 
@@ -265,13 +268,19 @@ class AdminLogic:
             self._log.exception("Could not execute get all user data logic")
             return abort(500)
 
-    @staticmethod
-    def invite_to_scheme():
-        scheme_id = current_user.scheme_id
+    def invite_to_scheme(self):
+        invite_form = InviteForm()
 
-        result = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
-        result = "/signup/" + result
-        return result
+        if request.method == 'POST':
+            if invite_form.validate_on_submit:
+                email = invite_form.email.data
+                scheme_id = current_user.scheme_id
+                token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
+
+                send_email_scheme_invite(email=email, token=token)
+                flash("Invite sent.")
+
+        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form)
 
     def __init__(self):
         try:

@@ -5,8 +5,8 @@ from flask_login import current_user, login_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.auth_token import verify_token
-from flaskr.emailer import send_email_confirmation_to_user
-from flaskr.forms import LoginForm, RegistrationForm
+from flaskr.emailer import send_email_confirmation_to_user, send_email_reset_password
+from flaskr.forms import LoginForm, RegistrationForm, RequestEmailPasswordResetForm, ResetPasswordWithEmailForm
 from flaskr.models.schememdl import SchemeModel
 from flaskr.models.studentmdl import StudentModel
 from flaskr.user import Student
@@ -31,8 +31,15 @@ class LoginLogic:
         try:
             if request.method == "POST":
                 if login_form.validate_on_submit():
+                    scheme_id = login_form.scheme_id.data
+                    k_number = login_form.k_number.data
+
+                    if not self._student_handler.user_exist(scheme_id, k_number):
+                        flash("This k_number and password combination does not exist in our database.")
+                        return redirect("/login")
+
                     try:
-                        user = Student(login_form.scheme_id.data, login_form.k_number.data)
+                        user = Student(scheme_id, k_number)
                     except:
                         flash('You must first confirm your email address')
                         return redirect("/login")
@@ -44,15 +51,10 @@ class LoginLogic:
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
 
-                            is_mentor = self._student_handler.get_user_data(login_form.scheme_id.data,
-                                                                            login_form.k_number.data)['is_mentor']
+                            is_mentor = self._student_handler.get_user_data(scheme_id,
+                                                                            k_number)['is_mentor']
 
-                            if is_mentor:
-                                target = "/mentor"
-                            else:
-                                target = "/mentee"
-
-                            return redirect(target)
+                            return redirect("/dashboard")
                         else:
                             flash('The password you entered is incorrect')
                             return redirect("/login")
@@ -109,7 +111,7 @@ class LoginLogic:
                     # user = Student(scheme_id, k_number)
                     # print(user.k_number)
                     send_email_confirmation_to_user(
-                        scheme_id=scheme_id, k_number=k_number, 
+                        scheme_id=scheme_id, k_number=k_number,
                         secret_key=current_app.config["SECRET_KEY"])
 
                     # redirect to profile page, where he must insert his preferences
@@ -124,12 +126,13 @@ class LoginLogic:
             self._log.exception("Could not parse registration form")
             return abort(500)
 
-    def confirm_email(self, token):  #TODO add scheme_id
+    def confirm_email(self, token):
 
         try:
             message = verify_token(
-                secret_key=current_app.config["SECRET_KEY"], token=token,
-                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"])
+                secret_key=current_app.config["SECRET_KEY"],
+                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"],
+                token=token)
 
         except Exception as e:
             self._log.exception("Could not verify token")
@@ -137,24 +140,23 @@ class LoginLogic:
 
         try:
             if message:
-                print(message)
-                print(current_app.config["MESSAGE_SEPARATION_TOKEN"])
                 (k_number, scheme_id) = message.split(
                     current_app.config["MESSAGE_SEPARATION_TOKEN"])
-                # return "this is: " + str(k_number)
+                
                 user = Student(k_number=k_number, scheme_id=scheme_id)
+
                 if user.email_confirmed:
-                    return "account already active"
+                    flash("Account already active.")
                 else:
                     user.activate()
-                    return "account activated"
+                    flash("Account successfully activated.")
             else:
-                # app.logger.warning("token verification failed")
-                return "token verification fail"
+                flash("The token verification has failed")
 
         except Exception as e:
             self._log.exception("Could not activate account")
             return abort(500)
+        return redirect("/login")
 
     def _get_scheme(self):
         schemes = self._scheme_handler.get_active_scheme_data()
@@ -167,6 +169,51 @@ class LoginLogic:
         secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
 
         return self.signup(request, scheme_id=scheme_id)
+
+    def reset_password_via_email(self, request):
+        reset_form = RequestEmailPasswordResetForm(request.form)
+
+        reset_form.scheme_id.choices = self._get_scheme()
+
+        if request.method == "POST":
+            if reset_form.validate_on_submit():
+                k_number = reset_form.k_number.data
+                scheme_id = reset_form.scheme_id.data
+                
+                flash("If your email exists in our database, you will receive an email. Don't forget to check spam")
+
+                if self._student_handler.user_exist(scheme_id, k_number):
+                    send_email_reset_password(k_number=k_number, scheme_id=scheme_id, secret_key=current_app.config["SECRET_KEY"])
+
+        return render_template("request_password_reset.html", reset_form=reset_form)
+    
+    def reset_password(self, request, token):
+        reset_password_form = ResetPasswordWithEmailForm(request.form)
+        message = verify_token(
+                secret_key=current_app.config["SECRET_KEY"],
+                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"],
+                token=token)
+        
+        try:
+            (k_number, scheme_id) = message.split(
+                        current_app.config["MESSAGE_SEPARATION_TOKEN"])
+
+            if not self._student_handler.user_exist(scheme_id, k_number):
+                flash("Invalid link")
+                return redirect("/forgot-my-password")
+
+            if request.method == "POST":
+                if reset_password_form.validate_on_submit():
+                    new_password = reset_password_form.password.data
+                    new_hashed_password = generate_password_hash(new_password)
+                    self._student_handler.update_hash_password(scheme_id, k_number, new_hashed_password)
+                    flash("Password updated successfully")
+                    return redirect("/login")
+
+        except Exception as e:
+            raise abort(500)
+        return render_template("reset_password.html", reset_password_form=reset_password_form)
+        
 
     def __init__(self):
         try:

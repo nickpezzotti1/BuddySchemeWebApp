@@ -84,7 +84,7 @@ class AdminLogic:
                 else:
                     flash("Be careful! you are about to delete your own account," +
                         " if you wish to do so, do it from your user dashboard")
-                    return render_template("admin/dashboard.html", title="Admin Dashboard")
+                return render_template("admin/dashboard.html", title="Admin Dashboard")
 
         except Exception:
             self._log.exception("Could not execute delete student details")

@@ -1,4 +1,6 @@
 import logging
+from os import urandom
+import base64
 
 from flask import abort
 from flask import flash
@@ -106,17 +108,13 @@ class SystemAdminLogic:
                     if self._scheme_handler.check_scheme_avail(new_scheme_name):
                         if self._scheme_handler.create_new_scheme(new_scheme_name):
                             scheme_admin_k_number = new_scheme_form.k_number.data
-                            # new_scheme_name) ## return from create_new_scheme isntead?
                             scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name)
-                            #
-                            # ToDo - below
-                            #
-                            password = "password"  # urandom(16) ## send in email + force to change
+                            random = urandom(10)
+                            password = base64.b64encode(random).decode("utf-8")
                             hashed_password = generate_password_hash(password)
-                            # check res?
                             if self._student_handler.insert_student(scheme_id, scheme_admin_k_number, 'admin change', 'admin change', 'admin change', 2, 'admin change', 1, hashed_password, 1, 1):
                                 if self._scheme_handler.create_allocation_config_entry(scheme_id):
-                                    flash("Scheme And Admin Account Succesfully Created")
+                                    flash("Scheme And Admin Account Succesfully Created \n Admin Should Sign In With Password - " + password)
                                 else:
                                     flash(
                                         "Scheme And Admin Account Created But Failed To Create Allocation Config")

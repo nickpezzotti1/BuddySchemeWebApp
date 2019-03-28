@@ -62,7 +62,6 @@ def send_email_scheme_feedback(k_numbers, feedback_url):
     send_email(sender, recipients, subject, content)
 
 def send_email_scheme_invite(email, token):
-
     sender = "no-reply@sbs.kcl.ac.uk"
     subject = "Student buddy scheme feedback"
     recipients = [email]

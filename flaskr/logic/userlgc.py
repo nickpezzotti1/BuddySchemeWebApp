@@ -14,7 +14,10 @@ from flaskr.models.studentmdl import StudentModel
 class UserLogic():
 
     def user(self):
+        """
 
+        :return:
+        """
         try:
             data_definitions = self.get_data_definitions(current_user.scheme_id)
             user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
@@ -26,6 +29,11 @@ class UserLogic():
                 return abort(500)
 
     def user_preferences(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         try:
             user_data = self.get_all_user_data(current_user.scheme_id, current_user.k_number)
 
@@ -67,7 +75,10 @@ class UserLogic():
 
 
     def user_delete(self, request):
-        """ Will delete all the users informations from the database"""
+        """ Will delete all the users informations from the database
+        :param request:
+        :return:
+        """
 
         try:
             if request.method == "POST":
@@ -82,6 +93,11 @@ class UserLogic():
             return abort(500)
     
     def user_password_reset(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         reset_password_form = ResetPasswordForm(request.form)
 
         if request.method == "POST":
@@ -98,7 +114,11 @@ class UserLogic():
         return render_template("user/reset_password.html", reset_password_form=reset_password_form)
 
     def user_buddy_list(self,request):
+        """
 
+        :param request:
+        :return:
+        """
         try:
 
             # Object to hold all the buddies. This takes the form of a nested dictionary indexed by k_numbers
@@ -130,7 +150,11 @@ class UserLogic():
                 return abort(500)
 
     def user_buddy_view(self, k_number_buddy):
+        """
 
+        :param k_number_buddy:
+        :return:
+        """
         try:
             return render_template("user/buddy_page.html", title="Your Mentee", buddy_data=self._student_handler.get_user_data(current_user.scheme_id, k_number_buddy), k_number_buddy=k_number_buddy)
 
@@ -141,7 +165,9 @@ class UserLogic():
     #### HELPER FUNCTIONS
 
     def get_gender_definitions(self):
-        """Get a list of all possible gender types"""
+        """Get a list of all possible gender types
+        :return:
+        """
         try:
             return ["Male", "Female", "Other", "Prefer not to say"]
 
@@ -150,7 +176,10 @@ class UserLogic():
                 return abort(500)
 
     def get_data_definitions(self, scheme_id):
-        """ Get a list of all possible hobbies and interests """
+        """ Get a list of all possible hobbies and interests
+        :param scheme_id:
+        :return:
+        """
         try:
             data_definitions = {
                 "hobbies": self._hobby_handler.get_hobby_list(scheme_id),
@@ -164,7 +193,11 @@ class UserLogic():
                 return abort(500)
 
     def get_all_user_data(self, scheme_id, k_number):
-        """ Get all user data from database and format into a single dict"""
+        """ Get all user data from database and format into a single dict
+        :param scheme_id:
+        :param k_number:
+        :return:
+        """
         try:
             user_data = self._student_handler.get_user_data(scheme_id, k_number)
 
@@ -189,6 +222,9 @@ class UserLogic():
                 return abort(500)
 
     def __init__(self):
+        """
+
+        """
         try:
             self._log = logging.getLogger(__name__)
             self._allocation_handler = AllocationModel()

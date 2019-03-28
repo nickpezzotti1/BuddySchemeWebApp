@@ -19,9 +19,17 @@ from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, In
 class AdminLogic:
     @staticmethod
     def admin_dashboard():
+        """
+
+        :return: 
+        """
         return render_template('admin/dashboard.html', title='Admin Dashboard')
 
     def admin_view_students(self):
+        """
+
+        :return: 
+        """
         try:
             data = self._student_handler.get_all_students_data_basic(current_user.scheme_id)
             return render_template('admin/view_students.html', title='View Students', data=data)
@@ -30,6 +38,10 @@ class AdminLogic:
             return abort(500)
 
     def view_student_details(self):
+        """
+
+        :return: 
+        """
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
@@ -59,6 +71,10 @@ class AdminLogic:
             return abort(500)
 
     def delete_student_details(self):
+        """
+
+        :return: 
+        """
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
@@ -75,6 +91,10 @@ class AdminLogic:
             return abort(500)
 
     def general_settings(self):
+        """
+
+        :return: 
+        """
         try:
             new_hobby_form = NewHobbyForm(request.form)
             new_interest_form = NewInterestForm(request.form)
@@ -120,7 +140,10 @@ class AdminLogic:
             return abort(500)
 
     def allocation_config(self):
+        """
 
+        :return: 
+        """
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
@@ -149,14 +172,26 @@ class AdminLogic:
             allocation_config=config_data, update_message=update_message)
 
     def allocation_algorithm(self):
+        """
+
+        :return: 
+        """
         flash("The allocations have been made, please look at the student table for more information")
         return render_template('admin/dashboard.html', assignments=self.allocate())
 
     @staticmethod
     def sign_up_settings():
+        """
+
+        :return: 
+        """
         return render_template('admin/dashboard.html', title='Sign-Up Settings')
 
     def allocate(self):
+        """
+
+        :return: 
+        """
         try:
             input_string = self.generate_mentee_and_mentor_json()
 
@@ -186,7 +221,10 @@ class AdminLogic:
 
     # TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
+        """
 
+        :return: 
+        """
         # Get allocation configuration from database
         allocation_config = self._allocation_config_handler.get_allocation_config(
             current_user.scheme_id)
@@ -227,7 +265,10 @@ class AdminLogic:
         return json.dumps(input)
 
     def manually_assign(self):
+        """
 
+        :return: 
+        """
         try:
             if(request.method == 'POST'):
                 k_number = request.form['knum']
@@ -244,7 +285,9 @@ class AdminLogic:
             flash("Something went wrong during manual assignment")
 
     def get_all_user_data(self, scheme_id, k_number):
-        """ Get all user data from database and format into a single dict"""
+        """ Get all user data from database and format into a single dict
+        :rtype: object
+        """
         try:
             user_data = self._student_handler.get_user_data(scheme_id, k_number)
 
@@ -269,6 +312,10 @@ class AdminLogic:
             return abort(500)
 
     def invite_to_scheme(self):
+        """
+
+        :return:
+        """
         invite_form = InviteForm()
 
         if request.method == 'POST':

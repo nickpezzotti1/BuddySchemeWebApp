@@ -15,7 +15,11 @@ from flaskr.user import Student
 class LoginLogic:
 
     def login(self, request):
+        """
 
+        :param request:
+        :return:
+        """
         if current_user.is_authenticated:
             return redirect("/dashboard")
 
@@ -71,7 +75,12 @@ class LoginLogic:
             flash("Oops... Something went wrong. The data entered could not be valid, try again.")
 
     def signup(self, request, scheme_id=False):
+        """
 
+        :param request:
+        :param scheme_id:
+        :return:
+        """
         try:
             if scheme_id:
                 schemes = self._scheme_handler.get_active_scheme_data()
@@ -127,7 +136,11 @@ class LoginLogic:
             return abort(500)
 
     def confirm_email(self, token):
+        """
 
+        :param token:
+        :return:
+        """
         try:
             message = verify_token(
                 secret_key=current_app.config["SECRET_KEY"],
@@ -159,18 +172,33 @@ class LoginLogic:
         return redirect("/login")
 
     def _get_scheme(self):
+        """
+
+        :return:
+        """
         schemes = self._scheme_handler.get_active_scheme_data()
         scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 
         return scheme_options
 
     def signup_token(self, request, token):
+        """
+
+        :param request:
+        :param token:
+        :return:
+        """
         scheme_id = verify_token(
         secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
 
         return self.signup(request, scheme_id=scheme_id)
 
     def reset_password_via_email(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         reset_form = RequestEmailPasswordResetForm(request.form)
 
         reset_form.scheme_id.choices = self._get_scheme()
@@ -188,6 +216,12 @@ class LoginLogic:
         return render_template("request_password_reset.html", reset_form=reset_form)
     
     def reset_password(self, request, token):
+        """
+
+        :param request:
+        :param token:
+        :return:
+        """
         reset_password_form = ResetPasswordWithEmailForm(request.form)
         message = verify_token(
                 secret_key=current_app.config["SECRET_KEY"],

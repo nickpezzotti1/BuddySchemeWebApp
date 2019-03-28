@@ -24,6 +24,11 @@ from flaskr.emailer import send_email_scheme_feedback
 class SystemAdminLogic:
 
     def system_admin_login(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         if current_user.is_authenticated:
             return redirect("/dashboard")
 
@@ -61,6 +66,10 @@ class SystemAdminLogic:
             flash("Error logging in, please check the data that was entered")
 
     def system_admin_dashboard(self):
+        """
+
+        :return:
+        """
         # try:
         if request.method == 'POST' and 'feedbackScheme' in request.form:
             scheme_id = request.form['scheme_id']
@@ -76,6 +85,11 @@ class SystemAdminLogic:
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
     def system_new_scheme(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         try:
             new_scheme_form = NewSchemeForm(request.form)
 
@@ -123,6 +137,11 @@ class SystemAdminLogic:
             return abort(500)
 
     def system_view_scheme_dashboard(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         if request.method == 'POST' and 'scheme_id' in request.form:
             scheme_id = request.form['scheme_id']
             # conf exists in db
@@ -135,6 +154,12 @@ class SystemAdminLogic:
             return redirect('/system')
 
     def system_scheme_feedback(self, request, scheme_id):
+        """
+
+        :param request:
+        :param scheme_id:
+        :return:
+        """
         feedback_form = SchemeFeedbackForm(request.form)
 
         if request.method == 'POST':
@@ -147,6 +172,9 @@ class SystemAdminLogic:
         return render_template('system_admin/feedback.html', title='Scheme Feedback', feedback_form=feedback_form)
 
     def __init__(self):
+        """
+
+        """
         try:
             self._log = logging.getLogger(__name__)
             self._scheme_handler = SchemeModel()

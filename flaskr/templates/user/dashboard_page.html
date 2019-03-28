@@ -6,7 +6,19 @@
   {% endif %}
 {% endblock nav_block %}
 
+
 {% block content_block %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+			{% for category, message in messages %}
+			<div class="alert alert-warning">
+				{{ message }}
+			</div>
+			{% endfor %}
+			{% endif %}
+			{% endwith %}
+			{% block content %}{% endblock %}
 
 <h1 id="title"> Your Profile </h1>
 

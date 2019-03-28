@@ -6,7 +6,6 @@ from flaskr.models.helpers import to_str
 class SchemeModel(BasicModel):
 
     def get_system_admin_pass(self, email):
-        # sanity but needs @ symbol
         try:
             return self._dao.execute("SELECT password_hash FROM Super_user WHERE email = %s;", (email, ))[0]['password_hash']
 
@@ -21,6 +20,21 @@ class SchemeModel(BasicModel):
         except Exception as e:
             self._log.exception("Could Not Get Scheme Data")
             raise e
+
+    def update_hash_password(self, email, password_hash):
+        """ Given the email, will update the password_hash """
+
+        if type(password_hash) is str:
+            try:
+                self._dao.execute(
+                    "UPDATE Super_user set password_hash = %s WHERE email = %s;", (password_hash, email))
+                self._dao.commit()
+
+            except Exception as e:
+                self._log.exception("Could not update hash")
+                raise e
+        else:       
+            raise TypeError(f"{type(password_hash)} type isn't accepted")
 
     def get_active_scheme_data(self):
         try:

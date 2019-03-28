@@ -10,6 +10,8 @@ from flaskr.models.interestmdl import InterestModel
 from flaskr.models.student_hobbymdl import StudentHobbyModel
 from flaskr.models.student_interestmdl import StudentInterestModel
 from flaskr.models.studentmdl import StudentModel
+from flaskr.models.schememdl import SchemeModel
+from flaskr.user import SystemAdmin
 
 class UserLogic():
 
@@ -95,7 +97,18 @@ class UserLogic():
             if reset_password_form.validate_on_submit():
                 if check_password_hash(current_user.password, reset_password_form.old_password.data):
                     new_hashed_password = generate_password_hash(reset_password_form.password.data)
-                    self._student_handler.update_hash_password(current_user.scheme_id, current_user.k_number, new_hashed_password)
+
+                    temp = current_user.get_id()
+                    (role, email) = temp.split(":")
+
+                    # if first element is `sysadmin` instead of a scheme_id
+                    # call function to reset `sysadmin` pass
+                    if role == "sysadmin":
+                        self._scheme_handler.update_hash_password(email, new_hashed_password)
+                    else:
+                        # regular user reset
+                        self._student_handler.update_hash_password(current_user.scheme_id, current_user.k_number, new_hashed_password)
+
                     flash("Password successfully updated")
                 else:
                     flash("Old password incorrect")
@@ -204,6 +217,7 @@ class UserLogic():
             self._student_interest_handler = StudentInterestModel()
             self._hobby_handler = HobbyModel()
             self._interest_handler = InterestModel()
+            self._scheme_handler = SchemeModel()
         except Exception as e:
                 self._log.exception("Could not create model instance")
                 return abort(500)

@@ -11,7 +11,7 @@ We are using pythons virtual enviorements to make sure we are all using the same
 3. `$ source env/bin/activate`
 4. `$ pip install -r requirements.txt`
 5. `$ aws configure`
-6. You will be asked to input AWS credentials (check chat description for latest).
+6. You will be asked to input AWS credentials (access credentials have been specified in the report).
 7. Run the application
 
 
@@ -26,9 +26,11 @@ We are using pythons virtual enviorements to make sure we are all using the same
 2. `$ export FLASK_APP=flaskr`
 3. `(env) $ flask run`
 
-
 ## Setup Local SMTP Server
 
-For debugging purposes, setup a local SMTP Server to send emails to while we don't use Amazon's SES
+As currently Amazon's SES (Simple Email Service) gets sent to KCL's junk email, we setup a local SMTP Server to send emails to. 
+This allows you to read the emails being sent in terminal. 
 
+To view the emails, run: 
 1. `(env) $ python3 -m smtpd -c DebuggingServer -n localhost:1025`
+

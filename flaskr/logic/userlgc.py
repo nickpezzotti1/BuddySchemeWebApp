@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort
+from flask import Flask, flash, redirect, render_template, request, url_for, Blueprint, abort, current_app
 from flask_login import LoginManager, UserMixin, current_user, login_required, login_user, logout_user
 from datetime import date
 from flaskr.forms import UserPreferencesForm, ResetPasswordForm
@@ -42,9 +42,12 @@ class UserLogic():
                 # If mentor 
                 if user_data["is_mentor"]:
                     buddy_limit = form.buddy_limit.data
-                    if buddy_limit > 3:
-                        flash("Buddy limit is 3.")
-                        buddy_limit = 3
+                    system_buddy_limit = current_app.config["BUDDY_LIMIT"]
+
+                    if buddy_limit > system_buddy_limit:
+                        flash(f"System's buddy limit is {system_buddy_limit}.")
+                        buddy_limit = system_buddy_limit
+
                     self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, buddy_limit)
                 else:
                     self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number)

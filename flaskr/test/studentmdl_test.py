@@ -18,7 +18,7 @@ def test_student():
 	tester.activateAccount(1,'k00000000')
 	tester.update_date_of_birth(1,'k00000000', '1991-02-21')
 	tester.update_gender(1,'k00000000','Female')
-	tester.update_buddy_limit(1,'k00000000')
+	tester.update_buddy_limit(1,'k00000000',1)
 	tester.update_hash_password(1,'k00000000', 'kkkkkkkkkkk')
 
 	get = tester.get_user_data(1,'k00000000')

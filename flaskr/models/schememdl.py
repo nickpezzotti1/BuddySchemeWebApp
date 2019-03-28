@@ -5,6 +5,7 @@ from flaskr.models.helpers import to_str
 
 class SchemeModel(BasicModel):
 
+    ## This should not be in this model
     def get_system_admin_pass(self, email):
         # sanity but needs @ symbol
         try:
@@ -14,6 +15,7 @@ class SchemeModel(BasicModel):
             self._log.exception("Could Get System Admin Password")
             raise e
 
+    ## What does this do
     def get_all_scheme_data(self):
         try:
             return self._dao.execute("SELECT Scheme.scheme_id, scheme_name, is_active, COUNT(Student.scheme_id) as student_count FROM Scheme LEFT JOIN Student ON Scheme.scheme_id = Student.scheme_id GROUP BY Scheme.scheme_id ORDER BY Scheme.is_active DESC, Scheme.scheme_name ASC;")
@@ -52,6 +54,7 @@ class SchemeModel(BasicModel):
             self._log.exception("Could Not Create New Scheme")
             raise e
 
+    ## This should not be in this model
     def create_allocation_config_entry(self, scheme_id):
         """Inserts an entry for new scheme into allocation_config"""
         if sanity_check(scheme_id):  
@@ -76,6 +79,7 @@ class SchemeModel(BasicModel):
                 self._log.exception("Could Not Get Scheme ID")
                 raise e
 
+    ## Why is there a case here
     def suspend_scheme(self, scheme_id):
         """Suspends a given scheme"""
         if sanity_check(scheme_id):
@@ -85,7 +89,7 @@ class SchemeModel(BasicModel):
                 self._dao.commit()
 
             except Exception as e:
-                self._log.exception("Could Not Get Scheme ID")
+                self._log.exception("Could Not suspend scheme")
                 raise e
 
     def delete_scheme(self, scheme_id):
@@ -94,8 +98,10 @@ class SchemeModel(BasicModel):
             try:
                 self._dao.execute("DELETE FROM Scheme WHERE scheme_id = %s;",
                                   (scheme_id, )) 
+                succ = self._dao.rowcount()
                 self._dao.commit()
+                return succ
 
             except Exception as e:
-                self._log.exception("Could Not Get Scheme ID")
+                self._log.exception("Could Not delete scheme")
                 raise e

@@ -5,8 +5,8 @@ from flask_login import current_user, login_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.auth_token import verify_token
-from flaskr.emailer import send_email_confirmation_to_user
-from flaskr.forms import LoginForm, RegistrationForm
+from flaskr.emailer import send_email_confirmation_to_user, send_email_reset_password
+from flaskr.forms import LoginForm, RegistrationForm, RequestEmailPasswordResetForm, ResetPasswordWithEmailForm
 from flaskr.models.schememdl import SchemeModel
 from flaskr.models.studentmdl import StudentModel
 from flaskr.user import Student
@@ -35,7 +35,7 @@ class LoginLogic:
                     k_number = login_form.k_number.data
 
                     if not self._student_handler.user_exist(scheme_id, k_number):
-                        flash("This email and password combination does not exist in our database.")
+                        flash("This k_number and password combination does not exist in our database.")
                         return redirect("/login")
 
                     try:
@@ -169,6 +169,51 @@ class LoginLogic:
         secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
 
         return self.signup(request, scheme_id=scheme_id)
+
+    def reset_password_via_email(self, request):
+        reset_form = RequestEmailPasswordResetForm(request.form)
+
+        reset_form.scheme_id.choices = self._get_scheme()
+
+        if request.method == "POST":
+            if reset_form.validate_on_submit():
+                k_number = reset_form.k_number.data
+                scheme_id = reset_form.scheme_id.data
+                
+                flash("If your email exists in our database, you will receive an email. Don't forget to check spam")
+
+                if self._student_handler.user_exist(scheme_id, k_number):
+                    send_email_reset_password(k_number=k_number, scheme_id=scheme_id, secret_key=current_app.config["SECRET_KEY"])
+
+        return render_template("request_password_reset.html", reset_form=reset_form)
+    
+    def reset_password(self, request, token):
+        reset_password_form = ResetPasswordWithEmailForm(request.form)
+        message = verify_token(
+                secret_key=current_app.config["SECRET_KEY"],
+                expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"],
+                token=token)
+        
+        try:
+            (k_number, scheme_id) = message.split(
+                        current_app.config["MESSAGE_SEPARATION_TOKEN"])
+
+            if not self._student_handler.user_exist(scheme_id, k_number):
+                flash("Invalid link")
+                return redirect("/forgot-my-password")
+
+            if request.method == "POST":
+                if reset_password_form.validate_on_submit():
+                    new_password = reset_password_form.password.data
+                    new_hashed_password = generate_password_hash(new_password)
+                    self._student_handler.update_hash_password(scheme_id, k_number, new_hashed_password)
+                    flash("Password updated successfully")
+                    return redirect("/login")
+
+        except Exception as e:
+            raise abort(500)
+        return render_template("reset_password.html", reset_password_form=reset_password_form)
+        
 
     def __init__(self):
         try:

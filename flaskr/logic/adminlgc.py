@@ -62,10 +62,13 @@ class AdminLogic:
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
-                res = self._student_handler.delete_students(current_user.scheme_id, k_number)
-                return render_template('admin/delete_student.html', title='Delete Student Profile ' + k_number, res=res, k_number=k_number)
-            else:
-                return redirect(url_for('admin.admin_view_students'))
+                if current_user.k_number != k_number:
+                    flash(k_number + "was deleted successfully")
+                    res = self._student_handler.delete_students(current_user.scheme_id, k_number)
+                else:
+                    flash("Be careful! you are about to delete your own account," +
+                        " if you wish to do so, do it from your user dashboard")
+                    return render_template("admin/dashboard.html", title="Admin Dashboard")
 
         except Exception:
             self._log.exception("Could not execute delete student details")
@@ -273,10 +276,10 @@ class AdminLogic:
                 email = invite_form.email.data
                 scheme_id = current_user.scheme_id
                 token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
-                
+
                 send_email_scheme_invite(email=email, token=token)
                 flash("Invite sent.")
-        
+
         return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form)
 
     def __init__(self):

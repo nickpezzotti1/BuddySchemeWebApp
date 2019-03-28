@@ -1,8 +1,12 @@
 {% extends "template.html"%}
 
 {% block nav_block %}
-  <li><a href="/dashboard">Back</a></li>
-  <li><a href="/user">User</a></li>   
+  {% if current_user.priv == 'admin'%}
+    <li><a href="/user">User</a></li>
+  {% endif %}
+  {% if current_user.priv == 'system_admin'%}
+    <li><a href="/system/admin">Admin</a></li>
+  {% endif %}
 {% endblock nav_block %}
 
 
@@ -39,8 +43,8 @@
             {{ hobby['hobby_name'] }}
           </label>
 	      {% endfor %}
-        </div>    
-    </div>  
+        </div>
+    </div>
 
         </br>
 		<form action="" method="post" name="settings">
@@ -69,15 +73,15 @@
 
     <div class="form-check" id="title">
       <label for="inputEmail3" class="col-sm-2 col-form-label">Current Interests</label>
-        <div class="col-sm-10">                                                              
+        <div class="col-sm-10">
           {% for interest in currentInterests %}
           <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
           <label class="form-check-label" for="gridCheck1">
             {{ interest['interest_name'] }}
           </label>
           {% endfor %}
-        </div>    
-    </div>  
+        </div>
+    </div>
 
         </br>
 		<form action="" method="post" name="settings">

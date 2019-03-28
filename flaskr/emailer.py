@@ -23,7 +23,6 @@ def send_email(sender, recipients, subject, content):
     except Exception as e:
         print(e)
 
-
 def send_email_confirmation_to_user(k_number, scheme_id, secret_key):
     message = str(k_number) + \
               current_app.config["MESSAGE_SEPARATION_TOKEN"] + \
@@ -37,7 +36,6 @@ def send_email_confirmation_to_user(k_number, scheme_id, secret_key):
     content = f"Welcome to KCL\'s Student Buddy System. \n Please activate your email at {path}{token}"
 
     send_email(sender, recipients, subject, content)
-
 
 def send_email_reset_password(k_number, scheme_id, secret_key):
     message = str(k_number) + \

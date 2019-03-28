@@ -24,6 +24,8 @@ from flaskr.emailer import send_email_scheme_feedback
 class SystemAdminLogic:
 
     def system_admin_login(self, request):
+        if current_user.is_authenticated:
+            return redirect("/dashboard")
 
         try:
 

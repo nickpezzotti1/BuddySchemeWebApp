@@ -63,6 +63,7 @@
 </div>
 
 <script src="{{ url_for('static',filename='js/system_admin/dashboard.js') }}"> </script>
+<a class="btn btn-large btn-info" href="{{url_for('user.user_password_reset')}}">Reset Password</a>
 
 
 {% endblock content_block %}

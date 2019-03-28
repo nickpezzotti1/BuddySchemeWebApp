@@ -6,7 +6,6 @@ from flaskr.models.helpers import to_str
 class SchemeModel(BasicModel):
 
     def get_system_admin_pass(self, email):
-        # sanity but needs @ symbol
         try:
             return self._dao.execute("SELECT password_hash FROM Super_user WHERE email = %s;", (email, ))[0]['password_hash']
 

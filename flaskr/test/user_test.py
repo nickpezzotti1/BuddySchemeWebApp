@@ -4,10 +4,6 @@ import flaskr.models.studentmdl as studentmdl
 student = studentmdl.StudentModel('testing')
 
 
-
-
-#sysadmin = user.SystemAdmin('haha@abv.bg')
-
 def test_student():
 	student.insert_student(1, 'k00000000', 'Bai', 'Ganyo', 'BSc Comp Sci', 1, 'Male', 0, 'kkkkkkkk', 0, 3)
 	test = user.Student(1,'k00000000')
@@ -17,3 +13,4 @@ def test_student():
 	active = test.is_active
 	assert active == True
 	student.delete_students(1, 'k00000000')
+

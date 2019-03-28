@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: /*
+    destination: /tmp/codedeploy-deployment-staging-area/
+hooks:
+  ApplicationStop:
+    - location: flaskr/codedeploy/ApplicationStop.sh
+      timeout: 300
+  BeforeInstall:
+    - location: flaskr/codedeploy/BeforeInstall.sh
+      timeout: 300
+  ApplicationStart:
+    - location: flaskr/codedeploy/ApplicationStart.sh
+      timeout: 300
+  ValidateService:
+    - location: flaskr/codedeploy/ValidateService.sh
+      timeout: 300
+
+

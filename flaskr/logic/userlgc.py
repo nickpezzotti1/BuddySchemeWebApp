@@ -41,7 +41,11 @@ class UserLogic():
 
                 # If mentor 
                 if user_data["is_mentor"]:
-                    self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, form.buddy_limit.data)
+                    buddy_limit = form.buddy_limit.data
+                    if buddy_limit > 3:
+                        flash("Buddy limit is 3.")
+                        buddy_limit = 3
+                    self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number, buddy_limit)
                 else:
                     self._student_handler.update_buddy_limit(current_user.scheme_id, current_user.k_number)
 

@@ -41,9 +41,8 @@
 
 
 
-						<div class="form-group">
-							<p class="text-center">By signing up you accept our <a href="/terms-conditions">Terms Of Use</a></p>
-						</div>
+							<p class="text-center">By signing up you accept our <a href="/terms-conditions"><strong> Terms Of Use</strong> </a></p>
+
 
 
 						<div class="col-md-12 text-center ">
@@ -55,8 +54,10 @@
 								<span class="span-or"></span>
 							</div>
 						</div>
+						<p class="text-center">Forgot your password? <a href="{{url_for('login.reset_password_via_email')}}"><strong> Reset it </strong> </a></p>
+
 						<div class="form-group">
-							<p class="text-center">Don't have account? <a href="/signup" id="signup">Sign up here</a></p>
+							<p class="text-center" > Don't have account? <a href="/signup" id="signup"> <strong> Sign up here </strong> </a></p>
 						</div>
 					</form>
 
@@ -65,5 +66,4 @@
 		</div>
 	</div>
 </div>
-<a class="btn btn-large btn-info" href="{{url_for('login.reset_password_via_email')}}">Forgot my password</a>
 {% endblock content_block %}

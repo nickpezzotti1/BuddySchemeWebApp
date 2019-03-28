@@ -27,7 +27,7 @@ class InterestModel(BasicModel):
             raise e
 
     def select_interest(self, interest, scheme_id=1):
-        """ Will insert an entry for a interest into the database"""
+        """ Will select an interest from the database"""
         try:
            return self._dao.execute(
                 "SELECT * FROM Interest WHERE scheme_id = %s AND interest_name = %s;", (scheme_id, interest))

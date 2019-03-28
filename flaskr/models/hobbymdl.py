@@ -24,6 +24,16 @@ class HobbyModel(BasicModel):
             self._log.exception("Could not insert the hobby")
             raise e
 
+    def select_hobby(self, scheme_id, hobby):
+        """ Will select a hobby from the database"""
+        try:
+           return self._dao.execute(
+                "SELECT * FROM Hobby WHERE scheme_id = %s AND hobby_name = %s;", (scheme_id, hobby))
+
+        except Exception as e:
+            self._log.exception("Could not select the hobby")
+            raise e
+
     def get_hobby_list(self, scheme_id):  
         """ Will retrieve a list of possible hobbies from the database"""
 

@@ -25,10 +25,17 @@ class RegistrationForm(FlaskForm):
     registration_submit = SubmitField("Sign Up")
 
 
-class RequestPasswordResetForm(FlaskForm):
+class RequestEmailPasswordResetForm(FlaskForm):
     scheme_id = SelectField('Scheme', coerce=int)
     k_number = StringField('K-number', validators=[DataRequired(), Length(min=8, max=9)])
     request_reset_password_submit = SubmitField("Send me an email")
+
+
+class ResetPasswordWithEmailForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm New Password', validators=[
+                                     DataRequired(), EqualTo("password")])
+    reset_password_submit = SubmitField("Reset Password")
 
 
 class ResetPasswordForm(FlaskForm):

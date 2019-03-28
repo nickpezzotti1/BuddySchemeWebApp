@@ -25,9 +25,10 @@ class SystemAdminLogic:
 
     def system_admin_login(self, request):
         """
-
-        :param request:
-        :return:
+        Produces the sytem admin login html page or a redirect to system admin dashboard if login is successfull
+             
+        :param request: Login form
+        :return: html view
         """
         if current_user.is_authenticated:
             return redirect("/dashboard")
@@ -67,8 +68,9 @@ class SystemAdminLogic:
 
     def system_admin_dashboard(self):
         """
-
-        :return:
+        Produces the system admin dashboard and handles redirects from requests
+        
+        :return: html view
         """
         # try:
         if request.method == 'POST' and 'feedbackScheme' in request.form:
@@ -86,9 +88,11 @@ class SystemAdminLogic:
 
     def system_new_scheme(self, request):
         """
+        Produces the new scheme page and creates a new scheme upon valid form 
+        submission, displaying the scheme admin password on screen
 
-        :param request:
-        :return:
+        :param request: new scheme form
+        :return: html view
         """
         try:
             new_scheme_form = NewSchemeForm(request.form)
@@ -138,13 +142,13 @@ class SystemAdminLogic:
 
     def system_view_scheme_dashboard(self, request):
         """
+        Redirects to admin dashboard of the selected scheme
 
-        :param request:
-        :return:
+        :param request: scheme selection form
+        :return: redirect to html view
         """
         if request.method == 'POST' and 'scheme_id' in request.form:
             scheme_id = request.form['scheme_id']
-            # conf exists in db
             current_user.set_scheme_id(scheme_id)
             resp = make_response(redirect('/admin'))
             resp.set_cookie('scheme', scheme_id)
@@ -155,10 +159,11 @@ class SystemAdminLogic:
 
     def system_scheme_feedback(self, request, scheme_id):
         """
+        Generates a form and upon submission sends a feeback url to scheme members
 
-        :param request:
-        :param scheme_id:
-        :return:
+        :param request: request form with url for feedback
+        :param scheme_id: scheme id to send url to
+        :return: html view 
         """
         feedback_form = SchemeFeedbackForm(request.form)
 

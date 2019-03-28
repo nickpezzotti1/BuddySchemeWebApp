@@ -15,7 +15,6 @@ class SchemeModel(BasicModel):
             self._log.exception("Could Get System Admin Password")
             raise e
 
-    ## What does this do
     def get_all_scheme_data(self):
         try:
             return self._dao.execute("SELECT Scheme.scheme_id, scheme_name, is_active, COUNT(Student.scheme_id) as student_count FROM Scheme LEFT JOIN Student ON Scheme.scheme_id = Student.scheme_id GROUP BY Scheme.scheme_id ORDER BY Scheme.is_active DESC, Scheme.scheme_name ASC;")

@@ -17,7 +17,6 @@ def test_user_exist():
 	assert get == True
 
 def test_admin_status():
-
 	tester.alter_admin_status(1,'k00000000', 1)
 	get = tester.get_user_data(1,'k00000000')
 	assert get['is_admin'] == 1

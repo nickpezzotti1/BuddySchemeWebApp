@@ -74,6 +74,19 @@ class AllocationModel(BasicModel):
         else:
             return "Error: one of the field did not pass the sanity check"
 
+    def get_allocation(self, scheme_id, tee_number, tor_number):
+        if sanity_check(tee_number) and sanity_check(tor_number):
+
+            try:
+                return self._dao.execute("SELECT * FROM Allocation WHERE mentor_k_number = %s AND mentee_k_number = %s AND scheme_id = %s;", (tor_number, tee_number, scheme_id))
+
+            except Exception as e:
+                self._log.exception("Could not get allocation")
+                raise e
+
+        else:
+            return "Error: one of the field did not pass the sanity check"
+
     def get_mentors(self, scheme_id, mentee_k_number):
         """ Given the mentee K-Number will return its mentor(s) k-number"""
 
@@ -125,7 +138,7 @@ class AllocationModel(BasicModel):
             self._dao.commit()
 
         except Exception as e:
-            self._log.exception("Could not inset mentor mentee pair")
+            self._log.exception("Could not insert mentor mentee pair")
             raise e
 
     def delete_mentors(self, scheme_id, mentee_k_number):

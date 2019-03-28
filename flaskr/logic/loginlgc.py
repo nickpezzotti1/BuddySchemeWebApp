@@ -16,25 +16,27 @@ class LoginLogic:
 
     def login(self, request):
         """
-
-        :param request:
-        :return:
+        Logs the user into the system given a username and password.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :return: A view based on wether the login was sucessfull (redirecting
+                to /dashboard or back to the login screen if the login was
+                unsuccesful)
         """
         if current_user.is_authenticated:
             return redirect("/dashboard")
 
+        # Try to load the available schemes
         try:
             scheme_options = self._get_scheme()
-
         except Exception as e:
-            self._log.exception("Invalid login form")
-            flash("Error logging in, please check the data that was entered")
+            flash("Error logging in, please try again")
 
         login_form = LoginForm(request.form)
         login_form.scheme_id.choices = scheme_options
         try:
-            if request.method == "POST":
-                if login_form.validate_on_submit():
+            if request.method == "POST": # If the user is trying to login
+                if login_form.validate_on_submit(): # If the form is validated
                     scheme_id = login_form.scheme_id.data
                     k_number = login_form.k_number.data
 
@@ -62,7 +64,7 @@ class LoginLogic:
                         else:
                             flash('The password you entered is incorrect')
                             return redirect("/login")
-                    else:
+                    else: # The user is loading the page
                         return redirect("/login")
                 else:
                     flash("Error logging in, please check the data that was entered")
@@ -76,10 +78,12 @@ class LoginLogic:
 
     def signup(self, request, scheme_id=False):
         """
-
-        :param request:
-        :param scheme_id:
-        :return:
+        Signs up the user into the system given a username and password.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :return: A view based on wether the signup was sucessfull (redirecting
+                to /login or back to the sign-up screen if it was
+                unsuccesful)
         """
         try:
             if scheme_id:
@@ -117,8 +121,7 @@ class LoginLogic:
                     self._student_handler.insert_student(
                         scheme_id, k_number, first_name, last_name, "na", 2018, "Prefer not to say",
                         (1 if is_mentor else 0), hashed_password, False, 1)
-                    # user = Student(scheme_id, k_number)
-                    # print(user.k_number)
+
                     send_email_confirmation_to_user(
                         scheme_id=scheme_id, k_number=k_number,
                         secret_key=current_app.config["SECRET_KEY"])
@@ -155,7 +158,7 @@ class LoginLogic:
             if message:
                 (k_number, scheme_id) = message.split(
                     current_app.config["MESSAGE_SEPARATION_TOKEN"])
-                
+
                 user = Student(k_number=k_number, scheme_id=scheme_id)
 
                 if user.email_confirmed:
@@ -207,14 +210,14 @@ class LoginLogic:
             if reset_form.validate_on_submit():
                 k_number = reset_form.k_number.data
                 scheme_id = reset_form.scheme_id.data
-                
+
                 flash("If your email exists in our database, you will receive an email. Don't forget to check spam")
 
                 if self._student_handler.user_exist(scheme_id, k_number):
                     send_email_reset_password(k_number=k_number, scheme_id=scheme_id, secret_key=current_app.config["SECRET_KEY"])
 
         return render_template("request_password_reset.html", reset_form=reset_form)
-    
+
     def reset_password(self, request, token):
         """
 
@@ -227,7 +230,7 @@ class LoginLogic:
                 secret_key=current_app.config["SECRET_KEY"],
                 expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"],
                 token=token)
-        
+
         try:
             (k_number, scheme_id) = message.split(
                         current_app.config["MESSAGE_SEPARATION_TOKEN"])
@@ -247,7 +250,7 @@ class LoginLogic:
         except Exception as e:
             raise abort(500)
         return render_template("reset_password.html", reset_password_form=reset_password_form)
-        
+
 
     def __init__(self):
         try:

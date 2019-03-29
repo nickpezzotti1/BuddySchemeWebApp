@@ -61,7 +61,7 @@ CREATE TABLE Student_Hobby
  k_number VARCHAR(255) NOT NULL,
  CONSTRAINT student_hobby_pk PRIMARY KEY (scheme_id, hobby_id, k_number),
  CONSTRAINT student_hobby_fk FOREIGN KEY (scheme_id, k_number) REFERENCES Student(scheme_id, k_number) ON DELETE cascade,
- CONSTRAINT hobby_fk FOREIGN KEY (hobby_id) REFERENCES Hobby(id)
+ CONSTRAINT hobby_fk FOREIGN KEY (hobby_id) REFERENCES Hobby(id) ON DELETE cascade
 );
 
 CREATE TABLE Student_Interest
@@ -71,7 +71,7 @@ CREATE TABLE Student_Interest
  k_number VARCHAR(255) NOT NULL,
  CONSTRAINT student_interest_pk PRIMARY KEY (scheme_id, interest_id, k_number),
  CONSTRAINT student_interest_fk FOREIGN KEY (scheme_id, k_number) REFERENCES Student(scheme_id, k_number) ON DELETE cascade,
- CONSTRAINT interest_fk FOREIGN KEY (interest_id) REFERENCES Interest(id)
+ CONSTRAINT interest_fk FOREIGN KEY (interest_id) REFERENCES Interest(id) ON DELETE cascade
 );
 
 CREATE TABLE Allocation

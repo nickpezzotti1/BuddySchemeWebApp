@@ -1,0 +1,95 @@
+{% extends "template.html" %}
+
+{% block nav_block %}
+  {% if current_user.priv == 'admin'%}
+    <li><a href="/admin">Admin</a></li>
+  {% endif %}
+{% endblock nav_block %}
+
+{% block content_block %}
+
+<form action = "{{url_for('user.user_preferences')}}" method = "POST">
+
+    <h1 id="title"> Preferences </h1>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">K-Number</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["k_number"]}}" readonly>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">First Name</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["first_name"]}}" readonly>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" value="{{user_data["last_name"]}}" readonly>
+    </div>
+  </div>
+
+  <fieldset class="form-group">
+    <div class="row">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">Gender</label>
+      <div class="col-sm-10">
+        {% for gender_type in form.gender %}
+          <div class="form-check">
+            {{ gender_type(class="form-check-input", id="gridRadios1") }}
+            {{ gender_type.label }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </fieldset>
+
+{% if user_data["is_mentor"] %}
+  <div class="form-group row">
+    {{ form.buddy_limit.label(class="col-sm-2 col-form-label") }}
+    <div class="col-sm-10">
+      {{ form.buddy_limit(class="form-control") }}
+    </div>
+  </div>
+{% endif %}
+
+  <div class="form-group row">
+      {{ form.date_of_birth.label(class="col-sm-2 col-form-label") }}
+      <div class="col-sm-10">
+        {{ form.date_of_birth(class="form-control", type="date") }}
+      </div>
+  </div>
+
+  <div class="col-sm-2"></div>
+  <p>Note: Hold ctrl/⌘ to select multiple hobbies/interests</p>
+
+  <div class="form-group row">
+      {{ form.interests.label(class="col-sm-2 col-form-label") }}
+      <div class="col-sm-10">
+        <div class="form-check">
+          {{ form.interests(class="col-sm-12 col-form-label text-primary", size="12") }}
+        </div>
+      </div>
+    </div>
+
+  <div class="form-group row">
+    {{ form.hobbies.label(class="col-sm-2 col-form-label") }}
+    <div class="col-sm-10">
+      <div class="form-check">
+        {{ form.hobbies(class="col-sm-12 row-sm-12 col-form-label text-primary", size="12") }}
+      </div>
+    </div>
+  </div>
+
+<div id="browse_app navigate">
+    {{ form.user_preferences_submit(class="btn btn-large btn-info") }}
+    <a class="btn btn-large btn-info" href="{{url_for('user.user')}}">Back to Dashboard </a>
+    <a class="btn btn-large btn-info" href="{{url_for('user.user_delete')}}">Delete Account</a>
+</div>
+
+</form>
+
+{% endblock content_block %}

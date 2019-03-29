@@ -1,0 +1,141 @@
+{% extends "template.html" %}
+
+{% block nav_block %}
+  {% if current_user.priv == 'admin'%}
+    <li><a href="/user">User</a></li>
+  {% endif %}
+  {% if current_user.priv == 'system_admin'%}
+    <li><a href="/system/admin">Admin</a></li>
+  {% endif %}
+{% endblock nav_block%}
+
+{% block content_block %}
+
+<div>
+    {% if udata['is_mentor'] %}
+    <h1> Mentor </h1>
+    {% else %}
+    <h1> Mentee </h1>
+    {% endif %}
+
+    <form>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">K-Number</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["k_number"]}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">First Name</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["first_name"]}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["last_name"]}}" readonly>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label"> Age </label>
+        <div class="col-sm-10">
+          <input class="form-control" type="text" value="{{udata["age"]}}" readonly>
+        </div>
+      </div>
+</div>
+<br />
+
+   <div class="form-check" id ='inputCol1'>
+    <label for="inputEmail3" class="col-sm-1 col-form-label" >Interests</label>
+         <div class="col-sm-11">
+          {% for interest_id, interest_name in udata["interests"].items() %}
+            <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
+            <label class="form-check-label" for="gridCheck1">
+              {{interest_name}}
+            </label>
+        {% endfor %}
+      </div>
+    </div>
+
+   <div class="form-check" id ='inputCol1'>
+    <label for="inputEmail3" class="col-sm-1 col-form-label" >Hobbies</label>
+         <div class="col-sm-11">
+          {% for hobby_id, hobby_name in udata["hobbies"].items() %}
+            <input class="form-check-input" type="checkbox" id="gridCheck1" name="interest" value="" checked disabled>
+            <label class="form-check-label" for="gridCheck1">
+              {{hobby_name}}
+            </label>
+        {% endfor %}
+      </div>
+    </div>
+    </form>
+<br />
+{% if matches|length %}
+<table class="table table-hover" id='table'>
+    <thead>
+        <tr colspan=5><h3 class='text-center'>{% if udata.is_mentor %} {{"Mentees"}} {% else %} {{"Mentors"}}{% endif %}</h3></tr>
+<tr>
+    <th scope="col" class="text-center">K Number</th>
+    <th scope="col">First Name</th>
+    <th scope="col">Last Name</th>
+    <th scope="col">Year</th>
+    <th scope="col" class="text-center">Action</th>
+</tr>
+</thead>
+<tbody id='tbody'>
+    {% for student in matches %}
+    <tr>
+        <td>{{student.k_number}}</td>
+        <td>{{student.first_name}}</td>
+        <td>{{student.last_name}}</td>
+        <td>{{student.year_study}}</td>
+<form method="POST" action='{{url_for("admin.view_student_details")}}'>
+    <input type='hidden' name='knum' value='{{udata.k_number}}'></input>
+    <input type="hidden" name='{% if udata.is_mentor %}{{"torNum"}}{% else %}{{"teeNum"}}{% endif %}' value="{{udata.k_number}}"></input>
+    <input type="hidden" name='{% if udata.is_mentor %}{{"teeNum"}}{% else %}{{"torNum"}}{% endif %}' value="{{student.k_number}}"></input>
+    <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='rmAlloc' onclick='return rmAllConf()' value="Remove Allocation"></input></td>
+</form>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<h3 class='text-center'> No Allocations </h3>
+{% endif %}
+<form method="POST" action="{{url_for("admin.manually_assign")}}">
+	<input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='manAlloc' value="Manually Assign Allocation"></input>
+	<input type='hidden' name='knum' value='{{udata.k_number}}'></input>
+</form>
+<br />
+{% if udata.is_admin %}
+<form method="POST" action="{{url_for('admin.view_student_details')}}">
+	<input type="hidden" name="knum" value="{{udata.k_number}}"></input>
+	<input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='rmAdmin' onclick='return rmAdConf()' value="Remove Admin Status" />
+</form>
+{% else %}
+<form method="POST" action="{{url_for('admin.view_student_details')}}">
+	<input type="hidden" name="knum" value="{{udata.k_number}}"></input>
+	<input type="submit" class="btn btn-lg btn-block btn-primary my-3" name='mkAdmin' onclick='return mkAdConf()' value="Make Admin" />
+</form>
+{% endif %}
+<br />
+<form method="POST" action="{{url_for('admin.delete_student_details')}}">
+	<input type="hidden" name="knum" value="{{udata.k_number}}"></input>
+	<input type="submit" class="btn btn-lg btn-block btn-primary my-3" onclick='return delConf()' value="Delete Account And Data" />
+</form>
+<br />
+<form method="POST" action="{{url_for('admin.admin_view_students')}}">
+	<input type="hidden" name="knum" value="{{udata.k_number}}"></input>
+	<input type="submit" class="btn btn-lg btn-block btn-primary my-3" value="Back" />
+</form>
+
+
+<script src="{{ url_for('static',filename='js/admin/student_details.js') }}"> </script>
+
+
+{% endblock content_block %}

@@ -1,0 +1,59 @@
+{% extends "index.html" %}
+
+{% block nav_block %}
+	{% if current_user.priv == 'admin'%}
+		<li><a href="/user">User</a></li>
+	{% endif %}
+	{% if current_user.priv == 'system_admin'%}
+    <li><a href="/system/admin">Admin</a></li>
+  {% endif %}
+{% endblock nav_block %}
+
+
+{% block content_block %}
+<h2>Allocation Configuration</h2>
+<p>Edit the values below to change the weighting used for the algorithm.</p>
+<p>Note: The weighting applied for hobbies and interests, will be applied for each individual hobby or interest.</p>
+<div class="form-group">
+	<form action="{{url_for('admin.allocation_config')}}" method="post">
+
+		{{ form.age_weight.label(class="form-text") }}
+		<div class="slidecontainer">
+			{{ form.age_weight(class="slider", id="ageSlider", type="range", min="0", max="100") }}
+			<p id="ageTextBox"> </p>
+		</div>
+
+		{{ form.gender_weight.label(class="form-text") }}
+		<div class="slidecontainer">
+			{{ form.gender_weight(class="slider", id="genderSlider", type="range", min="0", max="100") }}
+			<p id="genderTextBox"> </p>
+		</div>
+
+		{{ form.hobby_weight.label(class="form-text") }}
+		<div class="slidecontainer">
+			{{ form.hobby_weight(class="slider", id="hobbySlider", type="range", min="0", max="100") }}
+			<p id="hobbyTextBox"> </p>
+		</div>
+
+		{{ form.interest_weight.label(class="form-text") }}
+		<div class="slidecontainer">
+			{{ form.interest_weight(class="slider", id="interestSlider", type="range", min="0", max="100") }}
+			<p id="interestTextBox"> </p>
+		</div>
+
+		{{ form.allocation_config_submit(class="btn btn-block btn-lg help-block btn-primary my-3") }}
+
+	</form>
+	<script src="{{ url_for('static',filename='js/admin/admin_allocation_config_sliders.js') }}"> </script>
+</div>
+
+<div class="help-block" id="allocate">
+	<a class="btn btn-block btn-lg help-block btn-primary my-3" href="{{url_for('admin.allocation_algorithm')}}">Allocate</a>
+</div>
+
+
+{{update_message}}
+
+
+
+{% endblock content_block %}

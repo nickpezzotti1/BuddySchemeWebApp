@@ -1,0 +1,70 @@
+{% extends "template.html" %}
+
+{% block nav_block %}
+{% endblock nav_block %}
+
+{% block content_block %}
+    <h1 class="text-center">Schemes: {{ schemes|length }} </h1> <!-- change to active -->
+    <div>
+
+        <form method="GET" action="{{url_for('systemadmin.system_new_scheme')}}">
+            <input type="submit" class="btn btn-lg btn-block btn-primary" value="New Scheme" name="newScheme" />
+        </form>
+    </div>
+    {% if schemes|length %}
+    <div class="text-center" id='searchBar'>
+        Filter By Name:
+        <input type='text' id='nameFilt' onkeyup='return filter()'/>
+        <br />
+        <div class = 'admin-filter'>
+        Filter:
+        <input type='radio' id='all' name='actFilter' onclick='return filter()' checked ='checked' value='All'/>All
+        <input type='radio' id='act' name='actFilter' onclick='return filter()' value='act'/>Active
+        <input type='radio' id='sus' name='actFilter' onclick='return filter()' value='sus'/>Suspended
+        </div>
+    </div>
+    <table class="table table-hover text-center align" id = 'table'>
+        <thead>
+            <!--<tr colspan=5><h1 class='text-center'>Schemes</h1></tr>-->
+            <tr>
+                <th class = "text-center" scope="col">Scheme ID</th> <!-- needed???-->
+                <th class = "text-center" scope="col" class="text-center">Department</th>
+                <th class = "text-center" scope="col">Registered Students</th>
+                <th class = "text-center" scope="col">Status</th>
+                <th class = "text-center" scope="col" class="text-center">View</th>
+                <th class = "text-center" scope="col" class="text-center">Feedback</th>
+                <th class = "text-center" scope="col" class="text-center">Suspend</th>
+                <th class = "text-center" scope="col" class="text-center">Delete</th>
+            </tr>
+        </thead>
+        <tbody id='tbody'>
+            {% for scheme in schemes %}
+            <tr>
+                <td>{{scheme.scheme_id}}</td>
+                <td>{{scheme.scheme_name}}</td>
+                <td>{{scheme.student_count}}</td>
+                <td>{% if scheme.is_active %}{{"Active"}}{% else %}{{"Suspended"}}{% endif %}</td>
+        <form method="POST" action='{{url_for("systemadmin.system_view_scheme_dashboard")}}'>
+            <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
+            <td><input type="submit" class="btn btn-sm btn-block btn-primary admin-btn" name='viewAdmin' value="View Admin Dashboard"></input></td>
+        </form>
+        <form method="POST" action='{{url_for("systemadmin.system_admin_dashboard")}}'>
+            <input type='hidden' name='scheme_id' value='{{scheme.scheme_id}}'></input>
+            <td><input type="submit" class="btn btn-sm btn-block btn-primary admin-btn" name='feedbackScheme' value="Request Scheme Feedback"></input></td>
+            <td><input type="submit" class="btn btn-sm btn-block btn-primary admin-btn" onclick="return confSus()" name='susScheme' value='{% if scheme.is_active %}{{"Suspend Scheme"}}{% else %}{{"Activate Scheme"}}{% endif %}'></input></td>
+            <td><input type="submit" class="btn btn-sm btn-block btn-primary admin-btn" onclick="return confDel()" name='delScheme' value="Delete Scheme"></input></td>
+        </form>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h1 class='text-center'> No Schemes </h1>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static',filename='js/system_admin/dashboard.js') }}"> </script>
+<a class="btn btn-sm btn-primary" href="{{url_for('user.user_password_reset')}}">Reset Password</a>
+
+
+{% endblock content_block %}

@@ -15,9 +15,18 @@ from flaskr.user import Student
 class LoginLogic:
 
     def login(self, request):
+        """
+        Logs the user into the system given a username and password.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :return: A view based on wether the login was sucessfull (redirecting
+                to /dashboard or back to the login screen if the login was
+                unsuccesful)
+        """
         if current_user.is_authenticated:
             return redirect("/dashboard")
-
+            
+        # Try to load the available schemes
         try:
             scheme_options = self._get_scheme()
         except Exception as e:
@@ -27,9 +36,8 @@ class LoginLogic:
         login_form.scheme_id.choices = scheme_options
 
         try:
-            # if user is submitting form
-            if request.method == "POST":
-                if login_form.validate_on_submit():
+            if request.method == "POST": # If the user is trying to login
+                if login_form.validate_on_submit(): # If the form is validated
                     scheme_id = login_form.scheme_id.data
                     k_number = login_form.k_number.data
 
@@ -53,7 +61,7 @@ class LoginLogic:
                         else:
                             flash('The password you entered is incorrect')
                             return redirect("/login")
-                    else:
+                    else: # The user is loading the page
                         return redirect("/login")
                 else:
                     flash("Error logging in, please check the data that was entered")
@@ -65,6 +73,14 @@ class LoginLogic:
             raise abort(500)
 
     def signup(self, request, scheme_id=False):
+        """
+        Signs up the user into the system given a username and password.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :return: A view based on wether the signup was sucessfull (redirecting
+                to /login or back to the sign-up screen if it was
+                unsuccesful)
+        """
         try:
             # if scheme_id was set, only let user signup to it
             if scheme_id:
@@ -121,6 +137,11 @@ class LoginLogic:
             raise abort(500)
 
     def confirm_email(self, token):
+        """
+
+        :param token:
+        :return:
+        """
         try:
             message = verify_token(
                 secret_key=current_app.config["SECRET_KEY"],
@@ -136,7 +157,7 @@ class LoginLogic:
                 # split message using token set in config
                 (k_number, scheme_id) = message.split(
                     current_app.config["MESSAGE_SEPARATION_TOKEN"])
-                
+
                 user = Student(k_number=k_number, scheme_id=scheme_id)
 
                 if user.email_confirmed:
@@ -153,16 +174,31 @@ class LoginLogic:
         return redirect("/login")
 
     def _get_scheme(self):
+        """
+
+        :return:
+        """
         schemes = self._scheme_handler.get_active_scheme_data()
         scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
 
         return scheme_options
 
     def signup_token(self, request, token):
+        """
+
+        :param request:
+        :param token:
+        :return:
+        """
         scheme_id = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
         return self.signup(request, scheme_id=scheme_id)
 
     def reset_password_via_email(self, request):
+        """
+
+        :param request:
+        :return:
+        """
         reset_form = RequestEmailPasswordResetForm(request.form)
         reset_form.scheme_id.choices = self._get_scheme()
 
@@ -176,14 +212,20 @@ class LoginLogic:
                     send_email_reset_password(k_number=k_number, scheme_id=scheme_id, secret_key=current_app.config["SECRET_KEY"])
 
         return render_template("request_password_reset.html", reset_form=reset_form)
-    
+
     def reset_password(self, request, token):
+        """
+
+        :param request:
+        :param token:
+        :return:
+        """
         reset_password_form = ResetPasswordWithEmailForm(request.form)
         message = verify_token(
                 secret_key=current_app.config["SECRET_KEY"],
                 expiration=current_app.config["EMAIL_CONFIRMATION_EXPIRATION"],
                 token=token)
-        
+
         try:
             (k_number, scheme_id) = message.split(
                         current_app.config["MESSAGE_SEPARATION_TOKEN"])

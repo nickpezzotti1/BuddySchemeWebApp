@@ -137,7 +137,7 @@ class AdminLogic:
                         flash("Interest already created")
                     else:
                         flash("Interest successfully created")
-                        self._interest_handler.insert_interest(current_user.scheme_id, new_interest_form.interest_name.data)
+                        self._interest_handler.insert_interest(new_interest_form.interest_name.data, current_user.scheme_id)
             
 
             delete_hobby_form = DeleteHobbyForm(request.form)
@@ -151,7 +151,7 @@ class AdminLogic:
             delete_interest_form = DeleteInterestForm(request.form)
             if delete_interest_form.interest.data:
                 delete_id = delete_interest_form.interest.data
-                if self._interest_handler.delete_interest(current_user.scheme_id, delete_id):
+                if self._interest_handler.delete_interest(delete_id, current_user.scheme_id):
                     flash("Interest Removed")
                 else:
                     flash("Unable To Remove Interest")
@@ -159,6 +159,7 @@ class AdminLogic:
             currentHobbies = self._hobby_handler.get_hobby_list(current_user.scheme_id)
             delete_hobby_form.hobby.choices = [(h['id'], h['hobby_name']) for h in currentHobbies]
             currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+
             delete_interest_form.interest.choices = [(i['id'], i['interest_name']) for i in currentInterests]
             
             return render_template("admin/general_settings.html", hobby_form=new_hobby_form, delete_hobby_form=delete_hobby_form, delete_interest_form=delete_interest_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)

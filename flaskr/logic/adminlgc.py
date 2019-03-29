@@ -13,7 +13,8 @@ from flaskr.models.interestmdl import InterestModel
 from flaskr.models.hobbymdl import HobbyModel
 from flaskr.models.studentmdl import StudentModel
 from datetime import date, datetime
-from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, InviteForm
+from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, InviteForm, DeleteHobbyForm, DeleteInterestForm
+
 
 
 class AdminLogic:
@@ -105,7 +106,7 @@ class AdminLogic:
         try:
             new_hobby_form = NewHobbyForm(request.form)
             new_interest_form = NewInterestForm(request.form)
-
+            
             if new_hobby_form.hobby_name.data:
                 if new_hobby_form.validate_on_submit():
                     response = self._hobby_handler.get_hobby_list(current_user.scheme_id)
@@ -137,10 +138,30 @@ class AdminLogic:
                     else:
                         flash("Interest successfully created")
                         self._interest_handler.insert_interest(current_user.scheme_id, new_interest_form.interest_name.data)
+            
 
-            currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+            delete_hobby_form = DeleteHobbyForm(request.form)
+            if delete_hobby_form.hobby.data:
+                delete_id = delete_hobby_form.hobby.data
+                if self._hobby_handler.delete_hobby(current_user.scheme_id, delete_id):
+                    flash("Hobby Removed")
+                else:
+                    flash("Unable To Remove Hobby")
+                
+            delete_interest_form = DeleteInterestForm(request.form)
+            if delete_interest_form.interest.data:
+                delete_id = delete_interest_form.interest.data
+                if self._interest_handler.delete_interest(current_user.scheme_id, delete_id):
+                    flash("Interest Removed")
+                else:
+                    flash("Unable To Remove Interest")
+
             currentHobbies = self._hobby_handler.get_hobby_list(current_user.scheme_id)
-            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
+            delete_hobby_form.hobby.choices = [(h['id'], h['hobby_name']) for h in currentHobbies]
+            currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+            delete_interest_form.interest.choices = [(i['id'], i['interest_name']) for i in currentInterests]
+            
+            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, delete_hobby_form=delete_hobby_form, delete_interest_form=delete_interest_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
         except Exception:
             self._log.exception("Invalid new hobby form")

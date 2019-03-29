@@ -188,14 +188,6 @@ class AdminLogic:
         flash("The allocations have been made, please look at the student table for more information")
         return render_template('admin/dashboard.html', assignments=self.allocate())
 
-    @staticmethod
-    def sign_up_settings():
-        """
-
-        :return:
-        """
-        return render_template('admin/dashboard.html', title='Sign-Up Settings')
-
     def allocate(self):
         """
         Runs the allocation algorithm using the json provided from another method and returns the matches as a json
@@ -222,7 +214,7 @@ class AdminLogic:
             except:
                 print("Error in inserting into db")
 
-            return "The following assignments have been made:" + str(json_response["assignments"])
+
 
         except Exception as e:
             self._log.exception(e)
@@ -326,17 +318,17 @@ class AdminLogic:
         :return: invite.html
         """
         invite_form = InviteForm()
+        scheme_id = current_user.scheme_id
+        token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
+        invite_url = current_app.config["WEBSITE_PATH"] + "signup/" + token
 
         if request.method == 'POST':
             if invite_form.validate_on_submit:
                 email = invite_form.email.data
-                scheme_id = current_user.scheme_id
-                token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
-
                 send_email_scheme_invite(email=email, token=token)
                 flash("Invite sent.")
 
-        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form)
+        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form, invite_url=invite_url)
 
     def __init__(self):
         try:

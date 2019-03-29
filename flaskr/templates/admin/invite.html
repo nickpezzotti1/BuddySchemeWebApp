@@ -15,8 +15,16 @@
 {% block content %}
 {% endblock %}
 
-Please input the email to be invited to this scheme.
+<div>
+    <h3>Invite link</h3>
+    </br>
+    <a href={{invite_url}}> {{ invite_url }} </a>
+</div>
+
 </br></br>
+
+<h3>Email invite link</h3>
+</br>
 <form action="" method="post" name="invite">
     {{ invite_form.csrf_token }}
     <div class="form-group">

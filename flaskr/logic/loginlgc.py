@@ -25,15 +25,16 @@ class LoginLogic:
         """
         if current_user.is_authenticated:
             return redirect("/dashboard")
-
+            
         # Try to load the available schemes
         try:
             scheme_options = self._get_scheme()
         except Exception as e:
-            flash("Error logging in, please try again")
+            flash("Error logging in, please check the data that was entered")
 
         login_form = LoginForm(request.form)
         login_form.scheme_id.choices = scheme_options
+
         try:
             if request.method == "POST": # If the user is trying to login
                 if login_form.validate_on_submit(): # If the form is validated
@@ -56,10 +57,6 @@ class LoginLogic:
                         if check_password_hash(user.password, login_form.password.data):
                             # redirect to profile page, where he must insert his preferences
                             login_user(user, remember=False)
-
-                            is_mentor = self._student_handler.get_user_data(scheme_id,
-                                                                            k_number)['is_mentor']
-
                             return redirect("/dashboard")
                         else:
                             flash('The password you entered is incorrect')
@@ -71,10 +68,9 @@ class LoginLogic:
                     return render_template("login.html", login_form=login_form)
 
             return render_template("login.html", login_form=login_form)
-
         except Exception as e:
-            self._log.exception("Could not parse login form")
-            flash("Oops... Something went wrong. The data entered could not be valid, try again.")
+            self._log.exception("Oops... Something went wrong. The data entered could not be valid, try again.")
+            raise abort(500)
 
     def signup(self, request, scheme_id=False):
         """
@@ -86,6 +82,7 @@ class LoginLogic:
                 unsuccesful)
         """
         try:
+            # if scheme_id was set, only let user signup to it
             if scheme_id:
                 schemes = self._scheme_handler.get_active_scheme_data()
                 scheme_options = [(s['scheme_id'], s['scheme_name'])
@@ -94,11 +91,12 @@ class LoginLogic:
                 scheme_options = self._get_scheme()
 
             registration_form = RegistrationForm(request.form)
+            # preload form with possible scheme choices for user
             registration_form.scheme_id.choices = scheme_options
 
         except Exception as e:
             self._log.exception("Invalid registration form")
-            return abort(500)
+            raise abort(500)
 
         try:
             if request.method == "POST":  # if the registation form was submitted
@@ -136,7 +134,7 @@ class LoginLogic:
 
         except Exception as e:
             self._log.exception("Could not parse registration form")
-            return abort(500)
+            raise abort(500)
 
     def confirm_email(self, token):
         """
@@ -152,10 +150,11 @@ class LoginLogic:
 
         except Exception as e:
             self._log.exception("Could not verify token")
-            return abort(403)
+            raise abort(403)
 
         try:
             if message:
+                # split message using token set in config
                 (k_number, scheme_id) = message.split(
                     current_app.config["MESSAGE_SEPARATION_TOKEN"])
 
@@ -171,7 +170,7 @@ class LoginLogic:
 
         except Exception as e:
             self._log.exception("Could not activate account")
-            return abort(500)
+            raise abort(500)
         return redirect("/login")
 
     def _get_scheme(self):
@@ -191,9 +190,7 @@ class LoginLogic:
         :param token:
         :return:
         """
-        scheme_id = verify_token(
-        secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
-
+        scheme_id = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
         return self.signup(request, scheme_id=scheme_id)
 
     def reset_password_via_email(self, request):
@@ -203,7 +200,6 @@ class LoginLogic:
         :return:
         """
         reset_form = RequestEmailPasswordResetForm(request.form)
-
         reset_form.scheme_id.choices = self._get_scheme()
 
         if request.method == "POST":
@@ -212,7 +208,6 @@ class LoginLogic:
                 scheme_id = reset_form.scheme_id.data
 
                 flash("If your email exists in our database, you will receive an email. Don't forget to check spam")
-
                 if self._student_handler.user_exist(scheme_id, k_number):
                     send_email_reset_password(k_number=k_number, scheme_id=scheme_id, secret_key=current_app.config["SECRET_KEY"])
 
@@ -246,11 +241,10 @@ class LoginLogic:
                     self._student_handler.update_hash_password(scheme_id, k_number, new_hashed_password)
                     flash("Password updated successfully")
                     return redirect("/login")
-
         except Exception as e:
             raise abort(500)
+    
         return render_template("reset_password.html", reset_password_form=reset_password_form)
-
 
     def __init__(self):
         try:

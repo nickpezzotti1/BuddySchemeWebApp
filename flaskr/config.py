@@ -8,4 +8,4 @@ class Config:
     MESSAGE_SEPARATION_TOKEN = "[" + sha3_256(bytes(SECRET_KEY, "utf-8")).hexdigest() + "]"
     EMAIL_CONFIRMATION_REQUIRED = False
     BUDDY_LIMIT = 15
-    WEBSITE_PATH = "http://localhost:5000/"
+    WEBSITE_PATH = "http://52.208.1.251:8080/"

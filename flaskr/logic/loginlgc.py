@@ -19,7 +19,7 @@ class LoginLogic:
         Logs the user into the system given a username and password.
         :param request: The request is passed through so we can access the form
                         contained inside it.
-        :return: A view based on wether the login was sucessfull (redirecting
+        :return: A view based on whether the login was sucessfull (redirecting
                 to /dashboard or back to the login screen if the login was
                 unsuccesful)
         """
@@ -77,6 +77,7 @@ class LoginLogic:
         Signs up the user into the system given a username and password.
         :param request: The request is passed through so we can access the form
                         contained inside it.
+        :param scheme_id: This limits the choices of signup to a particular id
         :return: A view based on wether the signup was sucessfull (redirecting
                 to /login or back to the sign-up screen if it was
                 unsuccesful)
@@ -138,9 +139,10 @@ class LoginLogic:
 
     def confirm_email(self, token):
         """
-
-        :param token:
-        :return:
+        Activates users account on database, based on token sent by email.
+        :param token: Token sent to user by email, used to identify himself.
+        :return: A view of the login page showing the user that he was able
+                to activate his/her account.
         """
         try:
             message = verify_token(
@@ -175,8 +177,8 @@ class LoginLogic:
 
     def _get_scheme(self):
         """
-
-        :return:
+        Get active schemes from database.
+        :return: List of tuples consisting of scheme id and name.
         """
         schemes = self._scheme_handler.get_active_scheme_data()
         scheme_options = [(s['scheme_id'], s['scheme_name']) for s in schemes]
@@ -185,19 +187,24 @@ class LoginLogic:
 
     def signup_token(self, request, token):
         """
-
-        :param request:
-        :param token:
-        :return:
+        Parses a token to extract a scheme ID for the user to register to.
+        Made this way so users aren't able to directly manipulate the sign up
+        page through the URL.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :param token: Token represents a scheme_id that can be decrypted.
+        :return: A view of the signup page with scheme options limited to the
+                scheme id gotten from the token.
         """
         scheme_id = verify_token(secret_key=current_app.config["SECRET_KEY"], token=token, expiration=1337331)
         return self.signup(request, scheme_id=scheme_id)
 
     def reset_password_via_email(self, request):
         """
-
-        :param request:
-        :return:
+        Allows user to request password reset via email.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :return: A view of the password reset page with a form to provide k_number.
         """
         reset_form = RequestEmailPasswordResetForm(request.form)
         reset_form.scheme_id.choices = self._get_scheme()
@@ -215,10 +222,11 @@ class LoginLogic:
 
     def reset_password(self, request, token):
         """
-
-        :param request:
-        :param token:
-        :return:
+        Allows user to choose new password, if token provided is correct.
+        :param request: The request is passed through so we can access the form
+                        contained inside it.
+        :param token: Token sent to user by email on the reset_password_via_email function.
+        :return: A view of the login page.
         """
         reset_password_form = ResetPasswordWithEmailForm(request.form)
         message = verify_token(

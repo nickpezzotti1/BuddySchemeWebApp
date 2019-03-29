@@ -13,15 +13,25 @@ from flaskr.models.interestmdl import InterestModel
 from flaskr.models.hobbymdl import HobbyModel
 from flaskr.models.studentmdl import StudentModel
 from datetime import date, datetime
-from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, InviteForm
+from flaskr.forms import NewHobbyForm, NewInterestForm, AllocationConfigForm, InviteForm, DeleteHobbyForm, DeleteInterestForm
+
 
 
 class AdminLogic:
     @staticmethod
     def admin_dashboard():
+        """
+        Redirects the admin back to the dashboard
+        :return: dashboard.html
+        """
         return render_template('admin/dashboard.html', title='Admin Dashboard')
 
     def admin_view_students(self):
+        """
+        Retrieves the students from the database for the specific scheme which the admin looks over and lists them
+        with the option to request further information
+        :return: view_students.html
+        """
         try:
             data = self._student_handler.get_all_students_data_basic(current_user.scheme_id)
             return render_template('admin/view_students.html', title='View Students', data=data)
@@ -30,6 +40,12 @@ class AdminLogic:
             return abort(500)
 
     def view_student_details(self):
+        """
+        Returns the details about a specific student using their k-number to send a request form retrieving the associated data
+        It allows the admin to change the admin status of the user and also manually assign them to a mentor/mentee as well giving the
+        option to delete the user from the database.
+        :return: student_details.html or 500 error code
+        """
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
@@ -59,6 +75,12 @@ class AdminLogic:
             return abort(500)
 
     def delete_student_details(self):
+        """
+        Allows the admin to delete a user from the scheme by using their associated k-number
+        If the admin attempts to delete their own account they will be redirected to their dashboard where they can
+        delete their own account using their k-number
+        :return: dashboard.html or 500 error code
+        """
         try:
             if(request.method == 'POST' and 'knum' in request.form):
                 k_number = request.form['knum']
@@ -68,17 +90,23 @@ class AdminLogic:
                 else:
                     flash("Be careful! you are about to delete your own account," +
                         " if you wish to do so, do it from your user dashboard")
-                    return render_template("admin/dashboard.html", title="Admin Dashboard")
+                return render_template("admin/dashboard.html", title="Admin Dashboard")
 
         except Exception:
             self._log.exception("Could not execute delete student details")
             return abort(500)
 
     def general_settings(self):
+        """
+        Retrieves the listed hobbies and interests associated with a given scheme and displays them
+        Gives the admin the option to add further hobbies and interests using a request form, checks it doesn't exist alrady
+        Page refreshes listing the new list of hobbies/interests
+        :return: general_settings.html
+        """
         try:
             new_hobby_form = NewHobbyForm(request.form)
             new_interest_form = NewInterestForm(request.form)
-
+            
             if new_hobby_form.hobby_name.data:
                 if new_hobby_form.validate_on_submit():
                     response = self._hobby_handler.get_hobby_list(current_user.scheme_id)
@@ -110,17 +138,41 @@ class AdminLogic:
                     else:
                         flash("Interest successfully created")
                         self._interest_handler.insert_interest(current_user.scheme_id, new_interest_form.interest_name.data)
+            
 
-            currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+            delete_hobby_form = DeleteHobbyForm(request.form)
+            if delete_hobby_form.hobby.data:
+                delete_id = delete_hobby_form.hobby.data
+                if self._hobby_handler.delete_hobby(current_user.scheme_id, delete_id):
+                    flash("Hobby Removed")
+                else:
+                    flash("Unable To Remove Hobby")
+                
+            delete_interest_form = DeleteInterestForm(request.form)
+            if delete_interest_form.interest.data:
+                delete_id = delete_interest_form.interest.data
+                if self._interest_handler.delete_interest(current_user.scheme_id, delete_id):
+                    flash("Interest Removed")
+                else:
+                    flash("Unable To Remove Interest")
+
             currentHobbies = self._hobby_handler.get_hobby_list(current_user.scheme_id)
-            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
+            delete_hobby_form.hobby.choices = [(h['id'], h['hobby_name']) for h in currentHobbies]
+            currentInterests = self._interest_handler.get_interest_list(current_user.scheme_id)
+            delete_interest_form.interest.choices = [(i['id'], i['interest_name']) for i in currentInterests]
+            
+            return render_template("admin/general_settings.html", hobby_form=new_hobby_form, delete_hobby_form=delete_hobby_form, delete_interest_form=delete_interest_form, interest_form=new_interest_form, currentHobbies=currentHobbies, currentInterests=currentInterests)
 
         except Exception:
             self._log.exception("Invalid new hobby form")
             return abort(500)
 
     def allocation_config(self):
-
+        """
+        Allows the admin to changes the weights of the allocatio algorithm
+        Uses a post request and updates the page under the scheme id
+        :return: allocation_config.html
+        """
         # Retrieve current allocation config data
         config_data = self._allocation_config_handler.get_allocation_config(current_user.scheme_id)
 
@@ -149,14 +201,19 @@ class AdminLogic:
             allocation_config=config_data, update_message=update_message)
 
     def allocation_algorithm(self):
+        """
+        Runs the allocation algorithm and sends the admin back to the dashboard
+        Flashes it was successful
+        :return: dashboard.html
+        """
         flash("The allocations have been made, please look at the student table for more information")
         return render_template('admin/dashboard.html', assignments=self.allocate())
 
-    @staticmethod
-    def sign_up_settings():
-        return render_template('admin/dashboard.html', title='Sign-Up Settings')
-
     def allocate(self):
+        """
+        Runs the allocation algorithm using the json provided from another method and returns the matches as a json
+        :return: json
+        """
         try:
             input_string = self.generate_mentee_and_mentor_json()
 
@@ -178,15 +235,17 @@ class AdminLogic:
             except:
                 print("Error in inserting into db")
 
-            return "The following assignments have been made:" + str(json_response["assignments"])
+
 
         except Exception as e:
             self._log.exception(e)
             return abort(500)
 
-    # TODO add try catch for this method
     def generate_mentee_and_mentor_json(self):
-
+        """
+        Retrieves the mentor, mentees with their associated data and submits them as a json
+        :return: json
+        """
         # Get allocation configuration from database
         allocation_config = self._allocation_config_handler.get_allocation_config(
             current_user.scheme_id)
@@ -227,7 +286,11 @@ class AdminLogic:
         return json.dumps(input)
 
     def manually_assign(self):
-
+        """
+        Allows the admin manually assign a mentee/mentor using their k-number.
+        Restricts assignment of mentor-mentor, mentee-mentee and already matches users
+        :return: manually_assign.html
+        """
         try:
             if(request.method == 'POST'):
                 k_number = request.form['knum']
@@ -244,7 +307,9 @@ class AdminLogic:
             flash("Something went wrong during manual assignment")
 
     def get_all_user_data(self, scheme_id, k_number):
-        """ Get all user data from database and format into a single dict"""
+        """ Get all user data from database and format into a single dict
+        :rtype: object
+        """
         try:
             user_data = self._student_handler.get_user_data(scheme_id, k_number)
 
@@ -269,18 +334,22 @@ class AdminLogic:
             return abort(500)
 
     def invite_to_scheme(self):
+        """
+        Generates a url to allow users to sign up to the specific scheme using the scheme_id
+        :return: invite.html
+        """
         invite_form = InviteForm()
+        scheme_id = current_user.scheme_id
+        token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
+        invite_url = current_app.config["WEBSITE_PATH"] + "signup/" + token
 
         if request.method == 'POST':
             if invite_form.validate_on_submit:
                 email = invite_form.email.data
-                scheme_id = current_user.scheme_id
-                token = generate_token(secret_key=current_app.config["SECRET_KEY"], message=scheme_id)
-
                 send_email_scheme_invite(email=email, token=token)
                 flash("Invite sent.")
 
-        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form)
+        return render_template('admin/invite.html', title='Invite to scheme', invite_form=invite_form, invite_url=invite_url)
 
     def __init__(self):
         try:

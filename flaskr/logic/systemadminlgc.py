@@ -1,4 +1,6 @@
 import logging
+from os import urandom
+import base64
 
 from flask import abort
 from flask import flash
@@ -24,6 +26,12 @@ from flaskr.emailer import send_email_scheme_feedback
 class SystemAdminLogic:
 
     def system_admin_login(self, request):
+        """
+        Produces the sytem admin login html page or a redirect to system admin dashboard if login is successfull
+             
+        :param request: Login form
+        :return: html view
+        """
         if current_user.is_authenticated:
             return redirect("/dashboard")
 
@@ -61,6 +69,11 @@ class SystemAdminLogic:
             flash("Error logging in, please check the data that was entered")
 
     def system_admin_dashboard(self):
+        """
+        Produces the system admin dashboard and handles redirects from requests
+        
+        :return: html view
+        """
         # try:
         if request.method == 'POST' and 'feedbackScheme' in request.form:
             scheme_id = request.form['scheme_id']
@@ -76,6 +89,13 @@ class SystemAdminLogic:
         return render_template('system_admin/dashboard.html', title='System Admin', schemes=schemes)
 
     def system_new_scheme(self, request):
+        """
+        Produces the new scheme page and creates a new scheme upon valid form 
+        submission, displaying the scheme admin password on screen
+
+        :param request: new scheme form
+        :return: html view
+        """
         try:
             new_scheme_form = NewSchemeForm(request.form)
 
@@ -92,17 +112,13 @@ class SystemAdminLogic:
                     if self._scheme_handler.check_scheme_avail(new_scheme_name):
                         if self._scheme_handler.create_new_scheme(new_scheme_name):
                             scheme_admin_k_number = new_scheme_form.k_number.data
-                            # new_scheme_name) ## return from create_new_scheme isntead?
                             scheme_id = self._scheme_handler.get_scheme_id(new_scheme_name)
-                            #
-                            # ToDo - below
-                            #
-                            password = "password"  # urandom(16) ## send in email + force to change
+                            random = urandom(10)
+                            password = base64.b64encode(random).decode("utf-8")
                             hashed_password = generate_password_hash(password)
-                            # check res?
                             if self._student_handler.insert_student(scheme_id, scheme_admin_k_number, 'admin change', 'admin change', 'admin change', 2, 'admin change', 1, hashed_password, 1, 1):
                                 if self._scheme_handler.create_allocation_config_entry(scheme_id):
-                                    flash("Scheme And Admin Account Succesfully Created")
+                                    flash("Scheme And Admin Account Succesfully Created \n Admin Should Sign In With Password - " + password)
                                 else:
                                     flash(
                                         "Scheme And Admin Account Created But Failed To Create Allocation Config")
@@ -123,9 +139,14 @@ class SystemAdminLogic:
             return abort(500)
 
     def system_view_scheme_dashboard(self, request):
+        """
+        Redirects to admin dashboard of the selected scheme
+
+        :param request: scheme selection form
+        :return: redirect to html view
+        """
         if request.method == 'POST' and 'scheme_id' in request.form:
             scheme_id = request.form['scheme_id']
-            # conf exists in db
             current_user.set_scheme_id(scheme_id)
             resp = make_response(redirect('/admin'))
             resp.set_cookie('scheme', scheme_id)
@@ -135,6 +156,13 @@ class SystemAdminLogic:
             return redirect('/system')
 
     def system_scheme_feedback(self, request, scheme_id):
+        """
+        Generates a form and upon submission sends a feeback url to scheme members
+
+        :param request: request form with url for feedback
+        :param scheme_id: scheme id to send url to
+        :return: html view 
+        """
         feedback_form = SchemeFeedbackForm(request.form)
 
         if request.method == 'POST':
@@ -147,6 +175,9 @@ class SystemAdminLogic:
         return render_template('system_admin/feedback.html', title='Scheme Feedback', feedback_form=feedback_form)
 
     def __init__(self):
+        """
+
+        """
         try:
             self._log = logging.getLogger(__name__)
             self._scheme_handler = SchemeModel()

@@ -14,7 +14,6 @@ function filterName() {
 	}
 }
 
-function alConf(name) {
-	return confirm("Match {{udata.first_name + "
-		" + udata.last_name}} With " + name + "?")
+function alConf(user, match) {
+	return confirm("Match " + user + " With " + match + "?")
 }

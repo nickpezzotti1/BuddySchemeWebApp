@@ -7,9 +7,10 @@ class InterestModel(BasicModel):
         """ Given the interest_id will delete the interest"""
 
         try:
-            self._dao.execute("DELETE FROM Interest WHERE id = %s AND scheme_id = %s;",
-                              (interest_id, scheme_id))
+            self._dao.execute("DELETE FROM Interest WHERE id = %s AND scheme_id = %s;", (interest_id, scheme_id))
+            succ = self._dao.rowcount()
             self._dao.commit()
+            return succ
 
         except Exception as e:
             self._log.exception("Could not delete the interest")

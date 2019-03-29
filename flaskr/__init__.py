@@ -26,6 +26,7 @@ log = logging.getLogger(__name__)
 def create_app(config_class=Config):
     app = Flask(__name__)
     login_manager.init_app(app)
+    app.url_map.strict_slashes = False # Ignore trailing slashes in URL
 
     app.config.from_object(config_class)
 

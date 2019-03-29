@@ -48,13 +48,6 @@ def allocation_config():
 def allocation_algorithm():
     return handler.allocation_algorithm()
 
-
-@admin_blueprint.route('/admin/signup_settings')
-@admin_login_required()
-def sign_up_settings():
-    return render_template('admin/dashboard.html', title='Sign-Up Settings')
-
-
 @admin_blueprint.route('/admin/allocate')
 @admin_login_required()
 def allocate():

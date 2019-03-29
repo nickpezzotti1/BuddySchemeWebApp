@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 
@@ -44,7 +44,10 @@ class Student(User):
     @property
     def is_active(self):
         # user only able to login if email is confirmed
-        return self.email_confirmed
+        if current_app.config["EMAIL_CONFIRMATION_REQUIRED"]:
+            return self.email_confirmed
+        else:
+            return True
 
     def activate(self):
         # activates user account in database

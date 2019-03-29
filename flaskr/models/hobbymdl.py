@@ -8,7 +8,9 @@ class HobbyModel(BasicModel):
 
         try:
             self._dao.execute("DELETE FROM Hobby WHERE id = %s AND scheme_id = %s;", (hobby_id, scheme_id))
+            succ = self._dao.rowcount()
             self._dao.commit()
+            return succ
 
         except Exception as e:
             self._log.exception("Could not delete the hobby")

@@ -71,7 +71,7 @@
     <input type='hidden' name='knum' value='{{udata.k_number}}'></input>
     <input type="hidden" name='{% if udata.is_mentor %}{{"torNum"}}{% else %}{{"teeNum"}}{% endif %}' value="{{udata.k_number}}"></input>
     <input type="hidden" name='{% if udata.is_mentor %}{{"teeNum"}}{% else %}{{"torNum"}}{% endif %}' value="{{student.k_number}}"></input>
-    <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='mkAlloc' onclick='return alConf("{{student.first_name + " " + student.last_name}}")' value="Assign"></input></td>
+    <td><input type="submit" class="btn btn-lg btn-block btn-primary" name='mkAlloc' onclick='return alConf("{{udata.first_name + " " + udata.last_name}}", "{{student.first_name + " " + student.last_name}}")' value="Assign"></input></td>
 </form>
 </tr>
 {% endfor %}

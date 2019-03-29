@@ -37,13 +37,14 @@
 						<div class="form-group">
 							{{ login_form.password.label(class="form-control-label") }}
 							{{ login_form.password (class="form-control form-control-lg", placeholder="Enter password") }}
+							<p class="text-center"> <a href="{{url_for('login.reset_password_via_email')}}"><strong>Forgot your password?</strong> </a></p>
+
 						</div>
 
 
 
-						<div class="form-group">
-							<p class="text-center">By signing up you accept our <a href="/terms-conditions">Terms Of Use</a></p>
-						</div>
+							<p class="text-center">By signing up you accept our <a href="/terms-conditions"><strong> Terms Of Use</strong> </a></p>
+
 
 
 						<div class="col-md-12 text-center ">
@@ -56,7 +57,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<p class="text-center">Don't have account? <a href="/signup" id="signup">Sign up here</a></p>
+							<p class="text-center" > Don't have account? <a href="/signup" id="signup"> <strong> Sign up here </strong> </a></p>
 						</div>
 					</form>
 
@@ -65,5 +66,4 @@
 		</div>
 	</div>
 </div>
-<a class="btn btn-large btn-info" href="{{url_for('login.reset_password_via_email')}}">Forgot my password</a>
 {% endblock content_block %}

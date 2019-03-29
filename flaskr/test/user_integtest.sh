@@ -2,7 +2,7 @@
 
 for i in `seq 1 10`;
 do
-  HTTP_CODE=`curl --write-out '%{http_code}' -o /dev/null -m 10 -q -s http://localhost:5000/mentor`
+  HTTP_CODE=`curl --write-out '%{http_code}' -o /dev/null -m 10 -q -s http://localhost:5000/user`
   if [ "$HTTP_CODE" == "404" ]; then
     echo "Mentor page is not accessible. This is correct because it should not be reachable without logging in."
     exit 0;

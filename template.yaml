@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Marriage Problem
+Resources:
+  Algorithm:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: Hello::handleRequest
+      Runtime: java11
+      CodeUri: ./
+      Events:
+        MyTimeApi:
+          Type: Api
+          Properties:
+            Path: /Algorithm
+            Method: GET

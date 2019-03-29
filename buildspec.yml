@@ -1,0 +1,13 @@
+version: 0.1
+
+phases:
+  build:
+    commands:
+      - mvn package
+      - aws cloudformation package --template-file template.yaml --s3-bucket marriage-lambda-container 
+                                   --output-template-file template.yaml
+
+artifacts:
+  type: zip
+  files:
+    - template.yaml

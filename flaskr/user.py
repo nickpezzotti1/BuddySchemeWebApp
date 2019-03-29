@@ -53,6 +53,7 @@ class Student(User):
         # activates user account in database
         self._student_handler.activateAccount(
             scheme_id=self.scheme_id, k_number=self.k_number)
+        self.email_confirmed = True
 
     def reset_password(self, new_password):
         new_hashed_password = generate_password_hash(
